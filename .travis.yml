@@ -1,4 +1,4 @@
 language: java
 jdk:
   - oraclejdk8
-script: architecture/gradlew run
+script: bash ./ci/scripts/deploy-architecture-diagrams.sh
