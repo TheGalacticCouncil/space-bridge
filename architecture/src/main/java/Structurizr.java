@@ -71,7 +71,7 @@ public class Structurizr {
         ViewSet views = workspace.getViews();
         SystemContextView contextView = views.createSystemContextView(softwareSystem, "SystemContext",
                 "A System Context diagram of Space Bridge.");
-        contextView.setPaperSize(PaperSize.A4_Portrait);
+        contextView.setPaperSize(PaperSize.A5_Portrait);
         contextView.addAllSoftwareSystems();
         contextView.addAllPeople();
 
