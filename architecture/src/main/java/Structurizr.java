@@ -13,6 +13,7 @@ public class Structurizr {
     private static final long WORKSPACE_ID = 38780;
 
     private static final String DATABASE_TAG = "Database";
+    private static final String NETWORK_TAG = "Network";
     private static final String EXISTING_SYSTEM_TAG = "Existing System";
 
     public static void main(String[] args) throws Exception {
@@ -36,23 +37,48 @@ public class Structurizr {
 
         emptyEpsilon.addTags(EXISTING_SYSTEM_TAG);
 
-        Container galacticBroker = softwareSystem.addContainer("Galactic Broker",
-                "An application that translates HW input into events and relays them further.", "Python");
-        Container spaceNode = softwareSystem.addContainer("Space Node",
-                "An application that listens for control events, has necessary logic to translate those into Empty Epsilon control values and post those to Empty Epsilon client.",
-                "NodeJS");
-
+        // Define software system connections
         user.uses(hardwareBoard, "Uses");
         softwareSystem.uses(hardwareBoard, "Reads state");
         softwareSystem.uses(emptyEpsilon, "Sends commands to");
+
+        // Space Bridge containers
+        Container hwReader = softwareSystem.addContainer("HW Reader",
+                "Translates HW input into events and relays them further.", "Python");
+        Container hwEffectEngine = softwareSystem.addContainer("HW Effect Engine",
+                "Runs effects on hardware based on read events", "Python");
+        Container shipControl = softwareSystem.addContainer("Ship Control",
+                "Listens for control events, has necessary logic to translate those into Empty Epsilon control values and post those to Empty Epsilon client.",
+                "Node.js");
+        Container shipWatch = softwareSystem.addContainer("Ship Watch",
+                "Monitors EmptyEpsilon's state and generates events on changes", "Node.js");
+        Container eventBus = softwareSystem.addContainer("Event Bus", "LAN", "UDP Broadcast");
+        eventBus.addTags(NETWORK_TAG);
+
+        // Relations within containers
+        hwReader.uses(eventBus, "Broadcasts events", "UDP Broadcast");
+        shipControl.uses(eventBus, "Listens for events", "UDP Broadcast");
+        shipWatch.uses(eventBus, "Broadcasts events", "UDP Broadcast");
+        hwEffectEngine.uses(eventBus, "Listens for event", "UDP Broadcast");
+
+        // Relations to outside systems
+        shipControl.uses(emptyEpsilon, "Posts control values and read necessary spaceship properties", "HTTP");
+        hwReader.uses(hardwareBoard, "Reads HW input values", "Raspberry HW");
+        shipWatch.uses(emptyEpsilon, "Queries spaceship and space state", "HTTP");
+        hwEffectEngine.uses(hardwareBoard, "Lights up effects", "Raspberry HW");
 
         // define some views
         ViewSet views = workspace.getViews();
         SystemContextView contextView = views.createSystemContextView(softwareSystem, "SystemContext",
                 "A System Context diagram of Space Bridge.");
-        contextView.setPaperSize(PaperSize.A4_Landscape);
+        contextView.setPaperSize(PaperSize.A4_Portrait);
         contextView.addAllSoftwareSystems();
         contextView.addAllPeople();
+
+        ContainerView spaceBridgeContainerView = views.createContainerView(softwareSystem,
+                "Space Bridge container diagram", "The container diagram for the Space Bridge");
+        spaceBridgeContainerView.setPaperSize(PaperSize.A4_Portrait);
+        spaceBridgeContainerView.addAllContainersAndInfluencers();
 
         // add some documentation
         StructurizrDocumentationTemplate template = new StructurizrDocumentationTemplate(workspace);
@@ -63,9 +89,11 @@ public class Structurizr {
         Styles styles = views.getConfiguration().getStyles();
         styles.addElementStyle(Tags.COMPONENT).background("#cb8150").color("#ffffff");
         styles.addElementStyle(Tags.SOFTWARE_SYSTEM).background("#1168bd").color("#ffffff");
+        styles.addElementStyle(Tags.CONTAINER).background("#1168bd").color("#ffffff");
         styles.addElementStyle(Tags.PERSON).background("#08427b").color("#ffffff").shape(Shape.Person);
         styles.addElementStyle(EXISTING_SYSTEM_TAG).background("#999999");
         styles.addElementStyle(DATABASE_TAG).shape(Shape.Cylinder);
+        styles.addElementStyle(NETWORK_TAG).shape(Shape.Circle).background("#cbcbcb").color("#ffffff");
 
         uploadWorkspaceToStructurizr(workspace);
     }
