@@ -8,8 +8,8 @@ To allow playing the spaceship bridge simulator game [_EmptyEpsilon_ ](http://da
 
 1. Reads inputs from the hardware consoles
 2. Sends input data via LAN from the consoles to the players' computers
-3. Sends HTTP requests based on input data to EmptyEpsilons API
-4. Uses EmptyEpsilons state for hardware console effects during play
+3. Sends HTTP requests based on input data to EmptyEpsilon's API
+4. Uses EmptyEpsilon's state for hardware console effects during gameplay
 
 NOTE: The project is still in an early phase, and no functionality is implemented at this time.
 
