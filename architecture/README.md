@@ -1,6 +1,6 @@
 # Architecture of the project
 
-Please see [architecture diagrams](https://structurizr.com/workspace/38780/diagrams#SystemContext).  
+Please see [architecture diagrams](https://structurizr.com/share/38780/diagrams).  
 Architecture diagrams follow the [C4 Model](https://c4model.com/).
 
 ## Architecture as Structurizr
