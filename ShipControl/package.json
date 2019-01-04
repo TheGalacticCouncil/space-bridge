@@ -1,7 +1,7 @@
 {
   "name": "ship-control",
   "version": "1.0.0",
-  "description": "\u0016Listens for control events, has necessary logic to translate those into Empty Epsilon control values and post those to Empty Epsilon client.",
+  "description": "Listens for control events, has necessary logic to translate those into Empty Epsilon control values and post those to Empty Epsilon client.",
   "main": "index.js",
   "directories": {
     "doc": "docs"
