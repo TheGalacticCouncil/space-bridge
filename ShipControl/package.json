@@ -1,0 +1,25 @@
+{
+  "name": "ship-control",
+  "version": "1.0.0",
+  "description": "\u0016Listens for control events, has necessary logic to translate those into Empty Epsilon control values and post those to Empty Epsilon client.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheGalacticCouncil/space-bridge.git"
+  },
+  "author": "TheGalacticCouncil",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/TheGalacticCouncil/space-bridge/issues"
+  },
+  "homepage": "https://github.com/TheGalacticCouncil/space-bridge#readme",
+  "dependencies": {
+    "typescript": "^3.2.2"
+  }
+}
