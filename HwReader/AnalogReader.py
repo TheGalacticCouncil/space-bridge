@@ -18,7 +18,7 @@ class AnalogInput():
     def readRaw(self):
         return self.analogInput.value
         
-    def read(decimals, minimum, maximum):
+    def read(decimals=2, minimum=0, maximum=100):
         'rounds to [decimals]'
         'and rescales the input from [minimum] to [maximum]'
         
@@ -26,7 +26,7 @@ class AnalogInput():
         
         # add scaling
         
-        return self.analogInput.value    
+        return self.analogInput.value
         
 # Module can be run directly to test its function
 if __name__ == "__main__":
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     
     try:
         while True:
-            value = input1.read()
+            value = input1.readRaw()
             print(value)
             sleep(0.1)
     finally:
