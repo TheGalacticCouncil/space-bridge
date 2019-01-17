@@ -55,10 +55,10 @@ public class Structurizr {
 
         // Ship Control components
         Component eventReceiver = shipControl.addComponent("Event Receiver", "Receives events from network.", "event receiver");
-        Component eventValidator = shipControl.addComponent("Event Validator", "Validates event format.");
-        Component stationChecker = shipControl.addComponent("stationChecker", "Validates event is for current station.");
-        Component requestCreator = shipControl.addComponent("Engineering Request Creator", "Creates requests to send to EmptyEpsilon.");
-        Component requestSender = shipControl.addComponent("Request Sender", "Sends created requests to EmptyEpsilon.");
+        Component eventValidator = shipControl.addComponent("Event Validator", "Validates event format.", "validator");
+        Component stationChecker = shipControl.addComponent("stationChecker", "Validates event is for current station.", "checker");
+        Component requestCreator = shipControl.addComponent("Engineering Request Creator", "Creates requests to send to EmptyEpsilon.", "request creator");
+        Component requestSender = shipControl.addComponent("Request Sender", "Sends created requests to EmptyEpsilon.", "sender");
 
         // Relations between Ship Control components
         eventReceiver.uses(eventValidator, "Passes received events to Event Validator.");
@@ -90,6 +90,11 @@ public class Structurizr {
                 "Space Bridge container diagram", "The container diagram for the Space Bridge");
         spaceBridgeContainerView.setPaperSize(PaperSize.A4_Portrait);
         spaceBridgeContainerView.addAllContainersAndInfluencers();
+
+        ComponentView shipControlComponentView = views.createComponentView(shipControl, "Ship Control component diagram", "The component diagram for Ship Control");
+        shipControlComponentView.setPaperSize(PaperSize.A4_Portrait);
+        shipControlComponentView.addAllComponents();
+
 
         // add some documentation
         StructurizrDocumentationTemplate template = new StructurizrDocumentationTemplate(workspace);
