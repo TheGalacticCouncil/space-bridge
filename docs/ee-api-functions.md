@@ -105,6 +105,7 @@ PlayerSpaceship:commandSetBeamSystemTarget(ESystem system)
 
 Huomioita:
 - Tuubilla ammuttaess tulee aina antaa suunta. Peli laskee tämän maagisesti targetoitaessa vihollista, miten me hoidetaan asia?
+ks. https://github.com/daid/EmptyEpsilon/pull/507
 - Kilpien taajuusvalitsimen arvoa ei voi säätää, vaan kilvet kalibroidaan "suoraan"
 - Beam target ja frequency EI päivity UI:n rendauksen jälkeen...
 - Targetointi vaatii tuen lisäämisen EE:n puolelle.
