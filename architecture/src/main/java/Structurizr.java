@@ -10,7 +10,7 @@ import com.structurizr.view.*;
  */
 public class Structurizr {
 
-    private static final long WORKSPACE_ID = 38780;
+
 
     private static final String DATABASE_TAG = "Database";
     private static final String NETWORK_TAG = "Network";
@@ -54,6 +54,9 @@ public class Structurizr {
                 "Monitors EmptyEpsilon's state and generates events on changes", "Node.js");
         Container eventBus = softwareSystem.addContainer("Event Bus", "LAN", "UDP Broadcast");
         eventBus.addTags(NETWORK_TAG);
+
+        // Ship Control components
+        Component eventReceiver = shipControl.addComponent("Event Receiver", "Receives events from network.");
 
         // Relations within containers
         hwReader.uses(eventBus, "Broadcasts events", "UDP Broadcast");
@@ -99,8 +102,9 @@ public class Structurizr {
     }
 
     private static void uploadWorkspaceToStructurizr(Workspace workspace) throws Exception {
-        String API_KEY = System.getenv("STRUCTURIZR_API_KEY");
-        String API_SECRET = System.getenv("STRUCTURIZR_API_SECRET");
+        final long WORKSPACE_ID = Long.parseLong(System.getenv("STRUCTURIZR_WORKSPACE_ID"));
+        final String API_KEY = System.getenv("STRUCTURIZR_API_KEY");
+        final String API_SECRET = System.getenv("STRUCTURIZR_API_SECRET");
         StructurizrClient structurizrClient = new StructurizrClient(API_KEY, API_SECRET);
         structurizrClient.putWorkspace(WORKSPACE_ID, workspace);
     }
