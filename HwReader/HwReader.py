@@ -4,10 +4,22 @@
 from EncoderReader import EncoderInput
 from RPi import GPIO
 
+# add: read config from file
+idleTime = 0.001
 
-def delta(anInput, counter):
-    delta = anInput
-    if delta != 0:
+
+def delta(value, counter=0, threshold=0):
+    'value, [counter], [threshold]'
+    'input value'
+    'a counter that is incremented (optional, default=0)'
+    'threshold for incrementing the counter (optional, default=0)'
+    ' -for digital inputs use zero'
+    
+    delta = value
+
+    # If change is large enough to trigger an update
+    # for digital inputs use zero
+    if abs(delta) > threshold:
         counter += delta
         return(counter)
 
@@ -36,7 +48,7 @@ if __name__ == "__main__":
                 print(counter)
             delta = 0
             ###
-            sleep(0.001)
+            sleep(idleTime)
             
     finally:
         GPIO.cleanup()
