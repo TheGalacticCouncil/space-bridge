@@ -56,8 +56,8 @@ public class Structurizr {
         // Ship Control components
         Component eventReceiver = shipControl.addComponent("Event Receiver", "Receives events from network.", "event receiver");
         Component eventValidator = shipControl.addComponent("Event Validator", "Validates event format.", "validator");
-        Component stationChecker = shipControl.addComponent("stationChecker", "Validates event is for current station.", "checker");
-        Component requestCreator = shipControl.addComponent("Engineering Request Creator", "Creates requests to send to EmptyEpsilon.", "request creator");
+        Component stationChecker = shipControl.addComponent("Station Checker", "Validates event is for current station.", "checker");
+        Component requestCreator = shipControl.addComponent("Request Creator", "Creates requests to send to EmptyEpsilon.", "request creator");
         Component requestSender = shipControl.addComponent("Request Sender", "Sends created requests to EmptyEpsilon.", "sender");
 
         // Relations between Ship Control components
