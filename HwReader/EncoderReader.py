@@ -1,8 +1,10 @@
 # J.V.Ojala 17.01.2019
 # EncoderReader
-'''Module for reading rotary encoder input.
+"""
+Module for reading rotary encoder input.
 name = EncoderInput(clock, dt)
-name.read([counter])'''
+name.read([counter])
+"""
 
 from RPi import GPIO
 
@@ -36,6 +38,7 @@ class EncoderInput():
 
 # Module can be run directly to test its function
 if __name__ == "__main__":
+
     from time import sleep
 
     counter = 0      # Define counter

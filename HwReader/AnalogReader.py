@@ -1,9 +1,11 @@
 # J.V.Ojala 17.01.2019
 # AnalogReader
-'''Module for reading potentiometer (analog) input.
+"""
+Module for reading potentiometer (analog) input.
 name = AnalogInput(inputChannel)
   channel = [0-7]
-name.read()'''
+name.read()
+"""
 
 # For ANALOG INPUT you need
 # an MCP3008 AD converter chip
@@ -21,10 +23,17 @@ class AnalogInput():
         return self.analogInput.value
 
     def read(self, decimals=2, minimum=0, maximum=100):
-        'rounds to [decimals]'
-        'and rescales the input from [minimum] to [maximum]'
+        """
+        rounds to [decimals]
+        if decimals = 0, ommits dounding
+        and rescales the input from [minimum] to [maximum]
+        """
 
-        # add rounding
+        value = self.analogInput.value
+
+        #Rounding
+        if decimals > 0:
+            value = round(value ,decimals)
 
         # add scaling
 
