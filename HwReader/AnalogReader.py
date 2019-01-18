@@ -24,9 +24,9 @@ class AnalogInput():
 
     def read(self, decimals=2, minimum=0.0, maximum=1.0):
         """
-        rounds to [decimals]
-        if decimals = 0, ommits dounding
-        and rescales the input from [minimum] to [maximum]
+        Rounds to [decimals].
+        if decimals = 0, ommits dounding.
+        Rescales the input from [minimum] to [maximum].
         """
 
         value = self.analogInput.value
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            value = input1.read(9, 0.0024)
+            value = input1.read(9, 0.0024, 100)
             print(value)
             sleep(0.1)
     finally:
