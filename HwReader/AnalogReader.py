@@ -22,7 +22,7 @@ class AnalogInput():
     def readRaw(self):
         return self.analogInput.value
 
-    def read(self, decimals=2, minimum=0, maximum=100):
+    def read(self, decimals=2, minimum=0.0, maximum=1.0):
         """
         rounds to [decimals]
         if decimals = 0, ommits dounding
@@ -31,13 +31,14 @@ class AnalogInput():
 
         value = self.analogInput.value
 
-        #Rounding
+        # Scaling
+        value = (value-minimum)/(maximum-minimum)
+
+        # Rounding
         if decimals > 0:
             value = round(value ,decimals)
 
-        # add scaling
-
-        return self.analogInput.value
+        return value
 
 # Module can be run directly to test its function
 if __name__ == "__main__":
@@ -47,7 +48,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            value = input1.readRaw()
+            value = input1.read(9, 0.0024)
             print(value)
             sleep(0.1)
     finally:
