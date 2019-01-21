@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # J.V.Ojala 17.01.2019
 # AnalogReader
 """
@@ -16,39 +17,86 @@ from gpiozero import MCP3008    # A/D converter
 
 class AnalogInput():
 
-    def __init__(self, inputChannel):
+    def __init__(self, inputChannel, threshold=0, decimals=2, minimum=0.0, maximum=1.0):
+        # Configure input channel
         self.analogInput = MCP3008(inputChannel)
+        # Initiate input values
+        self.value = 0
+        self.oldValue = 0
+        # Input configuration variables
+        self.threshold = threshold
+        self.decimals = decimals
+        self.maximum = maximum
+        self.minimum = minimum
 
     def readRaw(self):
-        return self.analogInput.value
+        """
+        Reads the value and stores the old value in buffer
+        """
+        self.value = self.analogInput.value    # new value is read and stored
+        return self.value
 
-    def read(self, decimals=2, minimum=0.0, maximum=1.0):
+    def read(self):
         """
         Rounds to [decimals].
         if decimals = 0, ommits dounding.
         Rescales the input from [minimum] to [maximum].
         """
+        decimals = self.decimals
+        minimum = self.minimum
+        maximum = self.maximum
 
-        value = self.analogInput.value
+        value = AnalogInput.readRaw(self)          #self.analogInput.value
 
         # Scaling
         value = (value-minimum)/(maximum-minimum)
+
+        #Clipping
+        if value < 0.0:
+            value = 0.0
+        if value > 1.0:
+            value = 1.0
 
         # Rounding
         if decimals > 0:
             value = round(value ,decimals)
 
-        return value
+        # after processing is done, "value" is stored in "self.value"
+        # This is done, despite it being done in readRaw, because
+        # this time the value is also filtered. The old value remains correct.
+        self.value = value
+
+        return self.value
+
+    def readUpdate(self):
+        """
+        returns the read value and whether it has changed from before
+        """
+        changed = False
+
+        AnalogInput.read(self)                    #value is read in to self.value
+
+        delta = abs(self.value - self.oldValue)
+
+        if delta > self.threshold:
+            changed = True
+            self.oldValue = self.value        #oldValue is updated only if changed = True
+            return self.value, changed
+        else:
+            return self.value, changed
+
 
 # Module can be run directly to test its function
 if __name__ == "__main__":
     from time import sleep
 
-    input1 = AnalogInput(0)
+    analogInput=[]
+    analogInput.append(AnalogInput(0))
+    #input1 = AnalogInput(0)
 
     try:
         while True:
-            value = input1.read(9, 0.0024, 100)
+            value = analogInput[0].read(9, 0.00245, 0.998)
             print(value)
             sleep(0.1)
     finally:
