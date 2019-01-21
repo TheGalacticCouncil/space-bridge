@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # J.V.Ojala 17.01.2019
 # EncoderReader
 """
@@ -14,6 +15,7 @@ class EncoderInput():
 
         self.clockPin = clk
         self.dtPin = dt
+        self.counter = 0
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -34,6 +36,30 @@ class EncoderInput():
         self.previousClockState = clockState
 
         return counter
+
+
+    def increment(self, counter=None):
+        """
+        Increments the counter and returns the trueth value of whether
+        the counter value has changed.
+        The counter can be overridden by giving a value as parameter.
+        """
+
+        # If no counter override is defined, self.counter is used
+        if counter == None:
+            counter = self.counter
+
+        changed=False
+
+        delta = EncoderInput.read(self)
+
+        # If input has changed
+        if abs(delta) > 0:
+            changed = True
+            self.counter += delta
+            return self.counter, changed
+        else:
+            return self.counter, changed
 
 
 # Module can be run directly to test its function
