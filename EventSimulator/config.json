@@ -1,0 +1,5 @@
+{
+    "broadcastAddress": "192.168.1.255",
+    "broadcastPort": 41114,
+    "sendIntervalMs": 1000
+}
