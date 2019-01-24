@@ -12,7 +12,6 @@
             "console": "internalConsole",
             "stopOnEntry": false,
             "mainClass": "Structurizr",
-            "projectName": "java-quickstart",
             "args": ""
         },
         {
