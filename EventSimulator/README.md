@@ -6,4 +6,4 @@ EventSimulator is a simple tool to help development. Please see config.json for 
 Usage
 -----
 
-npm run
+npm start
