@@ -5,6 +5,10 @@ import dgram from "dgram";
 function main() {
     const config = require("../config.json");
 
+    if (config.disableLogging) {
+        console.log = () => {};
+    }
+
     // Load events
     const eventTypes: object[] = require("../events.json");
     const client = dgram.createSocket("udp4");
