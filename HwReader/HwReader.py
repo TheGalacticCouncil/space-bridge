@@ -11,7 +11,7 @@ def loadConfig():
     """
     Reads the config file and inputs the parameters from it
     """
-    configfile = open('config', 'r')
+    configfile = open('config.txt', 'r')
 
     configfile.close()
 
