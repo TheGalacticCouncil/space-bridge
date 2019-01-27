@@ -56,8 +56,9 @@ class EncoderInput():
         # If input has changed
         if abs(delta) > 0:
             changed = True
-            self.counter += delta
-            return self.counter, changed
+            counter += delta
+            self.counter = counter
+            return counter, changed
         else:
             return self.counter, changed
 
