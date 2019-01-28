@@ -11,3 +11,4 @@ __init__*
 
 # Test code
 test*.py
+test*.txt
