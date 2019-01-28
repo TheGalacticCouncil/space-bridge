@@ -62,7 +62,7 @@ class AnalogInput():
 
         # Rounding
         if decimals > 0:
-            value = round(value ,decimals)
+            value = round(value, decimals)
 
         # after processing is done, "value" is stored in "self.value"
         # This is done, despite it being done in readRaw, because
