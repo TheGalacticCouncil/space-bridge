@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# J.V.Ojala 23.01.2019
+# J.V.Ojala 28.01.2019
 # HwReader
 
 #from time import sleep
