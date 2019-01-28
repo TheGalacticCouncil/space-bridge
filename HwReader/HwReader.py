@@ -2,86 +2,58 @@
 # J.V.Ojala 17.01.2019
 # HwReader
 
-from EncoderReader import EncoderInput
-from AnalogReader import AnalogInput
+import inputConfig
 from RPi import GPIO
-
-
-def loadConfig():
-    """
-    Reads the config file and inputs the parameters from it
-    """
-    configfile = open('config.txt', 'r')
-
-    configfile.close()
 
 
 if __name__ == "__main__":
 
     from time import sleep
 
-    ######################
-    ##    FOR TESTING
+    # loads configuration from file
+    cycleTime, analogConfig, encoderConfig, buttonConfig = inputConfig.loadConfig()
 
-    # global congig
-    idleTime = 0.001
+    # creates appropriate input instances from config file
+    analogInput, encoderInput, buttonInput = inputConfig.collectInputs(analogConfig, encoderConfig, buttonConfig)
 
-    # Encoder config
-    counter = 0      # Define counter
-    clk = 17         # Define clock pin
-    dt = 24          # define dt pin
+    # Analog Init
+    value=[]
+    for i in range(len(analogInput)):
+        value.append(0)
 
-    # Analog Config
-    value = 0
-    decimals = 9
-    minimum = 0.00245
-    maximum = 0.998
-    threshold = 0.01
+    # Encoder Init
+    counter=[]
+    for i in range(len(encoderInput)):
+        counter.append(0)
 
-    # Analog config
-    channel = 0
-
-    # Initialize lists for input configs
-    analogConfig = []
-    encoderConfig = []
-
-    # to test the input list, make the list non-empty
-    analogConfig.append(0)
-    encoderConfig.append(0)
-
-    # Initialize input lists
-    analogInput = []
-    encoderInput = []
-
-    # Collect inputs
-    # The input is defined and signal processing is configured.
-    for i in analogConfig:
-        analogInput.append(AnalogInput(channel, threshold, decimals, minimum, maximum))
-
-    for i in encoderConfig:
-        encoderInput.append(EncoderInput(clk, dt))
-
-    ##
-    ######################
+    # Button Init
+    for i in range(len(buttonInput)):
+        pass
 
     try:
 
         # Main Loop
         while True:
 
-            # counter will need to be replaced with something more flexible
+            for i in range(len(analogInput)):
+                # Potentiometer is read
+                value[i], changed, name = analogInput[i].readUpdate()
+                if changed == True:
+                    print("Potential:", value[i])
 
-            # Encoder is read
-            counter, changed = encoderInput[0].increment(counter)
-            if changed == True:
-                print("encoder:", counter)
+            for i in range(len(encoderInput)):
+                # Encoder is read
+                counter[i], changed, name = encoderInput[i].increment(counter[i])
+                if changed == True:
+                    print("encoder:", counter[i])
 
-            # Potentiometer is read
-            value, changed = analogInput[0].readUpdate()
-            if changed == True:
-                print("Potential:", value)
+            for i in range(len(buttonInput)):
+                # Button is read
+                pass
 
-            sleep(idleTime)
+            sleep(cycleTime)
 
+    except KeyboardInterrupt:
+        pass
     finally:
         GPIO.cleanup()

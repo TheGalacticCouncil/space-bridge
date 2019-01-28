@@ -17,7 +17,10 @@ from gpiozero import MCP3008    # A/D converter
 
 class AnalogInput():
 
-    def __init__(self, inputChannel, threshold=0, decimals=2, minimum=0.0, maximum=1.0):
+    def __init__(self, inputChannel, name='', threshold=0, decimals=2,
+    minimum=0.0, maximum=1.0):
+        # Input name
+        self.name = name
         # Configure input channel
         self.analogInput = MCP3008(inputChannel)
         # Initiate input values
@@ -68,6 +71,10 @@ class AnalogInput():
 
         return self.value
 
+    def rescale(self):
+
+        return value
+
     def readUpdate(self):
         """
         returns the read value and whether it has changed from before
@@ -81,9 +88,9 @@ class AnalogInput():
         if delta > self.threshold:
             changed = True
             self.oldValue = self.value        #oldValue is updated only if changed = True
-            return self.value, changed
+            return self.value, changed, self.name
         else:
-            return self.value, changed
+            return self.value, changed, self.name
 
 
 # Module can be run directly to test its function
