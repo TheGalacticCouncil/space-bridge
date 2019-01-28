@@ -1,59 +1,34 @@
 #!/usr/bin/env python3
-# J.V.Ojala 17.01.2019
+# -*- coding: utf-8 -*-
+# J.V.Ojala 23.01.2019
 # HwReader
 
+#from time import sleep
+import inputPoller
 import inputConfig
-from RPi import GPIO
 
+# loads configuration from file
+cycleTime, aConfig, eConfig, bConfig = inputConfig.loadConfig()
 
-if __name__ == "__main__":
+# creates appropriate input instances from config file
+aInput, eInput, bInput = inputConfig.collectInputs(aConfig, eConfig, bConfig)
 
-    from time import sleep
+# Creates an input thread
+inputThread = inputPoller.inputPoller(aInput, eInput, bInput, cycleTime)
+# Mark thread as daemon
+inputThread.daemon = True
+# Spawn the input thread
+inputThread.start()
 
-    # loads configuration from file
-    cycleTime, analogConfig, encoderConfig, buttonConfig = inputConfig.loadConfig()
+print("Press Enter to quit")
 
-    # creates appropriate input instances from config file
-    analogInput, encoderInput, buttonInput = inputConfig.collectInputs(analogConfig, encoderConfig, buttonConfig)
+try:
+    while True:
+        a=input("Exit? ")
+        #if a != '':
+        break
+except KeyboardInterrupt:
+    inputThread.join(0.01)
+inputThread.join(0.01)
 
-    # Analog Init
-    value=[]
-    for i in range(len(analogInput)):
-        value.append(0)
-
-    # Encoder Init
-    counter=[]
-    for i in range(len(encoderInput)):
-        counter.append(0)
-
-    # Button Init
-    for i in range(len(buttonInput)):
-        pass
-
-    try:
-
-        # Main Loop
-        while True:
-
-            for i in range(len(analogInput)):
-                # Potentiometer is read
-                value[i], changed, name = analogInput[i].readUpdate()
-                if changed == True:
-                    print("Potential:", value[i])
-
-            for i in range(len(encoderInput)):
-                # Encoder is read
-                counter[i], changed, name = encoderInput[i].increment(counter[i])
-                if changed == True:
-                    print("encoder:", counter[i])
-
-            for i in range(len(buttonInput)):
-                # Button is read
-                pass
-
-            sleep(cycleTime)
-
-    except KeyboardInterrupt:
-        pass
-    finally:
-        GPIO.cleanup()
+print("It's done")
