@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "npm run build -- && node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,21 @@
   "homepage": "https://github.com/TheGalacticCouncil/space-bridge#readme",
   "dependencies": {
     "typescript": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/chai": "4.1.6",
+    "@types/lodash": "^4.14.117",
+    "@types/mocha": "5.2.5",
+    "@types/mock-fs": "3.6.30",
+    "@types/mock-require": "2.0.0",
+    "@types/node": "10.12.19",
+    "@types/node-cron": "2.0.0",
+    "@types/sinon": "5.0.5",
+    "chai": "4.2.0",
+    "mocha": "5.2.0",
+    "nyc": "13.1.0",
+    "sinon": "7.0.0",
+    "source-map-support": "0.5.9",
+    "ts-node": "7.0.1"
   }
 }
