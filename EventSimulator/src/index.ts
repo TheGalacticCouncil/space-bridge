@@ -6,18 +6,25 @@ function main() {
     const config = require("../config.json");
 
     if (config.disableLogging) {
-        console.log = () => {};
+        console.log = () => { };
     }
 
     // Load events
     const eventTypes: object[] = require("../events.json");
     const client = dgram.createSocket("udp4");
 
-    client.bind(0, "0.0.0.0",() => client.setBroadcast(true));
+    client.bind(0, "0.0.0.0", () => client.setBroadcast(true));
 
     console.log(eventTypes);
 
-    setInterval(update, config.sendIntervalMs);
+    if (config.autosend) {
+        setInterval(update, config.sendIntervalMs);
+    } else {
+        process.stdin.on("data", () => {
+            process.stdin.read();
+            update();
+        });
+    }
 
     function update() {
         // pick random index
