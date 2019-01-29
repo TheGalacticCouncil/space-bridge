@@ -1,0 +1,14 @@
+# Preliminary config file
+#
+# Syntax
+# [] are optional (optionality not implemented yet)
+
+# analog (channel [name threshold decimals minClip maxClip] [offset, maximum])
+# encoder (clk, dt [name] [min max step])
+
+#analog 0 MINIMAL_INPUT
+analog 0 AnalogTestInput 0.01 9 0.00245 0.998 
+#analog 0 FULLY_DEFINED 0.01 9 0.00245 0.998 100 500
+#encoder 17 24 MINIMAL_INPUT
+encoder 17 24 EncoderTest -100 100 10
+#encoder 17 24 FULLY_DEFINED 0 100 2

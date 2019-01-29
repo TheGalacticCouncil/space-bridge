@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # J.V.Ojala 17.01.2019
 # EncoderReader
 """
@@ -11,10 +12,16 @@ from RPi import GPIO
 
 class EncoderInput():
 
-    def __init__(self, clk, dt):
+    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
 
+        self.name = name
         self.clockPin = clk
         self.dtPin = dt
+
+        self.maximum = maximum
+        self.minimum = minimum
+        self.step = step
+
         self.counter = 0
 
         GPIO.setmode(GPIO.BCM)
@@ -29,18 +36,32 @@ class EncoderInput():
         dtState = GPIO.input(self.dtPin)
 
         if clockState != self.previousClockState:
-            if dtState != clockState:
+            if dtState != clockState and dtState == 1:
                 counter += 1
-            else:
+            elif dtState == clockState and dtState == 1:
                 counter -= 1
+            else:
+                pass
+
         self.previousClockState = clockState
 
         return counter
 
 
+    def rescale(self, counter, delta):
+        '''Re-scales the input to requirement'''
+        counter += delta*self.step
+        if self.minimum != None and self.maximum != None:
+            if counter > self.maximum:
+                counter = self.maximum
+            if counter < self.minimum:
+                counter = self.minimum
+        return counter
+
+
     def increment(self, counter=None):
         """
-        Increments the counter and returns the trueth value of whether
+        Increments the counter and returns the truth value of whether
         the counter value has changed.
         The counter can be overridden by giving a value as parameter.
         """
@@ -56,10 +77,12 @@ class EncoderInput():
         # If input has changed
         if abs(delta) > 0:
             changed = True
-            self.counter += delta
-            return self.counter, changed
+            counter = EncoderInput.rescale(self, counter, delta)
+
+            self.counter = counter
+            return counter, changed, self.name
         else:
-            return self.counter, changed
+            return self.counter, changed, self.name
 
 
 # Module can be run directly to test its function
