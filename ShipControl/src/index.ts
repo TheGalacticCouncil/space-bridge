@@ -13,4 +13,9 @@ server.on("listening", () => {
     console.log(`Server listening to ${address.address}:${address.port}`);
 });
 
+server.on("message", (message) => {
+    console.log(`Received message ${message}`);
+    console.log("-----------------------------------");
+})
+
 server.bind(41114);
