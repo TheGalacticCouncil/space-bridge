@@ -111,7 +111,57 @@ ks. https://github.com/daid/EmptyEpsilon/pull/507
 - Targetointi vaatii tuen lisäämisen EE:n puolelle.
 
 ## Engineer
+| ESystem |
+---
+|Hull|
+|Reactor|
+|beamweapons|
+|Missilesystem|
+|Maneuver|
+|Impulse|
+|Warp|
+|Jumpdrive|
+|Frontshield|
+|Rearshield|
+```
+// Hyväksyy mitä tahansa power_level arvoja, sallitut 0-3
+PlayerSpaceship:commandSetSystemPowerRequest(ESystem system, float power_level)
+
+// Hyväksyy mitä tahansa coolant_level arvoja, sallitut 0-100
+PlayerSpaceship:commandSetSystemCoolantRequest(ESystem system, float coolant_level)
+
+PlayerSpaceship:commandSetAutoRepair(bool enabled)
+
+PlayerSpaceship:commandActivateSelfDestruct()
+PlayerSpaceship:commandCancelSelfDestruct()
+
+// Tämä tullaan korvaamaan custom funktiolla, joka vain aloittaa laskennan samantien.
+PlayerSpaceship:commandConfirmDestructCode(int8_t index, uint32_t code)
+```
+
+Huomioita:
+- power ja coolant sliderin paikka ei muutu, lukuarvo muuttuu
+- Coolant ei balansoidu => mahdollista laittaa kaikkialle coolanttia!!
+- Ei funktiota järjestelmän valitsemiselle.
+- Self destructin aktivointi ei kysy konfirmaatiota
 
 ## Science
+Huomioita:
+- Lisää tai selvitä funktiot seuraaville
+- Zoom
+- UI-painikkeet
+- Database navigation
 
 ## Relay
+| EAlertLevel |
+---
+|normal|
+|yellow|
+|red|
+```
+PlayerSpaceship:commandSetAlertLevel(EAlertLevel level)
+```
+Huomioita:
+- Lisää tai selvitä funktiot seuraaville
+- Zoom
+- UI-painikkeet
