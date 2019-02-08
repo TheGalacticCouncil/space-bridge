@@ -1,0 +1,678 @@
+[
+    {
+        "name": "SET_THROTTLE",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": -100,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_JUMP",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 50,
+                "max": 500
+            }
+        ]
+    },
+    {
+        "name": "SET_WARP",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 4
+            }
+        ]
+    },
+    {
+        "name": "SET_HEADING",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 3599
+            }
+        ]
+    },
+    {
+        "name": "SET_COMBAT_MANOUVER",
+        "fields": [
+            {
+                "name": "x",
+                "datatype": "int",
+                "min": -100,
+                "max": 100
+            },
+            {
+                "name": "y",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "ACTIVATE_JUMP",
+        "fields": []
+    },
+    {
+        "name": "REQUEST_DOCK",
+        "fields": []
+    },
+    {
+        "name": "UNDOCK",
+        "fields": []
+    },
+    {
+        "name": "SELECT_SUBSYSTEM",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "string",
+                "possibleValues": [
+                    "REACTOR",
+                    "BEAM_WEAPONS",
+                    "MISSILE_SYSTEM",
+                    "MANEUVERING",
+                    "IMPULSE_ENGINES",
+                    "JUMP_DRIVE",
+                    "WARP_DRIVE",
+                    "FRONT_SHIELD_GENERATOR",
+                    "REAR_SHIELD_GENERATOR"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "SET_SUBSYSTEM_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_SUBSYSTEM_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_REACTOR_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_BEAM_WEAPONS_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_MISSILE_SYSTEM_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_MANEUVERING_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_IMPULSE_ENGINES_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_JUMP_DRIVE_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_WARP_DRIVE_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_FRONT_SHIELD_GENERATOR_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_REAR_SHIELD_GENERATOR_POWER",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 300
+            }
+        ]
+    },
+    {
+        "name": "SET_REACTOR_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_BEAM_WEAPONS_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_MISSILE_SYSTEM_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_MANEUVERING_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_IMPULSE_ENGINES_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_JUMP_DRIVE_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_WARP_DRIVE_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_FRONT_SHIELD_GENERATOR_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "SET_REAR_SHIELD_GENERATOR_COOLANT",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "REPAIR",
+        "fields": []
+    },
+    {
+        "name": "ACTIVATE_SELF_DESTRUCT",
+        "fields":[]
+    },
+    {
+        "name": "CONFIRM_SELF_DESTRUCT",
+        "fields": []
+    },
+    {
+        "name": "CANCEL_SELF_DESTRUCT",
+        "fields": []
+    },
+    {
+        "name": "SET_ZOOM_LEVEL",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 10,
+                "max": 80
+            }
+        ]
+    },
+    {
+        "name": "CLEAR_ALERT",
+        "fields": []
+    },
+    {
+        "name": "YELLOW_ALERT",
+        "fields": []
+    },
+    {
+        "name": "RED_ALERT",
+        "fields": []
+    },
+    {
+        "name": "PREPARE_PROBE_LAUNCH",
+        "fields": []
+    },
+    {
+        "name": "LAUNCH_PROBE",
+        "fields": [
+            {
+                "name": "x",
+                "datatype": "SPACEUNIT"
+            },
+            {
+                "name": "y",
+                "datatype": "SPACEUNIT"
+            }
+        ]
+    },
+    {
+        "name": "PREPARE_WAYPOINT_PLACEMENT",
+        "fields": []
+    },
+    {
+        "name": "PLACE_WAYPOINT",
+        "fields": [
+            {
+                "name": "x",
+                "datatype": "SPACEUNIT"
+            },
+            {
+                "name": "y",
+                "datatype": "SPACEUNIT"
+            }
+        ]
+    },
+    {
+        "name": "SELECT_PROBE",
+        "fields": []
+    },
+    {
+        "name": "SELECT_WAYPOINT",
+        "fields": []
+    },
+    {
+        "name": "DELETE_SELECTED_WAYPOINT",
+        "fields": []
+    },
+    {
+        "name": "LINK_SELECTED_PROBE",
+        "fields": []
+    },
+    {
+        "name": "UNLINK_SELECTED_PROBE",
+        "fields": []
+    },
+    {
+        "name": "UNLINK_PROBE",
+        "fields": []
+    },
+    {
+        "name": "OPEN_COMMS_TO_SELECTED",
+        "fields": []
+    },
+    {
+        "name": "CANCEL_OPENING_COMMS",
+        "fields": []
+    },
+    {
+        "name": "CLOSE_COMMS",
+        "fields": []
+    },
+    {
+        "name": "OPEN_COMMS_LOG",
+        "fields": []
+    },
+    {
+        "name": "START_HACKING",
+        "fields": []
+    },
+    {
+        "name": "STOP_HACKING",
+        "fields": []
+    },
+    {
+        "name": "ACTIVATE_PROBE_VIEW",
+        "fields": []
+    },
+    {
+        "name": "DEACTIVATE_PROBE_VIEW",
+        "fields": []
+    },
+    {
+        "name": "ACTIVATE_RADAR_VIEW",
+        "fields": []
+    },
+    {
+        "name": "ACTIVATE_DATABASE_VIEW",
+        "fields": []
+    },
+    {
+        "name": "PAUSE",
+        "fields": []
+    },
+    {
+        "name": "UNPAUSE",
+        "fields": []
+    },
+    {
+        "name": "TARGET_NEXT_SPACE_OBJECT",
+        "fields": []
+    },
+    {
+        "name": "TARGET_PREVIOUS_SPACE_OBJECT",
+        "fields": []
+    },
+    {
+        "name": "SCAN",
+        "fields": []
+    },
+    {
+        "name": "SCAN_SLIDER_1",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 10000
+            }
+        ]
+    },
+    {
+        "name": "SCAN_SLIDER_2",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 10000
+            }
+        ]
+    },
+    {
+        "name": "SCAN_SLIDER_3",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 10000
+            }
+        ]
+    },
+    {
+        "name": "SHOW_SYSTEMS",
+        "fields": []
+    },
+    {
+        "name": "SHOW_TACTICAL",
+        "fields": []
+    },
+    {
+        "name": "SELECT_WEAPON",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "string",
+                "possibleValues": [
+                    "HOMING",
+                    "NUKE",
+                    "MINE",
+                    "EMP",
+                    "HVLI"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "LOAD_TUBE",
+        "fields": [
+            {
+                "name": "tubeId",
+                "datatype": "int"
+            },
+            {
+                "name": "weapon",
+                "optional": true,
+                "datatype": "string",
+                "possibleValues": [
+                    "HOMING",
+                    "NUKE",
+                    "MINE",
+                    "EMP",
+                    "HVLI"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "LOAD_REAR_TUBE",
+        "fields": []
+    },
+    {
+        "name": "FIRE_TUBE",
+        "fields": [
+            {
+                "name": "tubeId",
+                "datatype": "int"
+            }
+        ]
+    },
+    {
+        "name": "UNLOAD_TUBE",
+        "fields": [
+            {
+                "name": "tubeId",
+                "datatype": "int"
+            }
+        ]
+    },
+    {
+        "name": "TARGET_NEXT_ENEMY",
+        "fields": []
+    },
+    {
+        "name": "TARGET_PREVIOUS_ENEMY",
+        "fields": []
+    },
+    {
+        "name": "SET_BEAM_TARGET",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "string",
+                "possibleValues": [
+                    "HULL",
+                    "REACTOR",
+                    "BEAM",
+                    "MISSILE_SYSTEM",
+                    "MANEUVERING",
+                    "IMPULSE_ENGINES",
+                    "WARP_DRIVE",
+                    "JUMP_DRIVE",
+                    "FRONT_SHIELD_GENERATOR",
+                    "REAR_SHIELD_GENERATOR"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "NEXT_BEAM_TARGET",
+        "fields": []
+    },
+    {
+        "name": "PREVIOUS_BEAM_TARGET",
+        "fields": []
+    },
+    {
+        "name": "SET_BEAM_FREQUENCY",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 20
+            }
+        ]
+    },
+    {
+        "name": "NEXT_BEAM_FREQUENCY",
+        "fields": []
+    },
+    {
+        "name": "PREVIOUS_BEAM_FREQUENCY",
+        "fields": []
+    },
+    {
+        "name": "SET_SHIELD_FREQUENCY",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 20
+            }
+        ]
+    },
+    {
+        "name": "NEXT_SHIELD_FREQUENCY",
+        "fields": []
+    },
+    {
+        "name": "PREVIOUS_SHIELD_FREQUENCY",
+        "fields": []
+    },
+    {
+        "name": "CALIBRATE_SHIELDS",
+        "fields": []
+    },
+    {
+        "name": "SHIELDS_UP",
+        "fields": []
+    },
+    {
+        "name": "SHIELDS_DOWN",
+        "fields": []
+    },
+    {
+        "name": "MANUAL_TARGETING",
+        "fields": []
+    },
+    {
+        "name": "AUTOMATIC_TARGETING",
+        "fields": []
+    },
+    {
+        "name": "MISSILE_TARGET_ANGLE",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 3599
+            }
+        ]
+    }
+]
