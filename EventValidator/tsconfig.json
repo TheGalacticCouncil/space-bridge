@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "lib": ["es2017"],
+        "esModuleInterop": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "strict": true,
+        "allowJs": true,
+        "target": "es2017",
+        "moduleResolution": "node",
+        "types": ["node"],
+        "forceConsistentCasingInFileNames": true,
+        "strictPropertyInitialization": false,
+        "noImplicitAny": false,
+        "resolveJsonModule": true
+    },
+    "include": [
+        "./src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "./src/**/*.spec.ts"
+    ]
+}

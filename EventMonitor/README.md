@@ -6,4 +6,8 @@ EventMonitor is a simple tool to help development. It listens to 0.0.0.0:41114 a
 Usage
 -----
 
+cd ../EventValidator
+npm link
+cd ../EventMonitor
+npm link event-validator
 npm start

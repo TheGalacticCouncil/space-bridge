@@ -79,18 +79,20 @@ function generatePayload(fields): object {
     _.forEach(fields, field => {
         let value;
 
-        if (field.datatype == "int") {
+        if (field.datatype === "int") {
             const min = _.get(field, "min", 0);
             const max = _.get(field, "max", 100);
 
             value = _.round(_.random(min, max));
 
-        } else if (field.datatype == "string") {
+        } else if (field.datatype === "string") {
             value = "value";
 
             if (field.possibleValues) {
                 value = field.possibleValues[_.random(0, field.possibleValues.length - 1)];
             }
+        } else if (field.datatype === "SPACEUNIT") {
+            value = _.random(-100, 100, true);
         }
 
         payload[field.name] = value;
