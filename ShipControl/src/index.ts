@@ -1,7 +1,10 @@
 import dgram from "dgram";
 import { AddressInfo } from "net";
+import { RequestCreator } from "./requestCreator"
 
 const server: dgram.Socket = dgram.createSocket("udp4");
+
+const requestCreator: RequestCreator = new RequestCreator();
 
 server.on("error", (err) => {
     console.log(`Server shutdown due to following error:\n ${err}`);
@@ -14,8 +17,7 @@ server.on("listening", () => {
 });
 
 server.on("message", (message) => {
-    console.log(`Received message ${message}`);
-    console.log("-----------------------------------");
+    let request = requestCreator.handleMessage(message);
 })
 
 server.bind(41114);
