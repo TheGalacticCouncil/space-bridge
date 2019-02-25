@@ -3,11 +3,15 @@ EventValidator
 
 EventValidator validates received event.
 
-Usage
------
-
+Installation
+------------
+npm install
 npm start
 npm link
+
+Usage
+-----
+npm start
 
 change to project where you would like to use EventValidator and run
 npm link event-validator
