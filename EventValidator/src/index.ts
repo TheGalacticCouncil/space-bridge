@@ -1,7 +1,8 @@
 import { validateEvent } from "./validateEvent";
+import { validateRawEvent } from "./validateRawEvent";
 
 module.exports = {
-    validateRawEvent: (event: Buffer): boolean => true,
+    validateRawEvent: validateRawEvent,
     validateEvent: validateEvent
 };
 
