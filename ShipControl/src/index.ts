@@ -1,6 +1,8 @@
 import dgram from "dgram";
 import { AddressInfo } from "net";
-import { RequestCreator } from "./requestCreator"
+import { RequestCreator } from "./requestCreator";
+import validator from "event-validator";
+
 
 const server: dgram.Socket = dgram.createSocket("udp4");
 
@@ -17,7 +19,12 @@ server.on("listening", () => {
 });
 
 server.on("message", (message) => {
-    let request = requestCreator.handleMessage(message);
+    validator.validateRawEvent(message)
+        .then(event => { requestCreator.handleEvent(event) })
+        .catch(err => {
+            console.log("Invalid event!");
+            console.log(err);
+    });
 })
 
 server.bind(41114);
