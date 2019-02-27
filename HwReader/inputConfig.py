@@ -67,16 +67,22 @@ def collectInputs(analogConfig, encoderConfig, buttonConfig):
         channel = int(analogConfig[i][1]) #0
 
         # Optional parameters
-        #try:
-        name = analogConfig[i][2] # "Set_Analog"
-        threshold = float(analogConfig[i][3]) #0.01   # sets the threshold for registering change
-        decimals = int(analogConfig[i][4]) #9
-        minClip = float(analogConfig[i][5]) #0.00245  # sets minimum value clipping
-        maxClip = float(analogConfig[i][6]) #0.998    # sets maximum value clipping
-        #except:
-            #pass
-
-        analogInput.append(AnalogInput(channel, name, threshold, decimals, minClip, maxClip))
+        try:
+            name = analogConfig[i][2] # "Set_Analog"
+            threshold = float(analogConfig[i][3]) #0.01   # sets the threshold for registering change
+            decimals = int(analogConfig[i][4]) #9
+            minClip = float(analogConfig[i][5]) #0.00245  # sets minimum value clipping
+            maxClip = float(analogConfig[i][6]) #0.998    # sets maximum value clipping
+        except:
+            pass
+            if len(analogConfig[i]) == 1:
+                analogInput.append(AnalogInput(channel))
+            elif len(analogConfig[i]) == 2:
+                analogInput.append(AnalogInput(channel, name))
+            elif len(analogConfig[i]) > 2:
+                analogInput.append(AnalogInput(channel, name, threshold, decimals))
+        else:
+            analogInput.append(AnalogInput(channel, name, threshold, decimals, minClip, maxClip))
 
     for i in range(len(encoderConfig)):
 
@@ -85,15 +91,20 @@ def collectInputs(analogConfig, encoderConfig, buttonConfig):
         dt = int(encoderConfig[i][2]) #24        # define dt pin
 
         # Optional parameters
-        #try:
-        name = encoderConfig[i][3]
-        minimum = int(encoderConfig[i][4])       # Minimum allowed value
-        maximum = int(encoderConfig[i][5])       # Maximum allowed value
-        step = int(encoderConfig[i][6])          # Step size
-        #except:
-            #pass
-
-        encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step))
+        try:
+            name = encoderConfig[i][3]
+            minimum = int(encoderConfig[i][4])       # Minimum allowed value
+            maximum = int(encoderConfig[i][5])       # Maximum allowed value
+            step = int(encoderConfig[i][6])          # Step size
+        except:
+            if len(encoderConfig[i]) == 2:
+                encoderInput.append(EncoderInput(clk, dt))
+            elif len(encoderConfig[i]) == 3:
+                encoderInput.append(EncoderInput(clk, dt, name))
+            if len(encoderConfig[i]) > 3:
+                encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum))
+        else:
+            encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step))
 
     for i in buttonConfig:
         pass

@@ -12,3 +12,4 @@ analog 0 AnalogTestInput 0.01 9 0.00245 0.998
 #encoder 17 24 MINIMAL_INPUT
 encoder 17 24 EncoderTest -100 100 10
 #encoder 17 24 FULLY_DEFINED 0 100 2
+encoder 21 20 EncoderTest2
