@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            value = analogInput[0].read(9, 0.00245, 0.998)
+            value = analogInput[0].read()
             print(value)
             sleep(0.1)
     finally:
