@@ -17,16 +17,22 @@ from gpiozero import MCP3008    # A/D converter
 
 
 class AnalogInput():
+    """
+    An object to read an analog MCP3008 hardware input.
+    """
 
     def __init__(self, inputChannel, name='', threshold=0, decimals=2,
     minimum=0.0, maximum=1.0):
         # Input name
         self.name = name
+
         # Configure input channel
         self.analogInput = MCP3008(inputChannel)
+
         # Initiate input values
         self.value = 0
         self.oldValue = 0
+
         # Input configuration variables
         self.threshold = threshold
         self.decimals = decimals
@@ -42,9 +48,10 @@ class AnalogInput():
 
     def read(self):
         """
-        Rounds to [decimals].
-        if decimals = 0, ommits dounding.
-        Rescales the input from [minimum] to [maximum].
+        Reads the raw value and:
+        - rounds it to [decimals].
+          - If [decimals] = 0, ommits rounding.
+        - Rescales the input from [minimum] to [maximum].
         """
         decimals = self.decimals
         minimum = self.minimum
@@ -66,19 +73,15 @@ class AnalogInput():
             value = round(value, decimals)
 
         # after processing is done, "value" is stored in "self.value"
-        # This is done, despite it being done in readRaw, because
+        # This is done despite it being done in readRaw, because
         # this time the value is also filtered. The old value remains correct.
         self.value = value
 
         return self.value
 
-    def rescale(self):
-
-        return value
-
     def readUpdate(self):
         """
-        returns the read value and whether it has changed from before
+        Returns the read value and whether it has changed from before.
         """
         changed = False
 
@@ -100,7 +103,6 @@ if __name__ == "__main__":
 
     analogInput=[]
     analogInput.append(AnalogInput(0))
-    #input1 = AnalogInput(0)
 
     try:
         while True:
@@ -109,5 +111,3 @@ if __name__ == "__main__":
             sleep(0.1)
     finally:
         GPIO.cleanup()
-
-##

@@ -3,6 +3,16 @@
 # J.V.Ojala 28.01.2019
 # HwReader
 
+'''
+Main program in HwReader system.
+Enables reading hardware inputs
+configured in config.txt
+
+Reprocesses the data in to events
+and sends the events as UDP broadcast
+packets.
+'''
+
 from time import sleep
 #import threading
 import inputPoller

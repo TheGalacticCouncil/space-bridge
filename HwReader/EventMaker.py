@@ -9,6 +9,8 @@ import threading
 
 
 class EventMaker(threading.Thread):
+    '''A thread to process the inputs to events.'''
+
 
     def __init__(self, sleep, inputQueue):
         threading.Thread.__init__(self)

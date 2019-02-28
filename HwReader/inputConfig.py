@@ -8,7 +8,7 @@ from AnalogReader import AnalogInput
 
 def loadConfig():
     """
-    Reads the config file and inputs the parameters from it
+    Reads the config file and returns the parameters from it
     """
     try:
         configfile = open('config.txt', 'r')
@@ -54,7 +54,10 @@ def loadConfig():
 
 
 def collectInputs(analogConfig, encoderConfig, buttonConfig):
-    '''Collects inputs: Creates input instanses from configuration data'''
+    '''
+    Collects inputs:
+    Creates input instanses from configuration data
+    and returns lists of instances.'''
 
     analogInput=[]
     encoderInput=[]

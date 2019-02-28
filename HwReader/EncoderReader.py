@@ -11,6 +11,9 @@ name.read([counter])
 from RPi import GPIO
 
 class EncoderInput():
+    """
+    An object to read an encoder input.
+    """
 
     def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
 
@@ -30,7 +33,15 @@ class EncoderInput():
 
         self.previousClockState = GPIO.input(self.clockPin)
 
+
     def read(self, counter=0):
+        '''
+        Reads the encoder state and increments
+        the counter accordingly.
+
+        Use increment() to make use of more
+        advanced features.
+        '''
 
         clockState = GPIO.input(self.clockPin)
         dtState = GPIO.input(self.dtPin)
@@ -49,7 +60,7 @@ class EncoderInput():
 
 
     def rescale(self, counter, delta):
-        '''Re-scales the input to requirement'''
+        '''Re-scales an input to requirement'''
         counter += delta*self.step
         if self.minimum != None and self.maximum != None:
             if counter > self.maximum:
@@ -61,9 +72,15 @@ class EncoderInput():
 
     def increment(self, counter=None):
         """
-        Increments the counter and returns the truth value of whether
-        the counter value has changed.
-        The counter can be overridden by giving a value as parameter.
+        - Reads the encoder,
+        - increments the counter,
+        - rescales and
+        - returns the counter.
+
+        - Returns whether the counter
+          value has changed.
+        - The counter can be overridden
+          by giving a value as parameter.
         """
 
         # If no counter override is defined, self.counter is used
@@ -110,18 +127,3 @@ if __name__ == "__main__":
             sleep(0.001)
     finally:
         GPIO.cleanup()
-
-
-##########
-##########
-
-## configurable module for reading a rotary encoder input
-#'''
-#encoder(
-#  "clk" GPIO pin,
-#  "dt" GPIO pin,
-#  [a Counter to be incremented])
-#Output:
-#  incremented counter or relative change
-#'''
-#

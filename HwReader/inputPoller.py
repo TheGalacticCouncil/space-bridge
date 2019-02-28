@@ -11,6 +11,13 @@ from queue import Full, Empty
 
 
 class inputPoller(threading.Thread):
+    '''
+    A thread to poll both analog and digital inputs.
+
+    takes lists of input instances as input.
+    The thread outputs values when they chance,
+    in to the inputQueue.
+    '''
 
     def __init__(self, analogInput, encoderInput, buttonInput, sleep, inputQueue):
         threading.Thread.__init__(self)
@@ -40,27 +47,38 @@ class inputPoller(threading.Thread):
             # Main Loop
             while True:
 
+                # Potentiometer is read
+                #
+                # The operation is non-blocking.
+                # If the queue is full, the new value is discarded.
+                #
+                # This is done, because analog inputs generate a
+                # massive flow of new inputs for even a small change.
+                # Discarding a few intermediary values will not hurt
+                # accuarcy, but improves responciveness a great deal.
+                #
                 for i in range(len(self.analogInput)):
-                    # Potentiometer is read
                     value[i], changed, name = self.analogInput[i].readUpdate()
                     if changed == True:
                         try:
                             self.inputQueue.put_nowait([name, value])
                         except Full:
                             pass
-                        #print("Potential:", name, value[i])
 
+                # Encoder is read
+                #
+                # If a new value is received, purges the
+                # queue and adds a new entry to it.
+                # The operation is non-blocking.
+                #
                 for i in range(len(self.encoderInput)):
-                    # Encoder is read
                     counter[i], changed, name = self.encoderInput[i].increment(counter[i])
                     if changed == True:
-                        # Purges the queue and adds a new entry to it
                         try:
                             self.inputQueue.get_nowait()
                         except Empty:
                             pass
                         self.inputQueue.put([name, counter[i]])
-                        #print("encoder:", name, counter[i])
 
                 for i in range(len(self.buttonInput)):
                     # Button is read
