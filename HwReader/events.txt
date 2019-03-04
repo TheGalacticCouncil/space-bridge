@@ -1,0 +1,6 @@
+#############################
+# Maps an input to event    #
+# [input_name] [event_name] #
+#############################
+
+EncoderTest2 SET_THROTTLE
