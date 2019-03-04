@@ -43,11 +43,6 @@ def loadConfig():
         elif line.split(' ')[0] in ['c','C','cycle','cycletime','cycleTime']:
             cycle=float(line.strip('\n').split(' ')[1])
 
-    #print("cycle",cycle)
-    #print("analog",analog)
-    #print("encoder",encoder)
-    #print("button",button)
-
     configfile.close()
 
     return cycle, analog, encoder, button
