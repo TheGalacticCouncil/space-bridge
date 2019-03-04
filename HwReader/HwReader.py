@@ -28,13 +28,15 @@ eventSleep = 0.5
 # creates appropriate input instances from config file
 aInput, eInput, bInput = inputConfig.collectInputs(aConfig, eConfig, bConfig)
 
-# Creates queues with debth: 1 (item)
+# Creates input and key-press queues with debth: 1 (item)
+# event Queue is infinite for now
 inputQueue = Queue(1)
 keyQueue = Queue(1)
+eventQueue = Queue(0)
 
 # Creates threads
 inputThread = inputPoller.inputPoller(aInput, eInput, bInput, cycleTime, inputQueue)
-eventThread = EventMaker.EventMaker(eventSleep, inputQueue)
+eventThread = EventMaker.EventMaker(eventSleep, inputQueue, eventQueue, station="")
 listener = KeyListener.KeyListener(keyQueue)
 
 # and marks them daemon
