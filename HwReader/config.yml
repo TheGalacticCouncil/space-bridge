@@ -1,0 +1,72 @@
+# Next iteration of a config file
+# Replaces 'config.txt' AND 'event.txt'
+#
+# Syntax
+# YAML syntax
+#
+# Following are configuration examples of 
+# different types of inputs.
+# 
+# FullyDefined:
+#   event: AN_EVENT
+#   event2: UN_EVENT
+#   type: encoder
+#   clk: 17
+#   dt: 24
+#   min: -100
+#   max: 100
+#   step: 1
+#   value:
+#     payload: heavy
+#
+#AnalogInp:
+#  event: SET_THROTTLE
+#  type: analog
+#  channel: 0
+#  threshold: 0.01
+#  decimals: 9
+#  min_clip: 0.00245
+#  max_clip: 0.998
+#  offset: 
+#  maximum: 
+
+General:
+  type: config
+  cycle: 0.001
+  station: Test Station
+
+AnalogInp:
+  event: SET_THROTTLE
+  type: analog
+  channel: 0
+  threshold: 0.01
+  decimals: 9
+  min_clip: 0.00245
+  max_clip: 0.998
+#  offset: not implemented
+#  maximum: not implemented
+
+TestInput1:
+  event: SET_JUMP
+  type: encoder
+  clk: 17
+  dt: 24
+  step: 10
+
+TestInput2:
+  event: TARGET_NEXT_ENEMY
+  event2: TARGET_PREVIOUS_ENEMY
+  type: encoder
+  clk: 21
+  dt: 20
+  step: 1 # optional
+
+ButtonTest:
+  event: LOAD_TUBE
+  type: button
+  pin: 16
+  value:
+    tubeId: 0123
+    weapon: NUKE
+
+

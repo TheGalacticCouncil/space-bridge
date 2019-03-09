@@ -10,7 +10,7 @@ import threading
 from queue import Full, Empty
 
 
-class inputPoller(threading.Thread):
+class InputPoller(threading.Thread):
     '''
     A thread to poll both analog and digital inputs.
 
