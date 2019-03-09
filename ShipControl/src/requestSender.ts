@@ -2,7 +2,7 @@ import dgram from "dgram";
 
 export class RequestSender {
   send(request: string, server: dgram.Socket) {
-    server.send(request, 41114, "localhost", err => {
+    server.send(request, 8080, "localhost", err => {
       server.close();
     });
   }
