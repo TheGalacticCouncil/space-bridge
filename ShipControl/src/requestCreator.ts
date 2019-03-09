@@ -67,7 +67,7 @@ export class RequestCreator {
   }
 
   public handleEvent(message: any) {
-    let request: String;
+    let request: string;
 
     switch (message.event) {
       // case "SET_THROTTLE":
@@ -254,7 +254,7 @@ export class RequestCreator {
         return request;
 
       case "SHIELDS_DOWN":
-        request = `set.lua=commandSetShields(false)`;
+        request = `set.lua?commandSetShields(false)`;
         return request;
 
       // case "MANUAL_TARGETING":

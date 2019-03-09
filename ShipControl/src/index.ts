@@ -22,11 +22,11 @@ server.on("listening", () => {
 server.on("message", message => {
   validator
     .validateRawEvent(message)
-    .then(event => {
-      requestCreator.handleEvent(event);
+    .then((event: any) => {
+      return requestCreator.handleEvent(event);
     })
-    .then(request => {
-      requestSender.send(request, server);
+    .then((request: string) => {
+      requestSender.send(request);
     })
     .catch(err => {
       console.log("Invalid event!");

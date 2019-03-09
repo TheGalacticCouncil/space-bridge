@@ -1,9 +1,10 @@
-import dgram from "dgram";
+import axios from "axios";
 
 export class RequestSender {
-  send(request: string, server: dgram.Socket) {
-    server.send(request, 8080, "localhost", err => {
-      server.close();
+  send(request: string) {
+    axios.get(`http://localhost:8080/${request}`)
+    .catch(err => {
+      console.log(err);
     });
   }
 }
