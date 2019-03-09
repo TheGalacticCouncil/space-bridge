@@ -12,3 +12,10 @@ __init__*
 # Test code
 test*.py
 test*.txt
+
+# My stuff and other
+old_*
+__*
+
+# Unnecessary in Python 3.5
+epoch.py

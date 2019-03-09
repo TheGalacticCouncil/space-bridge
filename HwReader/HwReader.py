@@ -14,30 +14,42 @@ packets.
 '''
 
 from time import sleep
-#import threading
-import inputPoller
-import inputConfig
-import EventMaker
-import KeyListener
+from inputPoller import InputPoller
+from inputConfig import InputConfig
+from EventMaker import EventMaker
+from KeyListener import KeyListener
+from eventConfig import EventConfig
 from queue import Queue, Empty
 
-# loads configuration from file
-cycleTime, aConfig, eConfig, bConfig = inputConfig.loadConfig()
+# Loads the event configuration class
+# It reads events.json and stores it as dict.
+# The dict can be accessed with functions.
+eventConfig = EventConfig()
+
+# Loads the input configuration class.
+# It stores input configuration and other
+# settings and can be accessed with fuctions.
+inputConfig = InputConfig()
+
+# Loads input configuration from file
+cycleTime = InputConfig.loadConfig(inputConfig, eventConfig)
 eventSleep = 0.5
+station = inputConfig.station
 
 # creates appropriate input instances from config file
-aInput, eInput, bInput = inputConfig.collectInputs(aConfig, eConfig, bConfig)
+aInput, eInput, bInput = InputConfig.collectInputs(inputConfig)
 
-# Creates input and key-press queues with debth: 1 (item)
+# Creates input and key-press queues with debth: 1 (item) each.
 # event Queue is infinite for now
 inputQueue = Queue(1)
 keyQueue = Queue(1)
 eventQueue = Queue(0)
 
 # Creates threads
-inputThread = inputPoller.inputPoller(aInput, eInput, bInput, cycleTime, inputQueue)
-eventThread = EventMaker.EventMaker(eventSleep, inputQueue, eventQueue, station="")
-listener = KeyListener.KeyListener(keyQueue)
+inputThread = InputPoller(aInput, eInput, bInput, cycleTime, inputQueue)
+eventThread = EventMaker(eventSleep, inputQueue, eventQueue,
+                         eventConfig, inputConfig, station=station)
+listener = KeyListener(keyQueue)
 
 # and marks them daemon
 inputThread.daemon = True
