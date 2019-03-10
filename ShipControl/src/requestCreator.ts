@@ -5,6 +5,7 @@ const NOT_SELECTED = "NOT_SELECTED";
 export class RequestCreator {
   shieldFrequency: number;
   beamTarget: string;
+  beamFrequency: number;
   selectedAmmoType: string;
   constructor() {
     this.shieldFrequency = 0;
@@ -25,7 +26,31 @@ export class RequestCreator {
   }
 
   setShieldFrequency(newFrequency: number) {
-    this.shieldFrequency = newFrequency;
+    if (newFrequency > 20) {
+      this.shieldFrequency = 20;
+    } else if (newFrequency < 0) {
+      this.shieldFrequency = 0;
+    } else {
+      this.shieldFrequency = newFrequency;
+    }
+  }
+
+  changeBeamFrequency(increase: Boolean) {
+    if (increase) {
+      this.beamFrequency++;
+    } else {
+      this.beamFrequency--;
+    }
+  }
+
+  setBeamFrequency(newFrequency: number) {
+    if (newFrequency > 20 ) {
+      this.shieldFrequency = 20;
+    } else if (newFrequency < 0) {
+      this.shieldFrequency = 0;
+    } else {
+      this.shieldFrequency = newFrequency;
+    }
   }
 
   setBeamTarget(newTarget: string) {
@@ -225,12 +250,19 @@ export class RequestCreator {
         request = `set.lua?commandSetBeamSystemTarget(${this.beamTarget})`;
         return request;
 
-      // case "NEXT_BEAM_FREQUENCY":
-      //     console.log("NEXT_BEAM_FREQUENCY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-      //     break;
-      // case "PREVIOUS_BEAM_FREQUENCY":
-      //     console.log("PREVIOUS_BEAM_FREQUENCY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-      //     break;
+      case "SET_BEAM_FREQUENCY":
+        this.setBeamFrequency(message.payload.value);
+
+      case "NEXT_BEAM_FREQUENCY":
+        this.changeBeamFrequency(true);
+        request = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        return request;
+
+      case "PREVIOUS_BEAM_FREQUENCY":
+        this.changeBeamFrequency(false);
+        request = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        return request;
+
       case "SET_SHIELD_FREQUENCY":
         this.setShieldFrequency(message.payload.value);
         request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
@@ -238,17 +270,20 @@ export class RequestCreator {
 
       case "NEXT_SHIELD_FREQUENCY":
         this.changeShieldFrequency(true);
-        request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
-        return request;
+        // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
+        // return request;
+        break;
 
       case "PREVIOUS_SHIELD_FREQUENCY":
         this.changeShieldFrequency(false);
-        request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
-        return request;
+        // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
+        // return request;
+        break;
 
-      // case "CALIBRATE_SHIELDS":
-      //     console.log("CALIBRATE_SHIELDS: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-      //     break;
+      case "CALIBRATE_SHIELDS":
+        request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
+        break;
+
       case "SHIELDS_UP":
         request = `set.lua?commandSetShields(true)`;
         return request;
