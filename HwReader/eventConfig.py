@@ -77,7 +77,13 @@ class EventConfig():
         try:
             maximum = self._events[name][0]["max"]
         except:
-            maximum = 1
+            try:
+                # Enables scrolling through possibleValues
+                # An enhancement would be for the scroll to be  and
+                # infinite wrap around.
+                maximum = len(self._events[name][0]["possibleValues"])-1
+            except KeyError:
+                maximum = 1
         return maximum
 
     def test(self):
