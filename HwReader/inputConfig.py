@@ -5,6 +5,7 @@
 
 from EncoderReader import EncoderInput
 from AnalogReader import AnalogInput
+from buttonInput import PushButton, SwitchInput
 import yaml
 
 class InputConfig():
@@ -14,7 +15,8 @@ class InputConfig():
         self._analogConfig = []
         self._encoderConfig = []
         self._buttonConfig = []
-        self.station = ''
+        self._switchConfig = []
+        self.station = ""
 
     def settings(self):
         '''Returns the full input settings dict'''
@@ -65,35 +67,53 @@ class InputConfig():
         analog=[]
         encoder=[]
         button=[]
+        switch=[]
 
         cycle=0.001
 
-        for i in settings:
-            config = settings[i]
+        for name in settings:
+            config = settings[name]
+            ##print(name)
+            ##print(settings[name])
             try:
+                # ANALOG
                 if config["type"] == "analog":
                     analog.append([
                         config['channel'],
                         ##config['event'],
-                        i,                        # "name"
+                        name,                        # "name"
                         config['threshold'],
                         config['decimals'],
                         config['min_clip'],
                         config['max_clip']])
 
+                # ENCODER
                 elif config["type"] == "encoder":
                     encoder.append([
                         config['clk'],
                         config['dt'],
                         ##config['event'],
-                        i,                        # name
-                        eventConfig.minimum(self.eventName(i)),
-                        eventConfig.maximum(self.eventName(i)),
+                        name,                        # name
+                        eventConfig.minimum(self.eventName(name)),
+                        eventConfig.maximum(self.eventName(name)),
                         config['step'] ])
 
-                elif config["type"] == "button":
-                    pass
+                # BUTTONS AND SWITCHES
+                elif config["type"] in ["push_button", "switch"]:
+                    ##print("button or switch detected")
+                    button_conf = [
+                        config["pin"],
+                        name,
+                        config["invert"] ]
 
+                    if config["type"] == "push_button":
+                        ##print("button detected")
+                        button.append(button_conf)
+                    else:
+                        ##print("switch detected")
+                        switch.append(button_conf)
+
+                # GENERAL SETTINGS
                 elif config["type"] == "config":
                     try:
                         cycle = config["cycle"]
@@ -105,15 +125,18 @@ class InputConfig():
                         print("No station defined, using fallback: ''.")
 
                 else:
-                    print("Undefined input type", settings[i]["type"])
+                    print("Undefined input type", settings[name]["type"])
 
             except KeyError:
-                print("No 'type' defined for", i)
+                print("No 'type' defined for", name)
 
         self._analogConfig = analog
         self._encoderConfig = encoder
         self._buttonConfig = button
+        self._switchConfig = switch
         self.station
+        ##print(button)
+        ##print(switch)
         return cycle
 
     def collectInputs(self):
@@ -126,10 +149,12 @@ class InputConfig():
         analogConfig = self._analogConfig
         encoderConfig = self._encoderConfig
         buttonConfig = self._buttonConfig
+        switchConfig = self._switchConfig
 
         analogInput=[]
         encoderInput=[]
         buttonInput=[]
+        switchInput=[]
 
         # ANALOG INPUTS
         # The input is defined and signal processing is configured.
@@ -179,7 +204,20 @@ class InputConfig():
 
             encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step))
 
-        for i in buttonConfig:
-            pass
+        # PUSH BUTTONS
+        for i in range(len(buttonConfig)):
+            pin = int(buttonConfig[i][0])
+            name = buttonConfig[i][1]
+            invert = buttonConfig[i][2]
+            #buttonInput.append(PushButton(buttonConfig[i]))
+            buttonInput.append(PushButton(pin, name, invert))
 
-        return analogInput, encoderInput, buttonInput
+        # SWITSHES
+        for i in range(len(switchConfig)):
+            pin = int(switchConfig[i][0])
+            name = switchConfig[i][1]
+            invert = switchConfig[i][2]
+            #switchInput.append(SwitchInput(switchConfig[i]))
+            switchInput.append(SwitchInput(pin, name, invert))
+
+        return analogInput, encoderInput, buttonInput, switchInput
