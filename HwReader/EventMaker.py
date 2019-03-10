@@ -24,7 +24,6 @@ class EventMaker(threading.Thread):
         self.cycleTime = sleep
         self.inputQueue = inputQueue
         self.eventQueue = eventQueue
-        ##self.eventMapping = eventConfig.loadConfig()
         self.eventConfig = eventConfig
         self.inputConfig = inputConfig
         self.station = station
@@ -100,7 +99,7 @@ class EventMaker(threading.Thread):
 
         # Formats the event
         #
-        event["timestamp0"] = int(posix)                 # "timestamp": "ms-from-epoch, number",
+        event["timestamp"] = int(posix)                 # "timestamp": "ms-from-epoch, number",
         event["sourceComponent"] = "HwReader"            # "sourceComponent": "HwReader",
         event["sourceIp"] = self.ip                      # "sourceIp": "We might need this",
         event["event"] = event_name                      # "event": "SET_THROTTLE",
@@ -116,12 +115,12 @@ class EventMaker(threading.Thread):
             if "name" in fields[0]:
                 value_name = fields[0]["name"]
 
-
                 # Check if a [set_value] has been defined [value_name]
                 # It is used if defined.
-                if value_name in settings[input_name]:
-                    set_value = settings[input_name][value_name]
-                    payload[value_name] = set_value
+                if 'value' in settings[input_name]:
+                    if value_name in settings[input_name]["value"]:
+                        set_value = settings[input_name]['value'][value_name]
+                        payload[value_name] = set_value
 
                 # If "possibleValues" are defined and no predefined
                 # value is set, cycles through the list.
@@ -170,9 +169,11 @@ if __name__ == '__main__':
     from queue import Queue
     import eventConfig
 
-    inQ = Queue(1)
-    eQ = Queue(0)
-    eventTypes = eventConfig.EventConfig()
-    a = EventMaker(0.5, inQ, eQ, eventTypes)
-    print(EventMaker.event("LOAD_TUBE", 1))
+    # inQ = Queue(1)
+    # eQ = Queue(0)
+    # eventTypes = eventConfig.EventConfig()
+    # inputConfig = InputConfig()
+    # a = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    # #print(a.event("LOAD_TUBE", 1, 0))
+    # event = EventMaker.event(a, "LOAD_TUBE", 1)
 
