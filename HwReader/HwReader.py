@@ -37,7 +37,7 @@ eventSleep = 0.5
 station = inputConfig.station
 
 # creates appropriate input instances from config file
-aInput, eInput, bInput = InputConfig.collectInputs(inputConfig)
+aInput, eInput, bInput, sInput = InputConfig.collectInputs(inputConfig)
 
 # Creates input and key-press queues with debth: 1 (item) each.
 # event Queue is infinite for now
@@ -46,7 +46,7 @@ keyQueue = Queue(1)
 eventQueue = Queue(0)
 
 # Creates threads
-inputThread = InputPoller(aInput, eInput, bInput, cycleTime, inputQueue)
+inputThread = InputPoller(aInput, eInput, bInput, sInput, cycleTime, inputQueue)
 eventThread = EventMaker(eventSleep, inputQueue, eventQueue,
                          eventConfig, inputConfig, station=station)
 listener = KeyListener(keyQueue)

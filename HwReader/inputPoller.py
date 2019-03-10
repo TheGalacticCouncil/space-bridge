@@ -19,35 +19,34 @@ class InputPoller(threading.Thread):
     in to the inputQueue.
     '''
 
-    def __init__(self, analogInput, encoderInput, buttonInput, sleep, inputQueue):
+    def __init__(self, analogInput, encoderInput, buttonInput, switchInput, sleep, inputQueue):
         threading.Thread.__init__(self)
+
         self.analogInput = analogInput
         self.encoderInput = encoderInput
         self.buttonInput = buttonInput
+        self.switchInput = switchInput
+
         self.cycleTime = sleep
-        self.inputQueue = inputQueue        # This is a new thing
+        self.inputQueue = inputQueue
 
     def run(self):
         # Analog Init
-        value=[]
+        a_value=[]
         for i in range(len(self.analogInput)):
-            value.append(0)
+            a_value.append(0)
 
         # Encoder Init
         counter=[]
         for i in range(len(self.encoderInput)):
             counter.append(0)
 
-        # Button Init
-        for i in range(len(self.buttonInput)):
-            pass
-
         try:
 
             # Main Loop
             while True:
 
-                # Potentiometer is read
+                # POTENTIOMETER is read
                 #
                 # The operation is non-blocking.
                 # If the queue is full, the new value is discarded.
@@ -58,14 +57,14 @@ class InputPoller(threading.Thread):
                 # accuarcy, but improves responciveness a great deal.
                 #
                 for i in range(len(self.analogInput)):
-                    value[i], changed, name = self.analogInput[i].readUpdate()
+                    a_value[i], changed, name = self.analogInput[i].readUpdate()
                     if changed == True:
                         try:
-                            self.inputQueue.put_nowait([name, value])
+                            self.inputQueue.put_nowait([name, a_value])
                         except Full:
                             pass
 
-                # Encoder is read
+                # ENCODER is read
                 #
                 # If a new value is received, purges the
                 # queue and adds a new entry to it.
@@ -80,9 +79,32 @@ class InputPoller(threading.Thread):
                             pass
                         self.inputQueue.put([name, counter[i]])
 
+                # BUTTON is read
+                #
+                # A value is sent only if value is True.
+                # Only a single True is sent for a press
+                # Thus, the press must be registered properly!
+                # Button press is blocking and waits to deposit
+                # its value. (Sort of, but not exactly like an interrupt)
                 for i in range(len(self.buttonInput)):
-                    # Button is read
-                    pass
+                    b_value, name = self.buttonInput[i].read()
+                    if b_value == True:
+                        self.inputQueue.put([name, b_value])
+
+                # SWITCH is read
+                #
+                # A value is sent only if value is changed.
+                # Only a single sginal is sent per press.
+                # Thus, the press must be registered properly!
+                # Button press is blocking and waits to deposit
+                # its value. (Sort of, but not exactly like an interrupt)
+                for i in range(len(self.switchInput)):
+                    s_value, name = self.switchInput[i].read()
+                    if s_value == True or s_value == False:
+                        self.inputQueue.put([name, s_value])
+                    else:
+                        pass    # Switch returns only a True on enable
+                                # False on disable and None when not changed
 
                 sleep(self.cycleTime)
 
