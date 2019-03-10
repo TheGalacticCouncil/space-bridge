@@ -36,11 +36,11 @@ class PushButton():
         if state == True:
             if state != self.last_state:
                 self.last_state = True
-                return True
+                return True, self.name
         else:
             self.last_state = False
         
-        return False
+        return False, self.name
 
 class SwitchInput():
     """
@@ -71,14 +71,14 @@ class SwitchInput():
         if state == True:
             if state != self.last_state:
                 self.last_state = True
-                return True
+                return True, self.name
 
         else:
             if state != self.last_state:
                 self.last_state = False
-                return False
+                return False, self.name
         
-        return None
+        return None, self.name
 
 
 # Module can be run directly to test its function
@@ -98,11 +98,11 @@ if __name__ == "__main__":
     try:
         while True:
             ###
-            button = input1.read()
+            button, name = input1.read()
             if button == True:
                 print("Hey! You pressed it!")
             ###
-            switch = input2.read()
+            switch, name = input2.read()
             if switch == True:
                 print("Hey! You pressed the other it!")
             elif switch == False:
