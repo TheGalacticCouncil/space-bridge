@@ -16,6 +16,7 @@ test*.txt
 # My stuff and other
 old_*
 __*
+.vscode
 
 # Unnecessary in Python 3.5
 epoch.py
