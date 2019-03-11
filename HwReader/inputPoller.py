@@ -60,7 +60,7 @@ class InputPoller(threading.Thread):
                     a_value[i], changed, name = self.analogInput[i].readUpdate()
                     if changed == True:
                         try:
-                            self.inputQueue.put_nowait([name, a_value])
+                            self.inputQueue.put_nowait([name, a_value[i]])
                         except Full:
                             pass
 
