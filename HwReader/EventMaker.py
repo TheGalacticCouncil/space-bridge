@@ -7,7 +7,8 @@ from time import sleep
 import threading
 #import eventConfig
 from inputConfig import InputConfig
-from datetime import datetime
+#from datetime import datetime
+import time
 import json
 import myIP
 #from queue import Queue
@@ -29,33 +30,6 @@ class EventMaker(threading.Thread):
         self.station = station
         self.ip = myIP.myIP()
 
-    def mapEvent(self, name):
-        '''
-        Maps an input to an event (deprecated)
-        '''
-        try:
-            eventName = self.eventMapping[name]
-        except KeyError:
-            # KeyError May be raised if input [name] is not mapped
-            # to an event name, or the event is mis-spelled.
-            #
-            # To improve the reliability, EventMaker will tolerate a
-            # misconfigured or unconfigured input, but will warn if
-            # such an input is used.
-            #
-            # This is to not crash the controller from a small typo
-            # in a config file.
-            #
-            print("Warning!")
-            print("Input:", name, "does not have a")
-            print("valid event configured to it.")
-
-            # Passes on the event, with a new name to be picked up
-            # by diagnostics.
-            eventName = "INVALID_EVENT_NAME: '" + name + "'"
-
-        return eventName
-
     def event(self, input_name, value):
         '''
         Formats the event input in to an event.
@@ -74,8 +48,7 @@ class EventMaker(threading.Thread):
         # Therefore the timestamp may be at most 0.1 ms
         # too small.
 
-        current_time = datetime.now()
-        posix = datetime.timestamp(current_time)*1000
+        posix = time.time() * 1000
         event = {}
         payload = {}
         event_name = InputConfig.eventName(self.inputConfig , input_name)
