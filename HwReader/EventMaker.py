@@ -7,6 +7,7 @@ from time import sleep
 import threading
 #import eventConfig
 from inputConfig import InputConfig
+from udpSender import UdpSender
 #from datetime import datetime
 import time
 import json
@@ -114,6 +115,13 @@ class EventMaker(threading.Thread):
 
     def run(self):
 
+        #########################################
+        udpIP = '192.168.10.255'
+        udpPort = 41114     #22100
+
+        udpSender = UdpSender(udpIP, udpPort)
+        #########################################
+
         try:
             # Main Loop
             while True:
@@ -126,6 +134,9 @@ class EventMaker(threading.Thread):
                 event = EventMaker.event(self, item[0], item[1])
                 print(json.dumps(event, sort_keys=False, indent=4))
                 ##self.eventQueue.put(event)
+
+                # Sends the message (single threaded)
+                udpSender.run(json.dumps(event))
 
                 # Sleeping is relevant only in TESTING.
                 # In use, the Tread runs as fast as it can
