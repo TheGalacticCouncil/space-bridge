@@ -142,7 +142,7 @@ class EventMaker(threading.Thread):
                 # In use, the Tread runs as fast as it can
                 # and waits for the input queue...
                 # this should validated on a single core Pi-0-W
-                sleep(self.cycleTime)
+                #sleep(self.cycleTime)
 
         except KeyboardInterrupt:
             pass
