@@ -18,9 +18,9 @@ export class RequestCreator {
   }
 
   changeShieldFrequency(increase: Boolean) {
-    if (increase) {
+    if (increase && this.shieldFrequency < 20) {
       this.shieldFrequency++;
-    } else {
+    } else if (this.shieldFrequency > 0) {
       this.shieldFrequency--;
     }
   }
@@ -212,12 +212,12 @@ export class RequestCreator {
         this.selectAmmoType(message.payload.value);
         break;
       case "LOAD_TUBE":
-        if (_.has(message.payload, "weapons")) {
+        if (_.has(message.payload, "weapon")) {
           this.selectAmmoType(message.payload.weapon);
         }
-        request = `set.lua?commandLoadTube(${message.payload.tubeId}, \"${
+        request = `set.lua?commandLoadTube(${message.payload.tubeId}, "${
           this.selectedAmmoType
-        }\")`;
+        }")`;
         return request;
 
       // case "LOAD_REAR_TUBE":
@@ -272,17 +272,18 @@ export class RequestCreator {
         this.changeShieldFrequency(true);
         // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
         // return request;
-        break;
+        return false;
 
       case "PREVIOUS_SHIELD_FREQUENCY":
         this.changeShieldFrequency(false);
         // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
         // return request;
-        break;
+        return false;
 
       case "CALIBRATE_SHIELDS":
+        console.log("Shield Frequency to calibrate: ", this.shieldFrequency);
         request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
-        break;
+        return request;
 
       case "SHIELDS_UP":
         request = `set.lua?commandSetShields(true)`;
