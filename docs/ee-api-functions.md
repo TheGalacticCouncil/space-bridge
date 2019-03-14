@@ -92,8 +92,18 @@ PlayerSpaceship:getWeaponTubeCount()
 // angle 0-360, manuaalitähtäyksen suunta
 PlayerSpaceship:commandFireTube(int8_t tubeNumber, float missile_target_angle) 
 
+// Kalibroi kilvet suoraan annettuun arvoon
 // 0-20, 0=400THz, 20=800THz
 SpaceShip:commandSetShieldFrequency(int32_t freq)
+
+// Shield frequency UI selection
+SpaceShip:commandSetShieldFrequencySelection(int32_t freq)
+
+// Select next shield frequency
+SpaceShip:commandSetNextShieldFrequencySelection()
+
+// Select previous shield frequency
+SpaceShip:commandSetPreviousShieldFrequencySelection()
 
 PlayerSpaceship:commandSetShields(bool enabled)
 
