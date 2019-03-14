@@ -3,36 +3,16 @@ import _ from "lodash";
 const NOT_SELECTED = "NOT_SELECTED";
 
 export class RequestCreator {
-  shieldFrequency: number;
   beamTarget: string;
   beamFrequency: number;
   selectedAmmoType: string;
   constructor() {
-    this.shieldFrequency = 0;
     this.beamTarget = "HULL";
     this.selectedAmmoType = NOT_SELECTED;
   }
 
   selectAmmoType(newAmmoType: string) {
     this.selectedAmmoType = newAmmoType;
-  }
-
-  changeShieldFrequency(increase: Boolean) {
-    if (increase && this.shieldFrequency < 20) {
-      this.shieldFrequency++;
-    } else if (this.shieldFrequency > 0) {
-      this.shieldFrequency--;
-    }
-  }
-
-  setShieldFrequency(newFrequency: number) {
-    if (newFrequency > 20) {
-      this.shieldFrequency = 20;
-    } else if (newFrequency < 0) {
-      this.shieldFrequency = 0;
-    } else {
-      this.shieldFrequency = newFrequency;
-    }
   }
 
   changeBeamFrequency(increase: Boolean) {
@@ -45,11 +25,11 @@ export class RequestCreator {
 
   setBeamFrequency(newFrequency: number) {
     if (newFrequency > 20 ) {
-      this.shieldFrequency = 20;
+      this.beamFrequency = 20;
     } else if (newFrequency < 0) {
-      this.shieldFrequency = 0;
+      this.beamFrequency = 0;
     } else {
-      this.shieldFrequency = newFrequency;
+      this.beamFrequency = newFrequency;
     }
   }
 
@@ -264,25 +244,19 @@ export class RequestCreator {
         return request;
 
       case "SET_SHIELD_FREQUENCY":
-        this.setShieldFrequency(message.payload.value);
-        request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
+        request = `set.lua?commandSetShieldFrequencySelection(${message.payload.value})`;
         return request;
 
       case "NEXT_SHIELD_FREQUENCY":
-        this.changeShieldFrequency(true);
-        // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
-        // return request;
-        return false;
+        request = `set.lua?commandSetNextShieldFrequencySelection()`;
+        return request;
 
       case "PREVIOUS_SHIELD_FREQUENCY":
-        this.changeShieldFrequency(false);
-        // request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
-        // return request;
-        return false;
+        request = `set.lua?commandSetPreviousShieldFrequencySelection()`;
+        return request;
 
       case "CALIBRATE_SHIELDS":
-        console.log("Shield Frequency to calibrate: ", this.shieldFrequency);
-        request = `set.lua?commandSetShieldFrequency(${this.shieldFrequency})`;
+        request = `set.lua?commandSetShieldFrequency(${message.payload.value})`;
         return request;
 
       case "SHIELDS_UP":
