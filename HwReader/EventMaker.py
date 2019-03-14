@@ -126,6 +126,8 @@ class EventMaker(threading.Thread):
             # Main Loop
             while True:
 
+                start_time = time.time()
+
                 # Gets a new input message from queue
                 item = self.inputQueue.get()
                 ##print(" >>>", item[0], item[1])
@@ -133,7 +135,17 @@ class EventMaker(threading.Thread):
                 # A new event is created
                 event = EventMaker.event(self, item[0], item[1])
                 print(json.dumps(event, sort_keys=False, indent=4))
-                ##self.eventQueue.put(event)
+                ##self.eventQueue.put(event)                        # If we decide to go with a threading solution
+
+                end_time = time.time()
+                cycle_length = end_time - start_time
+                print("EventMaker cycle time:\nYou were served in:", cycle_length, "seconds")
+                
+                start_time
+                udpSender.run(json.dumps(event))    # SEND HERE #
+                end_time = time.time()
+                cycle_length = end_time - start_time
+                print("udpSender delivery time:", cycle_length, "seconds")
 
                 # Sends the message (single threaded)
                 udpSender.run(json.dumps(event))

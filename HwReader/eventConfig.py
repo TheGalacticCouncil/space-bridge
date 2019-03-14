@@ -84,6 +84,11 @@ class EventConfig():
                 maximum = len(self._events[name][0]["possibleValues"])-1
             except KeyError:
                 maximum = 1
+            except IndexError:
+                print(">>", self._events[name])
+                maximum = 1
+                #raise IndexError
+
         return maximum
 
     def test(self):

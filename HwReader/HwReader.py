@@ -13,13 +13,15 @@ and sends the events as UDP broadcast
 packets.
 '''
 
-from time import sleep
+from time import sleep, time
 from inputPoller import InputPoller
 from inputConfig import InputConfig
 from EventMaker import EventMaker
 from KeyListener import KeyListener
 from eventConfig import EventConfig
 from queue import Queue, Empty
+
+start_time = time()
 
 # Loads the event configuration class
 # It reads events.json and stores it as dict.
@@ -64,6 +66,10 @@ eventThread.start()
 listener.start()
 
 dont_stop = True
+
+end_time = time()
+boot_length = end_time - start_time
+print("Start time", boot_length, "seconds")
 
 try:
     while True:
