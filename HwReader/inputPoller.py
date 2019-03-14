@@ -8,7 +8,7 @@ from time import sleep, time
 import threading
 #from queue import Queue
 from queue import Full, Empty
-
+from logger import Logger
 
 class InputPoller(threading.Thread):
     '''

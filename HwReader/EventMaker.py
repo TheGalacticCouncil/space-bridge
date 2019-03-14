@@ -141,7 +141,7 @@ class EventMaker(threading.Thread):
                 cycle_length = end_time - start_time
                 print("EventMaker cycle time:\nYou were served in:", cycle_length, "seconds")
                 
-                start_time
+                start_time = time.time()
                 udpSender.run(json.dumps(event))    # SEND HERE #
                 end_time = time.time()
                 cycle_length = end_time - start_time

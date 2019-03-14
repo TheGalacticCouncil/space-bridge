@@ -14,12 +14,22 @@ packets.
 '''
 
 from time import sleep, time
+
+start_time = time()
+
 from inputPoller import InputPoller
 from inputConfig import InputConfig
 from EventMaker import EventMaker
 from KeyListener import KeyListener
 from eventConfig import EventConfig
 from queue import Queue, Empty
+from logger import Logger
+
+end_time = time()
+import_time = int(end_time - start_time)
+
+logger = Logger(__name__)
+logger.info("Module imports compleate in %i seconds" % import_time)
 
 start_time = time()
 
@@ -69,7 +79,8 @@ dont_stop = True
 
 end_time = time()
 boot_length = end_time - start_time
-print("Start time", boot_length, "seconds")
+logger.info("Start-up complete in %i seconds" % boot_length)
+#print("Start time", boot_length, "seconds")
 
 try:
     while True:
