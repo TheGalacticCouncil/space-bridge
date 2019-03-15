@@ -23,8 +23,8 @@ class EventConfig():
     """
 
     def __init__(self):
-        self._events = EventConfig.events(self)
         self.logger = Logger(__name__)
+        self._events = EventConfig.events(self)
 
     def loadEvents(self):
         """
