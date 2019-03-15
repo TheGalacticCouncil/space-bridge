@@ -10,6 +10,7 @@ with events.txt to map inputs to events.
 '''
 
 import json
+from logger import Logger
 
 class EventConfig():
     """
@@ -23,6 +24,7 @@ class EventConfig():
 
     def __init__(self):
         self._events = EventConfig.events(self)
+        self.logger = Logger(__name__)
 
     def loadEvents(self):
         """
@@ -31,7 +33,8 @@ class EventConfig():
         try:
             eventfile = open('events.json', 'r')
         except IOError:
-            exit("Error: Could not find 'events.json'")
+            self.logger.critical("Error: Could not find 'events.json'")
+            exit()
 
         eventFile = json.load(eventfile)
 
@@ -85,7 +88,7 @@ class EventConfig():
             except KeyError:
                 maximum = 1
             except IndexError:
-                print(">>", self._events[name])
+                #print(">>", self._events[name])
                 maximum = 1
                 #raise IndexError
 

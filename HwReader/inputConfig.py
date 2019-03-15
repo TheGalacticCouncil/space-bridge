@@ -13,13 +13,17 @@ from logger import Logger
 class InputConfig():
 
     def __init__(self):
-        self._settings = InputConfig.readConfig()
+        self.logger = Logger(__name__)
+        try:
+            self._settings = self.readConfig()
+        except:
+            self.logger.critical("Encountered a critical error while reading config.")
+            raise
         self._analogConfig = []
         self._encoderConfig = []
         self._buttonConfig = []
         self._switchConfig = []
         self.station = ""
-        self.logger = Logger(__name__)
 
     def settings(self):
         '''Returns the full input settings dict'''
@@ -37,7 +41,7 @@ class InputConfig():
 
         return self._settings[name]
 
-    def readConfig():
+    def readConfig(self):
         """
         Reads the config file and returns the dict of
         all settings.
@@ -47,8 +51,9 @@ class InputConfig():
 
         try:
             configfile = open(filename, 'r')
-        except IOError:
-            exit("Error: Could not find", filename)
+        except FileNotFoundError:
+            self.logger.critical("Error: Could not find %s" % filename)
+            exit()
 
         settings = yaml.load(configfile)
         configfile.close()
