@@ -13,6 +13,7 @@ import time
 import json
 import myIP
 #from queue import Queue
+from logger import Logger
 
 
 class EventMaker(threading.Thread):
@@ -83,6 +84,7 @@ class EventMaker(threading.Thread):
         return event
 
     def payloader(input_name, value, fields, settings):
+        
         payload = {}
 
         try:
@@ -115,6 +117,9 @@ class EventMaker(threading.Thread):
 
     def run(self):
 
+        logger = Logger(__name__)
+        logger.info("EventMaker thread started")
+
         #########################################
         udpIP = '192.168.10.255'
         udpPort = 41114     #22100
@@ -134,18 +139,24 @@ class EventMaker(threading.Thread):
 
                 # A new event is created
                 event = EventMaker.event(self, item[0], item[1])
-                print(json.dumps(event, sort_keys=False, indent=4))
+
+                # Prints a pretty json formatted event
+                #print(json.dumps(event, sort_keys=False, indent=4))
                 ##self.eventQueue.put(event)                        # If we decide to go with a threading solution
 
+                logger.info("Event created %s" % event["event"])
+
                 end_time = time.time()
-                cycle_length = end_time - start_time
-                print("EventMaker cycle time:\nYou were served in:", cycle_length, "seconds")
-                
+                cycle_length = int((end_time - start_time) * 1000)
+                # logger.info("EventMaker cycle time: You were served in: %i ms" % cycle_length)
+                logger.info("EventMaker cycle time: %i ms" % cycle_length)
+
+
                 start_time = time.time()
                 udpSender.run(json.dumps(event))    # SEND HERE #
                 end_time = time.time()
-                cycle_length = end_time - start_time
-                print("udpSender delivery time:", cycle_length, "seconds")
+                cycle_length = int((end_time - start_time) * 1000)
+                logger.info("udpSender delivery time: %i ms" % cycle_length)
 
                 # Sends the message (single threaded)
                 udpSender.run(json.dumps(event))

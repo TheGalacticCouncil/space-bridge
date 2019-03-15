@@ -7,6 +7,8 @@ from EncoderReader import EncoderInput
 from AnalogReader import AnalogInput
 from buttonInput import PushButton, SwitchInput
 import yaml
+from logger import Logger
+
 
 class InputConfig():
 
@@ -17,6 +19,7 @@ class InputConfig():
         self._buttonConfig = []
         self._switchConfig = []
         self.station = ""
+        self.logger = Logger(__name__)
 
     def settings(self):
         '''Returns the full input settings dict'''
@@ -80,7 +83,6 @@ class InputConfig():
                 if config["type"] == "analog":
                     analog.append([
                         config['channel'],
-                        ##config['event'],
                         name,                        # "name"
                         config['threshold'],
                         config['decimals'],
@@ -92,7 +94,6 @@ class InputConfig():
                     encoder.append([
                         config['clk'],
                         config['dt'],
-                        ##config['event'],
                         name,                        # name
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
@@ -125,18 +126,16 @@ class InputConfig():
                         print("No station defined, using fallback: ''.")
 
                 else:
-                    print("Undefined input type", settings[name]["type"])
+                    self.logger.warning("Undefined input type '%s'" % settings[name]["type"])
 
             except KeyError:
-                print("No 'type' defined for", name)
+                self.logger.warning("No 'type' defined for '%s'" % name)
 
         self._analogConfig = analog
         self._encoderConfig = encoder
         self._buttonConfig = button
         self._switchConfig = switch
         self.station
-        ##print(button)
-        ##print(switch)
         return cycle
 
     def collectInputs(self):

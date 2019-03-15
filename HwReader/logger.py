@@ -13,13 +13,18 @@ class Logger():
 
     def __init__(self, module_name):
 
-        #logging.DEBUG
+        filename = 'HwReader.log'
+        
+        # Creates an empty log file
+        # Comment out to use append mode 
+        open(filename, 'w').close()
 
         self.module_name = module_name
         self.logger = logging.getLogger(self.module_name)
+        self.logger.setLevel(logging.DEBUG)
         
         # Create handlers
-        self.file_handler = logging.FileHandler('HwReader.log')
+        self.file_handler = logging.FileHandler(filename)
         self.stream_handler = logging.StreamHandler()
 
         # Set handler levels
@@ -58,3 +63,7 @@ class Logger():
 
     def critical(self, message):
         self.logger.critical(message)
+
+if __name__ == "__main__":
+    lokking = Logger(__name__)
+    lokking.debug("foo")

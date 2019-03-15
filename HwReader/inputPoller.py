@@ -32,6 +32,9 @@ class InputPoller(threading.Thread):
 
     def run(self):
 
+        logger = Logger(__name__)
+        logger.info("InputPoller thread started")
+
         q = 0   #Counter for a performance metric
 
         # Analog Init
@@ -112,10 +115,10 @@ class InputPoller(threading.Thread):
                                 # False on disable and None when not changed
 
                 end_time = time()
-                cycle_length = end_time - start_time
-                if q >= 10000:
+                cycle_length = int((end_time - start_time) * 1000)
+                if q >= 1000:
                     q = 0
-                    print("InputPoller cycle time:", cycle_length)
+                    logger.info("InputPoller cycle time: %i ms" % cycle_length)
                 q += 1
 
                 sleep(self.cycleTime)

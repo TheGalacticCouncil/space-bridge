@@ -26,10 +26,10 @@ from queue import Queue, Empty
 from logger import Logger
 
 end_time = time()
-import_time = int(end_time - start_time)
+import_time = int((end_time - start_time)*1000)
 
 logger = Logger(__name__)
-logger.info("Module imports compleate in %i seconds" % import_time)
+logger.info("Module imports compleate in %i ms" % import_time)
 
 start_time = time()
 
@@ -78,9 +78,8 @@ listener.start()
 dont_stop = True
 
 end_time = time()
-boot_length = end_time - start_time
-logger.info("Start-up complete in %i seconds" % boot_length)
-#print("Start time", boot_length, "seconds")
+boot_length = int((end_time - start_time)*1000)
+logger.info("Start-up complete in %i ms" % boot_length)
 
 try:
     while True:
