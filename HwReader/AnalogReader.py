@@ -91,7 +91,6 @@ class AnalogInput():
         if delta > self.threshold:
             changed = True
             self.oldValue = self.value        #oldValue is updated only if changed = True
-            print(self.value)   ###
             return self.value, changed, self.name
         else:
             return self.value, changed, self.name

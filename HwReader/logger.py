@@ -10,7 +10,7 @@ class Logger():
     Logging class to centrally take care of logging everyting
     Used to interface with the global logging module.
     '''
-
+ 
     def __init__(self, module_name):
 
         filename = 'HwReader.log'
@@ -65,5 +65,5 @@ class Logger():
         self.logger.critical(message)
 
 if __name__ == "__main__":
-    lokking = Logger(__name__)
-    lokking.debug("foo")
+    asd = Logger(__name__)
+    asd.debug("foo")
