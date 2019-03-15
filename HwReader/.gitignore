@@ -14,7 +14,7 @@ test*.py
 test*.txt
 
 # Logs
-*.log
+#*.log
 
 # My stuff and other
 old_*
