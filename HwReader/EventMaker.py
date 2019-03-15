@@ -115,12 +115,12 @@ class EventMaker(threading.Thread):
 
     def run(self):
 
-        #########################################
-        udpIP = '192.168.10.255'
-        udpPort = 41114     #22100
-
+        # Configures the UDP-Sender and creates an instance
+        udpIP = self.inputConfig.udp_ip         #.255
+        udpPort = self.inputConfig.udp_port     #22100
         udpSender = UdpSender(udpIP, udpPort)
-        #########################################
+        print(udpIP)
+        print(udpPort)
 
         try:
             # Main Loop
