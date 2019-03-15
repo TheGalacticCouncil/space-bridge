@@ -83,18 +83,21 @@ logger.info("Start-up complete in %i ms" % boot_length)
 
 try:
     while True:
-        if inputThread.is_alive() and eventThread.is_alive() and dont_stop:
-            try:
-                dont_stop = keyQueue.get_nowait()
-            except Empty:
-                pass
-            #print("Threads:", threading.active_count())
-            sleep(0.5)
+        if inputThread.is_alive() and eventThread.is_alive():
+            if dont_stop:
+                try:
+                    dont_stop = keyQueue.get_nowait()
+                except Empty:
+                    pass
+                sleep(0.5)
+            else:
+                break
         else:
-            #print("A thread crashed")
+            logger.critical("A thread has crashed. Terminating")
             break
 
 except KeyboardInterrupt:
+    logger.warning("KeyboardInterrupt: Exiting")
     inputThread.join(0.01)
     eventThread.join(0.01)
     listener.join(0.01)
@@ -104,4 +107,4 @@ inputThread.join(0.01)
 eventThread.join(0.01)
 listener.join(0.01)
 
-print("It's done")
+logger.info("Exited")
