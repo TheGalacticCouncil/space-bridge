@@ -13,6 +13,9 @@ __init__*
 test*.py
 test*.txt
 
+# Logs
+*.log
+
 # My stuff and other
 old_*
 __*
