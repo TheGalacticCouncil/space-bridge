@@ -17,6 +17,8 @@ class InputConfig():
         self._buttonConfig = []
         self._switchConfig = []
         self.station = ""
+        self.udp_ip = '12.168.10.255'
+        self.udp_port = 41114 
 
     def settings(self):
         '''Returns the full input settings dict'''
@@ -123,6 +125,10 @@ class InputConfig():
                         self.station = config["station"]
                     except KeyError:
                         print("No station defined, using fallback: ''.")
+                    if "udp_ip" in config:
+                        self.udp_ip = config["udp_ip"]
+                    if "udp_port" in config:
+                        self.udp_port = config["udp_port"]
 
                 else:
                     print("Undefined input type", settings[name]["type"])
