@@ -20,7 +20,7 @@ class UdpSender():
         byte_message = bytearray(message,"utf-8")
         network = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         network.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        network.sendto(byte_message, (udpIP, udpPort))
+        network.sendto(byte_message, (self.broadcast_ip, self.port))
 
 if __name__ == '__main__':
 

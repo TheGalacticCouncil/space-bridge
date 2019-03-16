@@ -72,7 +72,11 @@ export class RequestCreator {
   }
 
   public handleEvent(message: any) {
-    let request: string;
+    let request = {
+      body: "",
+      method: "",
+      path: ""
+    };
 
     switch (message.event) {
       // case "SET_THROTTLE":
@@ -195,7 +199,8 @@ export class RequestCreator {
         if (_.has(message.payload, "weapon")) {
           this.selectAmmoType(message.payload.weapon);
         }
-        request = `set.lua?commandLoadTube(${message.payload.tubeId}, "${
+        request.method = "get";
+        request.path = `set.lua?commandLoadTube(${message.payload.tubeId}, "${
           this.selectedAmmoType
         }")`;
         return request;
@@ -205,11 +210,22 @@ export class RequestCreator {
       //     break;
       case "FIRE_TUBE":
         // TODO: second param (target angle) needs to be figured out
-        request = `set.lua?commandFireTube(${message.payload.tubeId}, 90)`;
+        // TODO: firing without target to use EE API which is not availabe atm
+        request.method = "post";
+        request.path = "exec.lua";
+        request.body = `
+        us = getPlayerShip(-1)
+        target = us:getTarget()
+        if target == nil then
+          us:commandFireTube(${message.payload.tubeId}, 0)
+        else
+          us:commandFireTubeAtTarget(${message.payload.tubeId}, target)
+        end`;
         return request;
 
       case "UNLOAD_TUBE":
-        request = `set.lua?commandUnloadTube(${message.payload.tubeId})`;
+        request.method = "get";
+        request.path = `set.lua?commandUnloadTube(${message.payload.tubeId})`;
         return request;
 
       // case "TARGET_NEXT_ENEMY":
@@ -220,14 +236,16 @@ export class RequestCreator {
       //     break;
       case "SET_BEAM_TARGET":
         this.setBeamTarget(message.payload.value);
-        request = `set.lua?commandSetBeamSystemTarget(${
+        request.method = "get";
+        request.path = `set.lua?commandSetBeamSystemTarget(${
           message.payload.value
         })`;
         return request;
 
       case "NEXT_BEAM_TARGET":
         this.nextBeamTarget();
-        request = `set.lua?commandSetBeamSystemTarget(${this.beamTarget})`;
+        request.method = "get";
+        request.path = `set.lua?commandSetBeamSystemTarget(${this.beamTarget})`;
         return request;
 
       case "SET_BEAM_FREQUENCY":
@@ -235,36 +253,44 @@ export class RequestCreator {
 
       case "NEXT_BEAM_FREQUENCY":
         this.changeBeamFrequency(true);
-        request = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
         return request;
 
       case "PREVIOUS_BEAM_FREQUENCY":
         this.changeBeamFrequency(false);
-        request = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
         return request;
 
       case "SET_SHIELD_FREQUENCY":
-        request = `set.lua?commandSetShieldFrequencySelection(${message.payload.value})`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShieldFrequencySelection(${message.payload.value})`;
         return request;
 
       case "NEXT_SHIELD_FREQUENCY":
-        request = `set.lua?commandSetNextShieldFrequencySelection()`;
+        request.method = "get";
+        request.path = `set.lua?commandSetNextShieldFrequencySelection()`;
         return request;
 
       case "PREVIOUS_SHIELD_FREQUENCY":
-        request = `set.lua?commandSetPreviousShieldFrequencySelection()`;
+        request.method = "get";
+        request.path = `set.lua?commandSetPreviousShieldFrequencySelection()`;
         return request;
 
       case "CALIBRATE_SHIELDS":
-        request = `set.lua?commandSetShieldFrequency(${message.payload.value})`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShieldFrequency(${message.payload.value})`;
         return request;
 
       case "SHIELDS_UP":
-        request = `set.lua?commandSetShields(true)`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShields(true)`;
         return request;
 
       case "SHIELDS_DOWN":
-        request = `set.lua?commandSetShields(false)`;
+        request.method = "get";
+        request.path = `set.lua?commandSetShields(false)`;
         return request;
 
       // case "MANUAL_TARGETING":

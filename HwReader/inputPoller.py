@@ -4,11 +4,11 @@
 # inputPoller (HwReader)
 
 from RPi import GPIO
-from time import sleep
+from time import sleep, time
 import threading
 #from queue import Queue
 from queue import Full, Empty
-
+from logger import Logger
 
 class InputPoller(threading.Thread):
     '''
@@ -31,6 +31,12 @@ class InputPoller(threading.Thread):
         self.inputQueue = inputQueue
 
     def run(self):
+
+        logger = Logger(__name__)
+        logger.info("InputPoller thread started")
+
+        q = 0   #Counter for a performance metric
+
         # Analog Init
         a_value=[]
         for i in range(len(self.analogInput)):
@@ -45,6 +51,8 @@ class InputPoller(threading.Thread):
 
             # Main Loop
             while True:
+
+                start_time = time()
 
                 # POTENTIOMETER is read
                 #
@@ -105,6 +113,13 @@ class InputPoller(threading.Thread):
                     else:
                         pass    # Switch returns only a True on enable
                                 # False on disable and None when not changed
+
+                end_time = time()
+                cycle_length = int((end_time - start_time) * 1000)
+                if q >= 1000:
+                    q = 0
+                    logger.info("InputPoller cycle time: %i ms" % cycle_length)
+                q += 1
 
                 sleep(self.cycleTime)
 

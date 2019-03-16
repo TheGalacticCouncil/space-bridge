@@ -76,7 +76,6 @@ class AnalogInput():
         # This is done despite it being done in readRaw, because
         # this time the value is also filtered. The old value remains correct.
         self.value = value
-
         return self.value
 
     def readUpdate(self):

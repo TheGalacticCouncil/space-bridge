@@ -7,11 +7,18 @@ from EncoderReader import EncoderInput
 from AnalogReader import AnalogInput
 from buttonInput import PushButton, SwitchInput
 import yaml
+from logger import Logger
+
 
 class InputConfig():
 
     def __init__(self):
-        self._settings = InputConfig.readConfig()
+        self.logger = Logger(__name__)
+        try:
+            self._settings = self.readConfig()
+        except:
+            self.logger.critical("Encountered a critical error while reading config.")
+            raise
         self._analogConfig = []
         self._encoderConfig = []
         self._buttonConfig = []
@@ -36,7 +43,7 @@ class InputConfig():
 
         return self._settings[name]
 
-    def readConfig():
+    def readConfig(self):
         """
         Reads the config file and returns the dict of
         all settings.
@@ -46,8 +53,9 @@ class InputConfig():
 
         try:
             configfile = open(filename, 'r')
-        except IOError:
-            exit("Error: Could not find", filename)
+        except FileNotFoundError:
+            self.logger.critical("Error: Could not find %s" % filename)
+            exit()
 
         settings = yaml.load(configfile)
         configfile.close()
@@ -82,7 +90,6 @@ class InputConfig():
                 if config["type"] == "analog":
                     analog.append([
                         config['channel'],
-                        ##config['event'],
                         name,                        # "name"
                         config['threshold'],
                         config['decimals'],
@@ -94,7 +101,6 @@ class InputConfig():
                     encoder.append([
                         config['clk'],
                         config['dt'],
-                        ##config['event'],
                         name,                        # name
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
@@ -131,18 +137,16 @@ class InputConfig():
                         self.udp_port = config["udp_port"]
 
                 else:
-                    print("Undefined input type", settings[name]["type"])
+                    self.logger.warning("Undefined input type '%s'" % settings[name]["type"])
 
             except KeyError:
-                print("No 'type' defined for", name)
+                self.logger.warning("No 'type' defined for '%s'" % name)
 
         self._analogConfig = analog
         self._encoderConfig = encoder
         self._buttonConfig = button
         self._switchConfig = switch
         self.station
-        ##print(button)
-        ##print(switch)
         return cycle
 
     def collectInputs(self):
