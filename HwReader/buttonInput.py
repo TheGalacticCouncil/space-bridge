@@ -18,7 +18,7 @@ class PushButton():
         self.invert = invert
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.last_state = False
 
@@ -53,7 +53,7 @@ class SwitchInput():
         self.invert = invert
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.last_state = False
 
