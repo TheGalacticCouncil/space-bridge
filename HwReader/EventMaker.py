@@ -125,8 +125,8 @@ class EventMaker(threading.Thread):
         udpPort = self.inputConfig.udp_port     #22100
 
         udpSender = UdpSender(udpIP, udpPort)
-        print(udpIP)
-        print(udpPort)
+        logger.info("Broadcas address set to %s" % udpIP)
+        logger.info("Broadcas port set to %s" % udpPort)
 
         try:
             # Main Loop
@@ -145,7 +145,7 @@ class EventMaker(threading.Thread):
                 #print(json.dumps(event, sort_keys=False, indent=4))
                 ##self.eventQueue.put(event)                        # If we decide to go with a threading solution
 
-                logger.info("Event created %s" % event["event"])
+                logger.info("Event created %s - %s" % (event["event"], str(event["payload"].strip("{''}") ))
 
                 end_time = time.time()
                 cycle_length = int((end_time - start_time) * 1000)
