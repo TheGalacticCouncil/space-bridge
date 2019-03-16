@@ -191,10 +191,15 @@ export class RequestCreator {
       //     console.log("LAUNCH_PROBE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
       //     break;
 
+
+
+      // TODO: Replace returning rejected promises with more elegant solutions when events don't cause requests.
+
       // This should be modified when EE UI allows selecting weapon types through HTTP API
       case "SELECT_WEAPON":
         this.selectAmmoType(message.payload.value);
-        break;
+        return Promise.reject();
+
       case "LOAD_TUBE":
         if (_.has(message.payload, "weapon")) {
           this.selectAmmoType(message.payload.weapon);
@@ -250,17 +255,18 @@ export class RequestCreator {
 
       case "SET_BEAM_FREQUENCY":
         this.setBeamFrequency(message.payload.value);
+        return Promise.reject();
 
       case "NEXT_BEAM_FREQUENCY":
         this.changeBeamFrequency(true);
         request.method = "get";
-        request.path = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        request.path = `set.lua?commandSetBeamFrequency(${this.beamFrequency})`;
         return request;
 
       case "PREVIOUS_BEAM_FREQUENCY":
         this.changeBeamFrequency(false);
         request.method = "get";
-        request.path = `set.lua?commandSetShieldFrequency(${this.beamFrequency})`;
+        request.path = `set.lua?commandSetBeamFrequency(${this.beamFrequency})`;
         return request;
 
       case "SET_SHIELD_FREQUENCY":
