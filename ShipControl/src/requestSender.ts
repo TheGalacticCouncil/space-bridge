@@ -1,10 +1,27 @@
 import axios from "axios";
 
 export class RequestSender {
-  send(request: string) {
-    axios.get(`http://localhost:8080/${request}`)
-    .catch(err => {
-      console.log(err);
-    });
+
+  url: string;
+  constructor () {
+    this.url = "http://localhost:8080";
+  }
+
+  send(request: any) {
+
+    console.log(request);
+    if (request.method === "get") {
+      axios.get(`${this.url}/${request.path}`)
+      .catch(err => {
+        console.log(err);
+      });
+    } else if (request.method === "post") {
+      axios.post(`${this.url}/${request.path}`, request.body)
+      .catch(err => {
+        console.log(err);
+      });
+    } else {
+      console.log("Unknown method!");
+    }
   }
 }
