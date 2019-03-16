@@ -145,7 +145,7 @@ class EventMaker(threading.Thread):
                 #print(json.dumps(event, sort_keys=False, indent=4))
                 ##self.eventQueue.put(event)                        # If we decide to go with a threading solution
 
-                logger.info("Event created %s - %s" % (event["event"], str(event["payload"].strip("{''}") ))
+                logger.info("Event created %s - %s" % (event["event"], str(event["payload"].strip("{''}")) ) )
 
                 end_time = time.time()
                 cycle_length = int((end_time - start_time) * 1000)
