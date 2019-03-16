@@ -10,8 +10,7 @@ __init__*
 *.sh
 
 # Test code
-test*.py
-test*.txt
+test*
 
 # My stuff and other
 old_*

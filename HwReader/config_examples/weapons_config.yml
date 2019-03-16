@@ -1,0 +1,234 @@
+########################################################
+# This is an example config file for "Weapons" station #
+# ---------------------------------------------------- #
+# Place this in the HwReader folder of your WEAPONS    #
+# station and name it "events.yml"                     #
+# Adjust configuration as necessary                    #
+########################################################
+
+# Seuraavien eventtien tulee toimia demossa 16.3.2019:
+# - FIRE_TUBE
+# - LOAD_TUBE
+# - NEXT_SHIELD_FREQUENCY
+# - PREVIOUS_SHIELD_FREQUENCY 
+# - SHIELDS_UP
+# - SHIELDS_DOWN
+# - SELECT_WEAPON
+
+# Button:
+#   event: str
+#   type: push_button
+#   pin: int
+#   invert: bool
+#   value:
+#     ***
+
+General:
+  type: config            # config
+  cycle: 0.001            # Recommended 0.001
+  station: Test Station   # HELM, ENGINEERING, SCIENCE
+  udp_ip: 192.168.10.255
+  udp_port: 41114
+
+
+# FIRE FIRE
+Fire0:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 2
+  invert: False
+  value:
+    tubeId: 0
+
+Fire1:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 3
+  invert: False
+  value:
+    tubeId: 1
+
+Fire2:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 4
+  invert: False
+  value:
+    tubeId: 2
+
+Fire3:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 17
+  invert: False
+  value:
+    tubeId: 3
+
+Fire4:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 27
+  invert: False
+  value:
+    tubeId: 4
+
+Fire5:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 22
+  invert: False
+  value:
+    tubeId: 5
+
+Fire6:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 5
+  invert: False
+  value:
+    tubeId: 6
+
+Fire7:
+  event: FIRE_TUBE
+  type: push_button
+  pin: 6
+  invert: False
+  value:
+    tubeId: 7
+
+
+# LOAD TUBE
+Load0:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 13
+  invert: False
+  value:
+    tubeId: 0
+
+Load1:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 19
+  invert: False
+  value:
+    tubeId: 1
+
+Load2:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 26
+  invert: False
+  value:
+    tubeId: 2
+
+Load3:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 21
+  invert: False
+  value:
+    tubeId: 3
+
+Load4:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 20
+  invert: False
+  value:
+    tubeId: 4
+
+Load5:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 16
+  invert: False
+  value:
+    tubeId: 5
+
+Load6:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 12
+  invert: False
+  value:
+    tubeId: 6
+
+Load7:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 25
+  invert: False
+  value:
+    tubeId: 7
+
+
+# SHIELDS
+ShielFQ:
+  event: NEXT_SHIELD_FREQUENCY
+  event2: PREVIOUS_SHIELD_FREQUENCY
+  type: encoder
+  clk: 24
+  dt: 23
+  step: 1
+
+shealds:
+  event: SHIELDS_UP
+  event2: SHIELDS_DOWN
+  type: switch
+  pin: 18
+  invert: True
+
+
+# SELECT WEEAPONG
+Homing:
+  event: SELECT_WEAPON
+  type: push_button
+  pin: 8
+  invert: False
+  value:
+    value: "HOMING"
+
+Nuke:
+  event: SELECT_WEAPON
+  type: push_button
+  pin: 7
+  invert: False
+  value:
+    value: "NUKE"
+
+Mine:
+  event: SELECT_WEAPON
+  type: push_button
+  pin: 11
+  invert: False
+  value:
+    value: "MINE"
+
+Emp:
+  event: SELECT_WEAPON
+  type: push_button
+  pin: 9
+  invert: False
+  value:
+    value: "EMP"
+
+hvli:
+  event: SELECT_WEAPON
+  type: push_button
+  pin: 10
+  invert: False
+  value:
+    value: "HVLI"
+
+
+# AnalogInp:
+#   event: SET_THROTTLE
+#   type: analog
+#   channel: 0
+#   threshold: 0.01
+#   decimals: 9
+#   min_clip: 0.00245
+#   max_clip: 0.998
+# #  min: not implemented ** Should be auto-read from event!
+# #  max: not implemented
