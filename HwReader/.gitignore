@@ -12,6 +12,9 @@ __init__*
 # Test code
 test*
 
+# Logs
+*.log
+
 # My stuff and other
 old_*
 __*

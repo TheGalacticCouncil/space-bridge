@@ -13,13 +13,25 @@ and sends the events as UDP broadcast
 packets.
 '''
 
-from time import sleep
+from time import sleep, time
+
+start_time = time()
+
 from inputPoller import InputPoller
 from inputConfig import InputConfig
 from EventMaker import EventMaker
 from KeyListener import KeyListener
 from eventConfig import EventConfig
 from queue import Queue, Empty
+from logger import Logger
+
+end_time = time()
+import_time = int((end_time - start_time)*1000)
+
+logger = Logger(__name__)
+logger.info("Module imports compleate in %i ms" % import_time)
+
+start_time = time()
 
 # Loads the event configuration class
 # It reads events.json and stores it as dict.
@@ -65,20 +77,27 @@ listener.start()
 
 dont_stop = True
 
+end_time = time()
+boot_length = int((end_time - start_time)*1000)
+logger.info("Start-up complete in %i ms" % boot_length)
+
 try:
     while True:
-        if inputThread.is_alive() and eventThread.is_alive() and dont_stop:
-            try:
-                dont_stop = keyQueue.get_nowait()
-            except Empty:
-                pass
-            #print("Threads:", threading.active_count())
-            sleep(0.5)
+        if inputThread.is_alive() and eventThread.is_alive():
+            if dont_stop:
+                try:
+                    dont_stop = keyQueue.get_nowait()
+                except Empty:
+                    pass
+                sleep(0.5)
+            else:
+                break
         else:
-            #print("A thread crashed")
+            logger.critical("A thread has crashed. Terminating")
             break
 
 except KeyboardInterrupt:
+    logger.warning("KeyboardInterrupt: Exiting")
     inputThread.join(0.01)
     eventThread.join(0.01)
     listener.join(0.01)
@@ -88,4 +107,4 @@ inputThread.join(0.01)
 eventThread.join(0.01)
 listener.join(0.01)
 
-print("It's done")
+logger.info("Exited")
