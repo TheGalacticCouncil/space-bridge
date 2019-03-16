@@ -318,7 +318,7 @@
     },
     {
         "name": "ACTIVATE_SELF_DESTRUCT",
-        "fields":[]
+        "fields": []
     },
     {
         "name": "CONFIRM_SELF_DESTRUCT",
@@ -566,6 +566,27 @@
             {
                 "name": "tubeId",
                 "datatype": "int"
+            }
+        ]
+    },
+    {
+        "name": "LOAD_OR_UNLOAD_TUBE",
+        "fields": [
+            {
+                "name": "tubeId",
+                "datatype": "int"
+            },
+            {
+                "name": "weapon",
+                "optional": true,
+                "datatype": "string",
+                "possibleValues": [
+                    "HOMING",
+                    "NUKE",
+                    "MINE",
+                    "EMP",
+                    "HVLI"
+                ]
             }
         ]
     },
