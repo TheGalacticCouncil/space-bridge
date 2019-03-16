@@ -46,22 +46,33 @@ export function validateEvent<T>(event: T): Promise<T> {
     // Iterate through defined fields
     if (!_.isEmpty(eventDefinition.fields)) {
         _.forEach(eventDefinition.fields, field => {
+
+            let fieldToAdd;
+
             if (field.datatype === "int") {
                 const maxValue = _.get(field, "max", Number.MAX_SAFE_INTEGER);
                 const minValue = _.get(field, "min", Number.MIN_SAFE_INTEGER);
 
-                payloadSchema[field.name] = Joi.number().integer().max(maxValue).min(minValue).required();
+                 fieldToAdd = Joi.number().integer().max(maxValue).min(minValue);
 
             } else if (field.datatype === "string") {
                 if (_.has(field, "possibleValues")) {
-                    payloadSchema[field.name] = Joi.string().valid(field.possibleValues).required();
+                    fieldToAdd = Joi.string().valid(field.possibleValues);
 
                 } else {
-                    payloadSchema[field.name] = Joi.string().required();
+                    fieldToAdd = Joi.string();
                 }
 
             } else if (field.datatype === "SPACEUNIT") {
-                payloadSchema[field.name] = Joi.number().required();
+                fieldToAdd = Joi.number();
+            }
+
+            if (!_.isUndefined(fieldToAdd)) {
+                if (_.get(field, "optional", false)) {
+                    payloadSchema[field.name] = fieldToAdd;
+                } else {
+                    payloadSchema[field.name] = fieldToAdd.required();
+                }
             }
         });
     }
