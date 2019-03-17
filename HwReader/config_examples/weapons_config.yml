@@ -165,8 +165,7 @@ Load7:
 
 # SHIELDS
 ShielFQ:
-  event: NEXT_SHIELD_FREQUENCY
-  event2: PREVIOUS_SHIELD_FREQUENCY
+  event: SET_SHIELD_FREQUENCY
   type: encoder
   clk: 24
   dt: 23
