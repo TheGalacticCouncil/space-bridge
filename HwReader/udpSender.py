@@ -6,7 +6,6 @@
 from time import sleep
 #import threading           # UdpSender is easyly threadable, but
 import socket               # on the one-core Pi-Zero-W it would
-from timeit import Timer    # likely be counterproductive here.
 
 #class UdpSender(threading.Thread):
 class UdpSender():
@@ -24,8 +23,6 @@ class UdpSender():
 
 if __name__ == '__main__':
 
-    # udpIP = '127.0.0.1'
-    #udpIP = '0.0.0.0'
     udpIP = '192.168.10.255'
     #udpIP = '<broadcast>'
 

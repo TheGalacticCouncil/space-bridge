@@ -107,6 +107,8 @@ if __name__ == "__main__":
         while True:
             value = analogInput[0].read()
             print(value)
-            sleep(0.1)
+            sleep(0.2)
+    except:
+        print('n')
     finally:
         GPIO.cleanup()
