@@ -179,7 +179,7 @@ shealds:
   invert: True
 
 
-# SELECT WEEAPONG
+# SELECT WEAPON
 Homing:
   event: SELECT_WEAPON
   type: push_button
