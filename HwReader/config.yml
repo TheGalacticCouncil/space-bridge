@@ -32,7 +32,7 @@
 
 General:
   type: config            # config
-  cycle: 0.001            # Recommended 0.001
+  cycle: 0.002            # Recommended 0.001
   station: Test Station   # HELM, ENGINEERING, SCIENCE
   udp_ip: 192.168.10.255
   udp_port: 41114
@@ -78,4 +78,3 @@ SwitchTest:
   type: switch
   pin: 12
   invert: True
-
