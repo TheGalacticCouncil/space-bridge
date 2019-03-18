@@ -13,11 +13,11 @@ class Logger():
  
     def __init__(self, module_name):
 
-        filename = 'HwReader.log'
+        filename = 'hwreader.log'
         
         # Creates an empty log file
         # Comment out to use append mode 
-        open(filename, 'w').close()
+        #open(filename, 'w').close()
 
         self.module_name = module_name
         self.logger = logging.getLogger(self.module_name)
@@ -28,8 +28,7 @@ class Logger():
         self.stream_handler = logging.StreamHandler()
 
         # Set handler levels
-        #logging_level=logging.DEBUG
-        self.stream_handler.setLevel(logging.DEBUG)
+        self.stream_handler.setLevel(logging.INFO)
         self.file_handler.setLevel(logging.DEBUG)
 
         # Set log format

@@ -29,7 +29,8 @@ end_time = time()
 import_time = int((end_time - start_time)*1000)
 
 logger = Logger(__name__)
-logger.info("Module imports compleate in %i ms" % import_time)
+
+logger.debug("Module imports compleate in %i ms" % import_time)
 
 start_time = time()
 
@@ -79,7 +80,15 @@ dont_stop = True
 
 end_time = time()
 boot_length = int((end_time - start_time)*1000)
-logger.info("Start-up complete in %i ms" % boot_length)
+logger.debug("Start-up complete in %i ms" % boot_length)
+logger.info("Start-up complete")
+
+# If one or more of the treads are not up, waits a while for them to wake up.
+if inputThread.is_alive() and eventThread.is_alive():
+    pass
+else:
+    logger.warning("Thread is not ready, waiting for it to boot.")
+    sleep(0.5)
 
 try:
     while True:

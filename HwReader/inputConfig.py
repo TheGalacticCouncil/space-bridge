@@ -83,11 +83,11 @@ class InputConfig():
 
         for name in settings:
             config = settings[name]
-            ##print(name)
-            ##print(settings[name])
+            self.logger.debug("New input: %s" % name)
             try:
                 # ANALOG
                 if config["type"] == "analog":
+                    self.logger.debug("Type: analog")
                     analog.append([
                         config['channel'],
                         name,                        # "name"
@@ -98,6 +98,7 @@ class InputConfig():
 
                 # ENCODER
                 elif config["type"] == "encoder":
+                    self.logger.debug("Type: encoder")
                     encoder.append([
                         config['clk'],
                         config['dt'],
@@ -108,7 +109,7 @@ class InputConfig():
 
                 # BUTTONS AND SWITCHES
                 elif config["type"] in ["push_button", "switch"]:
-                    ##print("button or switch detected")
+                    self.logger.debug("Type: button or switch")
                     button_conf = [
                         config["pin"],
                         name,
@@ -123,18 +124,23 @@ class InputConfig():
 
                 # GENERAL SETTINGS
                 elif config["type"] == "config":
+                    self.logger.debug("Settings")
                     try:
                         cycle = config["cycle"]
+                        self.logger.debug("Cycle set to: %s" % cycle)
                     except KeyError:
-                        print("No cycle time defined, using fallback: (1 ms).")
+                        self.logger.warning("No cycle time defined, using fallback: (%i ms)." % (int(cycle * 1000)))
                     try:
                         self.station = config["station"]
+                        self.logger.debug("Station set to: %s" % self.station)
                     except KeyError:
-                        print("No station defined, using fallback: ''.")
+                        self.logger.warning("No station defined, using fallback: ''.")
                     if "udp_ip" in config:
                         self.udp_ip = config["udp_ip"]
+                        self.logger.info("Broadcas address set to %s" % self.udp_ip)
                     if "udp_port" in config:
                         self.udp_port = config["udp_port"]
+                        self.logger.info("Broadcas port set to %s" % self.udp_port)
 
                 else:
                     self.logger.warning("Undefined input type '%s'" % settings[name]["type"])
