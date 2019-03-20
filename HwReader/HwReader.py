@@ -23,6 +23,10 @@ from EventMaker import EventMaker
 from KeyListener import KeyListener
 from eventConfig import EventConfig
 from queue import Queue, Empty
+
+filename = 'hwreader.log'
+open(filename, 'w').close()     # Creates an empty log file
+                                # Comment out to use append mode
 from logger import Logger
 
 end_time = time()
