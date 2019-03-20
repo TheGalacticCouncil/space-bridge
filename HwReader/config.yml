@@ -42,7 +42,6 @@ AnalogInp:
   type: analog
   channel: 0
   threshold: 0.01
-  decimals: 9
   min_clip: 0.00245
   max_clip: 0.998
 #  min: not implemented ** Should be auto-read from event!
@@ -78,4 +77,3 @@ SwitchTest:
   type: switch
   pin: 12
   invert: True
-

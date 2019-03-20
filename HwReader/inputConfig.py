@@ -24,7 +24,7 @@ class InputConfig():
         self._buttonConfig = []
         self._switchConfig = []
         self.station = ""
-        self.udp_ip = '12.168.10.255'
+        self.udp_ip = '192.168.10.255'
         self.udp_port = 41114 
 
     def settings(self):
@@ -92,9 +92,11 @@ class InputConfig():
                         config['channel'],
                         name,                        # "name"
                         config['threshold'],
-                        config['decimals'],
                         config['min_clip'],
-                        config['max_clip']])
+                        config['max_clip'],
+                        eventConfig.minimum(self.eventName(name)),
+                        eventConfig.maximum(self.eventName(name)),
+                        ])
 
                 # ENCODER
                 elif config["type"] == "encoder":
@@ -105,7 +107,8 @@ class InputConfig():
                         name,                        # name
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
-                        config['step'] ])
+                        config['step'] 
+                        ])
 
                 # BUTTONS AND SWITCHES
                 elif config["type"] in ["push_button", "switch"]:
@@ -125,23 +128,26 @@ class InputConfig():
                 # GENERAL SETTINGS
                 elif config["type"] == "config":
                     self.logger.debug("Settings")
-                    try:
+                    if "cycle" in config:
                         cycle = config["cycle"]
                         self.logger.debug("Cycle set to: %s" % cycle)
-                    except KeyError:
+                    else:
                         self.logger.warning("No cycle time defined, using fallback: (%i ms)." % (int(cycle * 1000)))
-                    try:
+                    if "station" in config:
                         self.station = config["station"]
                         self.logger.debug("Station set to: %s" % self.station)
-                    except KeyError:
+                    else:
                         self.logger.warning("No station defined, using fallback: ''.")
                     if "udp_ip" in config:
                         self.udp_ip = config["udp_ip"]
                         self.logger.info("Broadcas address set to %s" % self.udp_ip)
+                    else:
+                        self.logger.error("Broadcast address not defined.")
                     if "udp_port" in config:
                         self.udp_port = config["udp_port"]
                         self.logger.info("Broadcas port set to %s" % self.udp_port)
-
+                    else:
+                        self.logger.warning("Port not defined. Using default %i" % self.udp_port)
                 else:
                     self.logger.warning("Undefined input type '%s'" % settings[name]["type"])
 
@@ -178,24 +184,14 @@ class InputConfig():
 
             # Analog config
             channel = int(analogConfig[i][0]) #0
-
-            # Optional parameters
-            try:
-                name = analogConfig[i][1] # "Set_Analog"
-                threshold = float(analogConfig[i][2]) #0.01   # sets the threshold for registering change
-                decimals = int(analogConfig[i][3]) #9
-                minClip = float(analogConfig[i][4]) #0.00245  # sets minimum value clipping
-                maxClip = float(analogConfig[i][5]) #0.998    # sets maximum value clipping
-            except:
-                pass
-                if len(analogConfig[i]) == 1:
-                    analogInput.append(AnalogInput(channel))
-                elif len(analogConfig[i]) == 2:
-                    analogInput.append(AnalogInput(channel, name))
-                elif len(analogConfig[i]) > 2:
-                    analogInput.append(AnalogInput(channel, name, threshold, decimals))
-            else:
-                analogInput.append(AnalogInput(channel, name, threshold, decimals, minClip, maxClip))
+            name = analogConfig[i][1] # "Set_Analog"
+            threshold = float(analogConfig[i][2]) #0.01   # sets the threshold for registering change
+            minClip = float(analogConfig[i][3]) #0.00245  # sets minimum value clipping
+            maxClip = float(analogConfig[i][4]) #0.998    # sets maximum value clipping
+            minimum = float(analogConfig[i][5]) # 0       # Set the minimum value
+            maximum = float(analogConfig[i][6]) # 100     # Set the maximum value
+            analogInput.append(AnalogInput(channel, name, threshold, 
+                                           minClip, maxClip, minimum, maximum))
 
         # ENCODER INPUTS
         for i in range(len(encoderConfig)):
