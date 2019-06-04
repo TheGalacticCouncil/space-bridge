@@ -204,10 +204,24 @@ export class RequestCreator {
         if (_.has(message.payload, "weapon")) {
           this.selectAmmoType(message.payload.weapon);
         }
+
         request.method = "get";
         request.path = `set.lua?commandLoadTube(${message.payload.tubeId}, "${
           this.selectedAmmoType
         }")`;
+        return request;
+
+      case "LOAD_OR_UNLOAD_TUBE":
+        if (_.has(message.payload, "weapon")) {
+          this.selectAmmoType(message.payload.weapon);
+        }
+
+        request.method = "post";
+        request.path = "exec.lua";
+        request.body = `
+        us = getPlayerShip(-1)
+        us:commandLoadTube(${message.payload.tubeId}, "${this.selectedAmmoType}")
+        us:commandUnloadTube(${message.payload.tubeId})`;
         return request;
 
       // case "LOAD_REAR_TUBE":

@@ -1,10 +1,16 @@
 import axios from "axios";
 
+const config: any = require("../config.json");
+
 export class RequestSender {
 
+  serverAddress: string;
+  serverPort: string;
   url: string;
   constructor () {
-    this.url = "http://localhost:8080";
+    this.serverAddress = config.serverAddress;
+    this.serverPort = config.serverPort;
+    this.url = this.serverAddress + ":" + this.serverPort;
   }
 
   send(request: any) {
