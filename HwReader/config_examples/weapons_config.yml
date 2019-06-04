@@ -26,8 +26,8 @@
 General:
   type: config            # config
   cycle: 0.001            # Recommended 0.001
-  station: Test Station   # HELM, ENGINEERING, SCIENCE
-  udp_ip: 192.168.10.255
+  station: WEAPONS        # HELM, ENGINEERING, SCIENCE
+  udp_ip: 192.168.100.255
   udp_port: 41114
 
 
@@ -36,7 +36,7 @@ Fire0:
   event: FIRE_TUBE
   type: push_button
   pin: 2
-  invert: False
+  invert: True
   value:
     tubeId: 0
 
@@ -44,7 +44,7 @@ Fire1:
   event: FIRE_TUBE
   type: push_button
   pin: 3
-  invert: False
+  invert: True
   value:
     tubeId: 1
 
@@ -52,7 +52,7 @@ Fire2:
   event: FIRE_TUBE
   type: push_button
   pin: 4
-  invert: False
+  invert: True
   value:
     tubeId: 2
 
@@ -60,7 +60,7 @@ Fire3:
   event: FIRE_TUBE
   type: push_button
   pin: 17
-  invert: False
+  invert: True
   value:
     tubeId: 3
 
@@ -68,7 +68,7 @@ Fire4:
   event: FIRE_TUBE
   type: push_button
   pin: 27
-  invert: False
+  invert: True
   value:
     tubeId: 4
 
@@ -76,7 +76,7 @@ Fire5:
   event: FIRE_TUBE
   type: push_button
   pin: 22
-  invert: False
+  invert: True
   value:
     tubeId: 5
 
@@ -84,7 +84,7 @@ Fire6:
   event: FIRE_TUBE
   type: push_button
   pin: 5
-  invert: False
+  invert: True
   value:
     tubeId: 6
 
@@ -92,81 +92,80 @@ Fire7:
   event: FIRE_TUBE
   type: push_button
   pin: 6
-  invert: False
+  invert: True
   value:
     tubeId: 7
 
 
 # LOAD TUBE
 Load0:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 13
-  invert: False
+  invert: True
   value:
     tubeId: 0
 
 Load1:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 19
-  invert: False
+  invert: True
   value:
     tubeId: 1
 
 Load2:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 26
-  invert: False
+  invert: True
   value:
     tubeId: 2
 
 Load3:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 21
-  invert: False
+  invert: True
   value:
     tubeId: 3
 
 Load4:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 20
-  invert: False
+  invert: True
   value:
     tubeId: 4
 
 Load5:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 16
-  invert: False
+  invert: True
   value:
     tubeId: 5
 
 Load6:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 12
-  invert: False
+  invert: True
   value:
     tubeId: 6
 
 Load7:
-  event: LOAD_TUBE
+  event: LOAD_OR_UNLOAD_TUBE
   type: push_button
   pin: 25
-  invert: False
+  invert: True
   value:
     tubeId: 7
 
 
 # SHIELDS
 ShielFQ:
-  event: NEXT_SHIELD_FREQUENCY
-  event2: PREVIOUS_SHIELD_FREQUENCY
+  event: SET_SHIELD_FREQUENCY
   type: encoder
   clk: 24
   dt: 23
@@ -180,12 +179,12 @@ shealds:
   invert: True
 
 
-# SELECT WEEAPONG
+# SELECT WEAPON
 Homing:
   event: SELECT_WEAPON
   type: push_button
   pin: 8
-  invert: False
+  invert: True
   value:
     value: "HOMING"
 
@@ -193,7 +192,7 @@ Nuke:
   event: SELECT_WEAPON
   type: push_button
   pin: 7
-  invert: False
+  invert: True
   value:
     value: "NUKE"
 
@@ -201,7 +200,7 @@ Mine:
   event: SELECT_WEAPON
   type: push_button
   pin: 11
-  invert: False
+  invert: True
   value:
     value: "MINE"
 
@@ -209,7 +208,7 @@ Emp:
   event: SELECT_WEAPON
   type: push_button
   pin: 9
-  invert: False
+  invert: True
   value:
     value: "EMP"
 
@@ -217,7 +216,7 @@ hvli:
   event: SELECT_WEAPON
   type: push_button
   pin: 10
-  invert: False
+  invert: True
   value:
     value: "HVLI"
 

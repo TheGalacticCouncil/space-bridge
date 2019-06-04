@@ -84,7 +84,11 @@ class EventMaker(threading.Thread):
         return event
 
     def payloader(input_name, value, fields, settings):
-        
+        '''
+        Packs the payload for the event
+        Searches the dict of events for payload configurations
+        and interprits how to combine it with the [value].
+        '''
         payload = {}
 
         try:
@@ -125,8 +129,6 @@ class EventMaker(threading.Thread):
         udpPort = self.inputConfig.udp_port     #22100
 
         udpSender = UdpSender(udpIP, udpPort)
-        logger.info("Broadcas address set to %s" % udpIP)
-        logger.info("Broadcas port set to %s" % udpPort)
 
         try:
             # Main Loop
@@ -150,14 +152,14 @@ class EventMaker(threading.Thread):
                 end_time = time.time()
                 cycle_length = int((end_time - start_time) * 1000)
                 # logger.info("EventMaker cycle time: You were served in: %i ms" % cycle_length)
-                logger.info("EventMaker cycle time: %i ms" % cycle_length)
+                logger.debug("EventMaker cycle time: %i ms" % cycle_length)
 
 
                 start_time = time.time()
                 udpSender.run(json.dumps(event))    # SEND HERE #
                 end_time = time.time()
                 cycle_length = int((end_time - start_time) * 1000)
-                logger.info("udpSender delivery time: %i ms" % cycle_length)
+                logger.debug("udpSender delivery time: %i ms" % cycle_length)
 
                 # Sends the message (single threaded)
                 udpSender.run(json.dumps(event))

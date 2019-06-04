@@ -115,10 +115,10 @@ class InputPoller(threading.Thread):
                                 # False on disable and None when not changed
 
                 end_time = time()
-                cycle_length = int((end_time - start_time) * 1000)
+                cycle_length = (end_time - start_time)
                 if q >= 1000:
                     q = 0
-                    logger.info("InputPoller cycle time: %i ms" % cycle_length)
+                    logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
                 q += 1
 
                 sleep(self.cycleTime)

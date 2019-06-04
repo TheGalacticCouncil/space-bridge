@@ -11,6 +11,7 @@ __init__*
 
 # Test code
 test*
+config.yml
 
 # Logs
 *.log
