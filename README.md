@@ -11,7 +11,16 @@ To allow playing the spaceship bridge simulator game [_EmptyEpsilon_ ](http://da
 3. Sends HTTP requests based on input data to EmptyEpsilon's API
 4. Uses EmptyEpsilon's state for hardware console effects during gameplay
 
-NOTE: The project is still in an early phase, and no functionality is implemented at this time.
+**Progress**
+
+A physical prototype for Weapons station has been created and play tested. The whole pipeline worked and the game was somewhat playable. No performance or latency issues were discovered. EmptyEpsilon's  HTTP API has been found to not support all actions required to play, so some additions to the HTTP API will be contributed.
+
+**Next Milestones**
+
+    -Expand HTTP API
+    -Implement handling for more event types
+    -Build consoles for other stations
+
 
 ## CI
 
