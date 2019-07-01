@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import * as requestCreators from "./requestCreators";
+import * as requestCreator from "./requestCreator";
 
 const NOT_SELECTED = "NOT_SELECTED";
 
@@ -99,40 +99,40 @@ export class EventHandler {
             //     console.log("SET_SUBSYSTEM_POWER: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             case "SET_REACTOR_POWER":
-                return requestCreators.setReactorPower(message.event.value);
+                return requestCreator.setReactorPower(message.event.value);
             case "SET_BEAM_WEAPONS_POWER":
-                return requestCreators.setBeamWeaponsPower(message.event.value);
+                return requestCreator.setBeamWeaponsPower(message.event.value);
             case "SET_MISSILE_SYSTEM_POWER":
-                return requestCreators.setMissileSystemPower(message.event.value);
+                return requestCreator.setMissileSystemPower(message.event.value);
             case "SET_MANEUVERING_POWER":
-                return requestCreators.setManeuveringPower(message.event.value);
+                return requestCreator.setManeuveringPower(message.event.value);
             case "SET_IMPULSE_ENGINES_POWER":
-                return requestCreators.setImpulseEnginePower(message.event.value);
+                return requestCreator.setImpulseEnginePower(message.event.value);
             case "SET_JUMP_DRIVE_POWER":
-                return requestCreators.setJumpDrivePower(message.event.value);
+                return requestCreator.setJumpDrivePower(message.event.value);
             case "SET_WARP_DRIVE_POWER":
-                return requestCreators.setWarpDrivePower(message.event.value);
+                return requestCreator.setWarpDrivePower(message.event.value);
             case "SET_FRONT_SHIELD_GENERATOR_POWER":
-                return requestCreators.setFrontShieldPower(message.event.value);
+                return requestCreator.setFrontShieldPower(message.event.value);
             case "SET_REAR_SHIELD_GENERATOR_POWER":
-                return requestCreators.setRearShieldPower(message.event.value);
+                return requestCreator.setRearShieldPower(message.event.value);
             // case "SET_SUBSYSTEM_COOLANT":
             //     console.log("SET_SUBSYSTEM_COOLANT", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             case "SET_REACTOR_COOLANT":
-                return requestCreators.setReactorCoolant(message.event.value);
+                return requestCreator.setReactorCoolant(message.event.value);
             case "SET_BEAM_WEAPONS_COOLANT":
-                return requestCreators.setBeamWeaponsCoolant(message.event.value);
+                return requestCreator.setBeamWeaponsCoolant(message.event.value);
             case "SET_MANEUVERING_COOLANT":
-                return requestCreators.setManeuveringCoolant(message.event.value);
+                return requestCreator.setManeuveringCoolant(message.event.value);
             case "SET_IMPULSE_ENGINES_COOLANT":
-                return requestCreators.setImpulseEngineCoolant(message.event.value);
+                return requestCreator.setImpulseEngineCoolant(message.event.value);
             case "SET_WARP_DRIVE_COOLANT":
-                return requestCreators.setWarpDriveCoolant(message.event.value);
+                return requestCreator.setWarpDriveCoolant(message.event.value);
             case "SET_FRONT_SHIELD_GENERATOR_COOLANT":
-                return requestCreators.setFrontShieldCoolant(message.event.value);
+                return requestCreator.setFrontShieldCoolant(message.event.value);
             case "SET_REAR_SHIELD_GENERATOR_COOLANT":
-                return requestCreators.setRearShieldCoolant(message.event.value);
+                return requestCreator.setRearShieldCoolant(message.event.value);
             // case "REPAIR":
             //     console.log("REPAIR: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
@@ -177,24 +177,24 @@ export class EventHandler {
                 if (_.has(message.payload, "weapon")) {
                     this.selectAmmoType(message.payload.weapon);
                 }
-                return requestCreators.loadTube(message.payload.tubeId, this.selectedAmmoType);
+                return requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType);
 
             case "LOAD_OR_UNLOAD_TUBE":
                 if (_.has(message.payload, "weapon")) {
                     this.selectAmmoType(message.payload.weapon);
                 }
 
-                requestCreators.loadTube(message.payload.tubeId, this.selectedAmmoType);
-                return requestCreators.unloadTube(message.payload.tubeId);
+                requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType);
+                return requestCreator.unloadTube(message.payload.tubeId);
 
             // case "LOAD_REAR_TUBE":
             //     console.log("LOAD_REAR_TUBE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             case "FIRE_TUBE":
-                return requestCreators.fireTube(message.payload.tubeId);
+                return requestCreator.fireTube(message.payload.tubeId);
 
             case "UNLOAD_TUBE":
-                return requestCreators.unloadTube(message.payload.tubeId);
+                return requestCreator.unloadTube(message.payload.tubeId);
 
             // case "TARGET_NEXT_ENEMY":
             //     console.log("TARGET_NEXT_ENEMY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
@@ -204,7 +204,7 @@ export class EventHandler {
             //     break;
             case "SET_BEAM_TARGET":
                 this.setBeamTarget(message.payload.value);
-                return requestCreators.setBeamTarget(message.payload.value);
+                return requestCreator.setBeamTarget(message.payload.value);
 
             case "NEXT_BEAM_TARGET":
                 this.nextBeamTarget();
@@ -216,29 +216,29 @@ export class EventHandler {
 
             case "NEXT_BEAM_FREQUENCY":
                 this.increaseBeamFrequency();
-                return requestCreators.setBeamFrequency(this.beamFrequency);
+                return requestCreator.setBeamFrequency(this.beamFrequency);
 
             case "PREVIOUS_BEAM_FREQUENCY":
                 this.decreaseBeamFrequency();
-                return requestCreators.setBeamFrequency(this.beamFrequency);
+                return requestCreator.setBeamFrequency(this.beamFrequency);
 
             case "SET_SHIELD_FREQUENCY":
-                return requestCreators.setShieldFrequency(message.payload.value);
+                return requestCreator.setShieldFrequency(message.payload.value);
 
             case "NEXT_SHIELD_FREQUENCY":
-                return requestCreators.increaseShieldFrequency();
+                return requestCreator.increaseShieldFrequency();
 
             case "PREVIOUS_SHIELD_FREQUENCY":
-                return requestCreators.decreaseShieldFrequency();
+                return requestCreator.decreaseShieldFrequency();
 
             case "CALIBRATE_SHIELDS":
-                return requestCreators.calibrateShields(message.payload.value);
+                return requestCreator.calibrateShields(message.payload.value);
 
             case "SHIELDS_UP":
-                return requestCreators.shieldsUp()
+                return requestCreator.shieldsUp()
 
             case "SHIELDS_DOWN":
-                return requestCreators.shieldsDown();
+                return requestCreator.shieldsDown();
 
             // case "MANUAL_TARGETING":
             //     console.log("MANUAL_TARGETING: ", message.event, "-----NOT_IMPLEMENTED!!-----");
