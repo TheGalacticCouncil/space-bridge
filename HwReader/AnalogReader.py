@@ -42,6 +42,9 @@ class AnalogInput():
         self.minimum = minimum
         self.trigger = trigger
 
+        if trigger != 0:
+            GPIO.setup(self.trigger, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
     def readRaw(self):
         """
         Reads the value and stores the old value in buffer
@@ -93,6 +96,7 @@ class AnalogInput():
         if self.trigger == 0:
             return self.update()
         else:
+            GPIO.setmode(GPIO.BCM)
             triggered = GPIO.input(self.trigger) == GPIO.LOW
             if triggered:
                 return self.update()
