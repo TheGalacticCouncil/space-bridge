@@ -102,7 +102,7 @@ class InputPoller(threading.Thread):
                 # SWITCH is read
                 #
                 # A value is sent only if value is changed.
-                # Only a single sginal is sent per press.
+                # Only a single signal is sent per press.
                 # Thus, the press must be registered properly!
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
