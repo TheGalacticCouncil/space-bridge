@@ -96,6 +96,7 @@ class InputConfig():
                         config['max_clip'],
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
+                        config['trigger']
                         ])
 
                 # ENCODER
@@ -190,8 +191,10 @@ class InputConfig():
             maxClip = float(analogConfig[i][4]) #0.998    # sets maximum value clipping
             minimum = float(analogConfig[i][5]) # 0       # Set the minimum value
             maximum = float(analogConfig[i][6]) # 100     # Set the maximum value
+            trigger = int(analogConfig[i][7])
             analogInput.append(AnalogInput(channel, name, threshold, 
-                                           minClip, maxClip, minimum, maximum))
+                                           minClip, maxClip, 
+                                           minimum, maximum, trigger))
 
         # ENCODER INPUTS
         for i in range(len(encoderConfig)):

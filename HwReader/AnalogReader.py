@@ -22,7 +22,8 @@ class AnalogInput():
     """
 
     def __init__(self, inputChannel, name='', threshold=0, 
-                 clip_min=0.0, clip_max=1.0, minimum=0, maximum=1):
+                 clip_min=0.0, clip_max=1.0, minimum=0, maximum=1, 
+                 trigger=0):
         # Input name
         self.name = name
 
@@ -39,6 +40,7 @@ class AnalogInput():
         self.clip_min = clip_min
         self.maximum = maximum
         self.minimum = minimum
+        self.trigger = trigger
 
     def readRaw(self):
         """
@@ -84,6 +86,20 @@ class AnalogInput():
         return int(value)
 
     def readUpdate(self):
+        """
+        Returns the read value and whether it has changed from before, 
+        if trigger is active or 0.
+        """
+        if self.trigger == 0:
+            return self.update()
+        else:
+            triggered = GPIO.input(self.trigger) == GPIO.LOW
+            if triggered:
+                return self.update()
+            else:
+                return None, False, self.name
+
+    def update(self):
         """
         Returns the read value and whether it has changed from before.
         """
