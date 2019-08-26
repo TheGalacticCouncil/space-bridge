@@ -13,8 +13,6 @@
 #   type: encoder
 #   clk: 17
 #   dt: 24
-#   min: -100
-#   max: 100
 #   step: 1
 #   value:
 #     payload: heavy
@@ -27,6 +25,7 @@
 #  decimals: 9
 #  min_clip: 0.00245
 #  max_clip: 0.998
+#  trigger: 12             # Pin defining the enable
 #  offset: 
 #  maximum: 
 
@@ -42,9 +41,9 @@ AnalogInp:
   type: analog
   channel: 0
   threshold: 0.01
-  decimals: 9
   min_clip: 0.00245
   max_clip: 0.998
+  trigger: 12
 #  min: not implemented ** Should be auto-read from event!
 #  max: not implemented
 
@@ -72,9 +71,9 @@ ButtonTest:
     tubeId: 0123
     weapon: NUKE
 
-SwitchTest:
-  event: SHIELDS_UP
-  event2: SHIELDS_DOWN
-  type: switch
-  pin: 12
-  invert: True
+# SwitchTest:
+#   event: SHIELDS_UP
+#   event2: SHIELDS_DOWN
+#   type: switch
+#   pin: 12
+#   invert: True

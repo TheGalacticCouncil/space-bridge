@@ -21,8 +21,9 @@ class AnalogInput():
     An object to read an analog MCP3008 hardware input.
     """
 
-    def __init__(self, inputChannel, name='', threshold=0, decimals=2,
-    minimum=0.0, maximum=1.0):
+    def __init__(self, inputChannel, name='', threshold=0, 
+                 clip_min=0.0, clip_max=1.0, minimum=0, maximum=1, 
+                 trigger=0):
         # Input name
         self.name = name
 
@@ -35,9 +36,14 @@ class AnalogInput():
 
         # Input configuration variables
         self.threshold = threshold
-        self.decimals = decimals
+        self.clip_max = clip_max
+        self.clip_min = clip_min
         self.maximum = maximum
         self.minimum = minimum
+        self.trigger = trigger
+
+        if trigger != 0:
+            GPIO.setup(self.trigger, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def readRaw(self):
         """
@@ -49,18 +55,18 @@ class AnalogInput():
     def read(self):
         """
         Reads the raw value and:
-        - rounds it to [decimals].
-          - If [decimals] = 0, ommits rounding.
         - Rescales the input from [minimum] to [maximum].
+        - (no longer rounds, because it is redundent when
+          the value will be converted to int)
         """
-        decimals = self.decimals
-        minimum = self.minimum
-        maximum = self.maximum
+
+        clip_min = self.clip_min
+        clip_max = self.clip_max
 
         value = AnalogInput.readRaw(self)          #self.analogInput.value
 
         # Scaling
-        value = (value-minimum)/(maximum-minimum)
+        value = (value-clip_min)/(clip_max-clip_min)
 
         #Clipping
         if value < 0.0:
@@ -68,17 +74,36 @@ class AnalogInput():
         if value > 1.0:
             value = 1.0
 
-        # Rounding
-        if decimals > 0:
-            value = round(value, decimals)
-
         # after processing is done, "value" is stored in "self.value"
         # This is done despite it being done in readRaw, because
         # this time the value is also filtered. The old value remains correct.
         self.value = value
         return self.value
 
+    def rescale(self):
+        '''Re-scales an input to match the event format requirement'''
+        self.value
+        self.maximum
+        self.minimum
+        value = self.value * (self.maximum-self.minimum) + self.minimum
+        return int(value)
+
     def readUpdate(self):
+        """
+        Returns the read value and whether it has changed from before, 
+        if trigger is active or 0.
+        """
+        if self.trigger == 0:
+            return self.update()
+        else:
+            GPIO.setmode(GPIO.BCM)
+            triggered = GPIO.input(self.trigger) == GPIO.LOW
+            if triggered:
+                return self.update()
+            else:
+                return None, False, self.name
+
+    def update(self):
         """
         Returns the read value and whether it has changed from before.
         """
@@ -90,10 +115,13 @@ class AnalogInput():
 
         if delta > self.threshold:
             changed = True
-            self.oldValue = self.value        #oldValue is updated only if changed = True
-            return self.value, changed, self.name
+            #oldValue is updated only if changed = True
+            self.oldValue = self.value
+            # Value is rescaled and changed in to an int
+            value = AnalogInput.rescale(self)
+            return value, changed, self.name
         else:
-            return self.value, changed, self.name
+            return None, changed, self.name
 
 
 # Module can be run directly to test its function
@@ -101,12 +129,18 @@ if __name__ == "__main__":
     from time import sleep
 
     analogInput=[]
-    analogInput.append(AnalogInput(0))
+    analogInput.append(AnalogInput(inputChannel=0, 
+                                   threshold=0.01,
+                                   clip_min=0.00245, 
+                                   clip_max=0.998, 
+                                   minimum=-100, 
+                                   maximum=200))
 
     try:
         while True:
-            value = analogInput[0].read()
-            print(value)
+            value, new, b = analogInput[0].readUpdate()
+            if new:
+                print(value)
             sleep(0.2)
     except:
         print('n')
