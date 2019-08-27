@@ -1,0 +1,137 @@
+Timer unit: 1e-06 s
+
+Total time: 12.3154 s
+File: /home/pi/space-bridge/HwReader/inputPoller.py
+Function: run at line 33
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    33                                               @profile
+    34                                               def run(self):
+    35                                           
+    36         1       5818.0   5818.0      0.0          logger = Logger(__name__)
+    37         1      29967.0  29967.0      0.2          logger.info("InputPoller thread started")
+    38                                           
+    39         1         34.0     34.0      0.0          q = 0   #Counter for a performance metric
+    40                                           
+    41                                                   # Analog Init
+    42         1         30.0     30.0      0.0          a_value=[]
+    43         2        104.0     52.0      0.0          for i in range(len(self.analogInput)):
+    44         1         48.0     48.0      0.0              a_value.append(0)
+    45                                           
+    46                                                   # Encoder Init
+    47         1         30.0     30.0      0.0          counter=[]
+    48         3        120.0     40.0      0.0          for i in range(len(self.encoderInput)):
+    49         2         74.0     37.0      0.0              counter.append(0)
+    50                                           
+    51                                           
+    52                                                   # PERFORMANCE IMPROVEMENTS
+    53                                                   # Precalculates ranges for polling "for" statements
+    54                                                   #
+    55         1         48.0     48.0      0.0          analog_range = range(len(self.analogInput))
+    56         1         51.0     51.0      0.0          encoder_range = range(len(self.encoderInput))
+    57         1         48.0     48.0      0.0          button_range = range(len(self.buttonInput))
+    58         1         48.0     48.0      0.0          switch_range = range(len(self.switchInput))
+    59                                                   #
+    60                                                   #
+    61                                                   # Converts class objects to local objects 
+    62                                                   # to reduce refrencing and improve performance
+    63                                                   #
+    64         1         42.0     42.0      0.0          cycleTime = self.cycleTime
+    65         1         32.0     32.0      0.0          analogInput = self.analogInput
+    66         1         30.0     30.0      0.0          encoderInput = self.encoderInput
+    67         1         28.0     28.0      0.0          buttonInput = self.buttonInput
+    68         1         28.0     28.0      0.0          switchInput = self.switchInput
+    69         1         29.0     29.0      0.0          inputQueue = self.inputQueue
+    70                                           
+    71         1         26.0     26.0      0.0          try:
+    72                                           
+    73                                                       # Main Loop
+    74         1         25.0     25.0      0.0              while True:
+    75                                           
+    76      5308     344971.0     65.0      2.8                  start_time = time()
+    77                                           
+    78                                                           # POTENTIOMETER is read
+    79                                                           #
+    80                                                           # The operation is non-blocking.
+    81                                                           # If the queue is full, the new value is discarded.
+    82                                                           #
+    83                                                           # This is done, because analog inputs generate a
+    84                                                           # massive flow of new inputs for even a small change.
+    85                                                           # Discarding a few intermediary values will not hurt
+    86                                                           # accuarcy, but improves responciveness a great deal.
+    87                                                           #
+    88     10616     385000.0     36.3      3.1                  for i in analog_range:
+    89      5308     942546.0    177.6      7.7                      a_value[i], changed, name = analogInput[i].readUpdate()
+    90      5308     190658.0     35.9      1.5                      if changed == True:
+    91                                                                   try:
+    92                                                                       inputQueue.put_nowait([name, a_value[i]])
+    93                                                                   except Full:
+    94                                                                       pass
+    95                                           
+    96                                                           # ENCODER is read
+    97                                                           #
+    98                                                           # If a new value is received, purges the
+    99                                                           # queue and adds a new entry to it.
+   100                                                           # The operation is non-blocking.
+   101                                                           #
+   102     15924     516944.0     32.5      4.2                  for i in encoder_range:
+   103     10616    2123803.0    200.1     17.2                      counter[i], changed, name = encoderInput[i].increment(counter[i])
+   104     10616     378540.0     35.7      3.1                      if changed == True:
+   105       139       4014.0     28.9      0.0                          try:
+   106       139      49158.0    353.7      0.4                              inputQueue.get_nowait()
+   107       134       5969.0     44.5      0.0                          except Empty:
+   108       134       6082.0     45.4      0.0                              pass
+   109       139      85983.0    618.6      0.7                          inputQueue.put([name, counter[i]])
+   110                                           
+   111                                                           # BUTTON is read
+   112                                                           #
+   113                                                           # A value is sent only if value is True.
+   114                                                           # Only a single True is sent for a press
+   115                                                           # Thus, the press must be registered properly!
+   116                                                           # Button press is blocking and waits to deposit
+   117                                                           # its value. (Sort of, but not exactly like an interrupt)
+   118     10616     356242.0     33.6      2.9                  for i in button_range:
+   119      5308     710593.0    133.9      5.8                      b_value, name = buttonInput[i].read()
+   120      5308     181606.0     34.2      1.5                      if b_value == True:
+   121                                                                   inputQueue.put([name, b_value])
+   122                                           
+   123                                                           # SWITCH is read
+   124                                                           #
+   125                                                           # A value is sent only if value is changed.
+   126                                                           # Only a single signal is sent per press.
+   127                                                           # Thus, the press must be registered properly!
+   128                                                           # Button press is blocking and waits to deposit
+   129                                                           # its value. (Sort of, but not exactly like an interrupt)
+   130      5308     184000.0     34.7      1.5                  for i in switch_range:
+   131                                                               s_value, name = switchInput[i].read()
+   132                                                               if s_value == True or s_value == False:
+   133                                                                   inputQueue.put([name, s_value])
+   134                                                               else:
+   135                                                                   pass    # Switch returns only a True on enable
+   136                                                                           # False on disable and None when not changed
+   137                                           
+   138                                                           # PERFORMANCE METRICS
+   139                                                           #
+   140      5308     256576.0     48.3      2.1                  end_time = time()
+   141      5308     198341.0     37.4      1.6                  cycle_length = (end_time - start_time)
+   142      5308     168559.0     31.8      1.4                  if q >= 200:
+   143        26        774.0     29.8      0.0                      q = 0
+   144        26     109641.0   4217.0      0.9                      logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
+   145      5308     171048.0     32.2      1.4                  q += 1
+   146                                           
+   147      5308     178019.0     33.5      1.4                  if cycle_length < cycleTime:
+   148      5123    4729661.0    923.2     38.4                      sleep(cycleTime - cycle_length)
+   149                                                           else:
+   150                                                               #logger.debug("Cycle time exceeded: cycle %i ns" % int(cycle_length * 1000 * 1000))
+   151                                                               #print((cycle_length * 1000 * 1000))
+   152                                                               ###########################################################################
+   153                                                               # Should we reserve some minimum sleep to give other threads time to run? #
+   154                                                               ###########################################################################
+   155                                                               pass
+   156                                           
+   157                                                   except KeyboardInterrupt:
+   158                                                       pass
+   159                                                   finally:
+   160                                                       GPIO.cleanup()
+
