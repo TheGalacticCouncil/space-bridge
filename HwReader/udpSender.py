@@ -15,6 +15,7 @@ class UdpSender():
         self.broadcast_ip = broadcast_ip
         self.port = port
 
+    @profile
     def run(self, message):
         byte_message = bytearray(message,"utf-8")
         network = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

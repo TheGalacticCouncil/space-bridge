@@ -45,6 +45,7 @@ class AnalogInput():
         if trigger != 0:
             GPIO.setup(self.trigger, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+    @profile
     def readRaw(self):
         """
         Reads the value and stores the old value in buffer
@@ -52,6 +53,7 @@ class AnalogInput():
         self.value = self.analogInput.value    # new value is read and stored
         return self.value
 
+    @profile
     def read(self):
         """
         Reads the raw value and:
@@ -88,6 +90,7 @@ class AnalogInput():
         value = self.value * (self.maximum-self.minimum) + self.minimum
         return int(value)
 
+    @profile
     def readUpdate(self):
         """
         Returns the read value and whether it has changed from before, 
@@ -103,6 +106,7 @@ class AnalogInput():
             else:
                 return None, False, self.name
 
+    @profile
     def update(self):
         """
         Returns the read value and whether it has changed from before.
