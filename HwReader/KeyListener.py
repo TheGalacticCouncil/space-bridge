@@ -15,6 +15,7 @@ class KeyListener(threading.Thread):
         #self.cycleTime = sleep
         self.inputQueue = inputQueue
 
+    @profile
     def run(self):
         input()                        # Wait for enter
         self.inputQueue.put(False)      # When enter is pressed, send True

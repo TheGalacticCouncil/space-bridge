@@ -33,7 +33,7 @@ class EncoderInput():
 
         self.previousClockState = GPIO.input(self.clockPin)
 
-
+    @profile
     def read(self, counter=0):
         '''
         Reads the encoder state and increments
@@ -58,7 +58,7 @@ class EncoderInput():
 
         return counter
 
-
+    @profile
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
         counter += delta*self.step
@@ -69,7 +69,7 @@ class EncoderInput():
                 counter = self.minimum
         return counter
 
-
+    @profile
     def increment(self, counter=None):
         """
         - Reads the encoder,

@@ -29,7 +29,8 @@ class InputPoller(threading.Thread):
 
         self.cycleTime = sleep
         self.inputQueue = inputQueue
-
+        
+    @profile
     def run(self):
 
         logger = Logger(__name__)
