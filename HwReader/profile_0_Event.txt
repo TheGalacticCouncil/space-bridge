@@ -1,0 +1,420 @@
+Timer unit: 1e-06 s
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/AnalogReader.py
+Function: readRaw at line 48
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    48                                               @profile
+    49                                               def readRaw(self):
+    50                                                   """
+    51                                                   Reads the value and stores the old value in buffer
+    52                                                   """
+    53                                                   self.value = self.analogInput.value    # new value is read and stored
+    54                                                   return self.value
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/AnalogReader.py
+Function: read at line 56
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    56                                               @profile
+    57                                               def read(self):
+    58                                                   """
+    59                                                   Reads the raw value and:
+    60                                                   - Rescales the input from [minimum] to [maximum].
+    61                                                   - (no longer rounds, because it is redundent when
+    62                                                     the value will be converted to int)
+    63                                                   """
+    64                                           
+    65                                                   clip_min = self.clip_min
+    66                                                   clip_max = self.clip_max
+    67                                           
+    68                                                   value = AnalogInput.readRaw(self)          #self.analogInput.value
+    69                                           
+    70                                                   # Scaling
+    71                                                   value = (value-clip_min)/(clip_max-clip_min)
+    72                                           
+    73                                                   #Clipping
+    74                                                   if value < 0.0:
+    75                                                       value = 0.0
+    76                                                   if value > 1.0:
+    77                                                       value = 1.0
+    78                                           
+    79                                                   # after processing is done, "value" is stored in "self.value"
+    80                                                   # This is done despite it being done in readRaw, because
+    81                                                   # this time the value is also filtered. The old value remains correct.
+    82                                                   self.value = value
+    83                                                   return self.value
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/AnalogReader.py
+Function: readUpdate at line 93
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    93                                               @profile
+    94                                               def readUpdate(self):
+    95                                                   """
+    96                                                   Returns the read value and whether it has changed from before, 
+    97                                                   if trigger is active or 0.
+    98                                                   """
+    99                                                   if self.trigger == 0:
+   100                                                       return self.update()
+   101                                                   else:
+   102                                                       GPIO.setmode(GPIO.BCM)
+   103                                                       triggered = GPIO.input(self.trigger) == GPIO.LOW
+   104                                                       if triggered:
+   105                                                           return self.update()
+   106                                                       else:
+   107                                                           return None, False, self.name
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/AnalogReader.py
+Function: update at line 109
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   109                                               @profile
+   110                                               def update(self):
+   111                                                   """
+   112                                                   Returns the read value and whether it has changed from before.
+   113                                                   """
+   114                                                   changed = False
+   115                                           
+   116                                                   AnalogInput.read(self)                    #value is read in to self.value
+   117                                           
+   118                                                   delta = abs(self.value - self.oldValue)
+   119                                           
+   120                                                   if delta > self.threshold:
+   121                                                       changed = True
+   122                                                       #oldValue is updated only if changed = True
+   123                                                       self.oldValue = self.value
+   124                                                       # Value is rescaled and changed in to an int
+   125                                                       value = AnalogInput.rescale(self)
+   126                                                       return value, changed, self.name
+   127                                                   else:
+   128                                                       return None, changed, self.name
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/EncoderReader.py
+Function: read at line 36
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    36                                               @profile
+    37                                               def read(self, counter=0):
+    38                                                   '''
+    39                                                   Reads the encoder state and increments
+    40                                                   the counter accordingly.
+    41                                           
+    42                                                   Use increment() to make use of more
+    43                                                   advanced features.
+    44                                                   '''
+    45                                           
+    46                                                   clockState = GPIO.input(self.clockPin)
+    47                                                   dtState = GPIO.input(self.dtPin)
+    48                                           
+    49                                                   if clockState != self.previousClockState:
+    50                                                       if dtState != clockState and dtState == 1:
+    51                                                           counter += 1
+    52                                                       elif dtState == clockState and dtState == 1:
+    53                                                           counter -= 1
+    54                                                       else:
+    55                                                           pass
+    56                                           
+    57                                                   self.previousClockState = clockState
+    58                                           
+    59                                                   return counter
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/EncoderReader.py
+Function: rescale at line 61
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    61                                               @profile
+    62                                               def rescale(self, counter, delta):
+    63                                                   '''Re-scales an input to requirement'''
+    64                                                   counter += delta*self.step
+    65                                                   if self.minimum != None and self.maximum != None:
+    66                                                       if counter > self.maximum:
+    67                                                           counter = self.maximum
+    68                                                       if counter < self.minimum:
+    69                                                           counter = self.minimum
+    70                                                   return counter
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/EncoderReader.py
+Function: increment at line 72
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    72                                               @profile
+    73                                               def increment(self, counter=None):
+    74                                                   """
+    75                                                   - Reads the encoder,
+    76                                                   - increments the counter,
+    77                                                   - rescales and
+    78                                                   - returns the counter.
+    79                                           
+    80                                                   - Returns whether the counter
+    81                                                     value has changed.
+    82                                                   - The counter can be overridden
+    83                                                     by giving a value as parameter.
+    84                                                   """
+    85                                           
+    86                                                   # If no counter override is defined, self.counter is used
+    87                                                   if counter == None:
+    88                                                       counter = self.counter
+    89                                           
+    90                                                   changed=False
+    91                                           
+    92                                                   delta = EncoderInput.read(self)
+    93                                           
+    94                                                   # If input has changed
+    95                                                   if abs(delta) > 0:
+    96                                                       changed = True
+    97                                                       counter = EncoderInput.rescale(self, counter, delta)
+    98                                           
+    99                                                       self.counter = counter
+   100                                                       return counter, changed, self.name
+   101                                                   else:
+   102                                                       return self.counter, changed, self.name
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/buttonInput.py
+Function: read at line 25
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    25                                               @profile
+    26                                               def read(self):
+    27                                                   """
+    28                                                   Reads the push button state.
+    29                                                   Returns True, if the button is pressed. 
+    30                                                   """
+    31                                           
+    32                                                   if self.invert == True:
+    33                                                       state = GPIO.input(self.pin) == GPIO.LOW
+    34                                                   else:
+    35                                                       state = GPIO.input(self.pin) == GPIO.HIGH
+    36                                           
+    37                                                   if state == True:
+    38                                                       if state != self.last_state:
+    39                                                           self.last_state = True
+    40                                                           return True, self.name
+    41                                                   else:
+    42                                                       self.last_state = False
+    43                                                   
+    44                                                   return False, self.name
+
+Total time: 0 s
+File: /home/pi/space-bridge/HwReader/buttonInput.py
+Function: read at line 61
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    61                                               @profile
+    62                                               def read(self):
+    63                                                   """
+    64                                                   Reads the switch state.
+    65                                                   Returns True, if the button is pressed. 
+    66                                                   """
+    67                                           
+    68                                                   if self.invert == True:
+    69                                                       state = GPIO.input(self.pin) == GPIO.LOW
+    70                                                   else:
+    71                                                       state = GPIO.input(self.pin) == GPIO.HIGH
+    72                                           
+    73                                                   if state == True:
+    74                                                       if state != self.last_state:
+    75                                                           self.last_state = True
+    76                                                           return True, self.name
+    77                                           
+    78                                                   else:
+    79                                                       if state != self.last_state:
+    80                                                           self.last_state = False
+    81                                                           return False, self.name
+    82                                                   
+    83                                                   return None, self.name
+
+Total time: 0.001682 s
+File: /home/pi/space-bridge/HwReader/udpSender.py
+Function: run at line 18
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    18                                               @profile
+    19                                               def run(self, message):
+    20         1         87.0     87.0      5.2          byte_message = bytearray(message,"utf-8")
+    21         1        245.0    245.0     14.6          network = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    22         1        118.0    118.0      7.0          network.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    23         1       1232.0   1232.0     73.2          network.sendto(byte_message, (self.broadcast_ip, self.port))
+
+Total time: 0.001219 s
+File: EventMaker.py
+Function: event at line 35
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    35                                               @profile
+    36                                               def event(self, input_name, value):
+    37                                                   '''
+    38                                                   Formats the event input in to an event.
+    39                                                   - Takes the input name and value as inputs
+    40                                                   - Translates the input name to an event name
+    41                                                   ...
+    42                                                   '''
+    43                                           
+    44         1        120.0    120.0      9.8          settings = InputConfig.settings(self.inputConfig)
+    45                                           
+    46                                                   # Collects event data
+    47                                                   #
+    48                                                   # A reminder:
+    49                                                   # This implementation of POSIX returns a float.
+    50                                                   # The default rounding used rounds "half down".
+    51                                                   # Therefore the timestamp may be at most 0.1 ms
+    52                                                   # too small.
+    53                                           
+    54         1         85.0     85.0      7.0          posix = time.time() * 1000
+    55         1         29.0     29.0      2.4          event = {}
+    56         1         24.0     24.0      2.0          payload = {}
+    57         1         84.0     84.0      6.9          event_name = InputConfig.eventName(self.inputConfig , input_name)
+    58                                           
+    59                                                   # Makes the payload
+    60                                                   #
+    61                                                   # Dev. Status note:
+    62                                                   # Currently supports only a single payload field
+    63                                           
+    64         1         71.0     71.0      5.8          fields = self.eventConfig.event(event_name)
+    65                                           
+    66         1        577.0    577.0     47.3          payload = EventMaker.payloader(input_name, value, fields, settings)
+    67                                           
+    68         1         34.0     34.0      2.8          if payload == {}:
+    69                                                       # If a secondary event is defined, the input is a binary
+    70                                                       # input. Only values 1 and 0 are significant.
+    71                                                       if "event2" in settings[input_name] and value == 0:
+    72                                                           secondary_event = settings[input_name]["event2"]
+    73                                                           event_name = secondary_event
+    74                                                       ##else: Use the primary event_name, that was defined earlier.
+    75                                           
+    76                                                   # Formats the event
+    77                                                   #
+    78         1         51.0     51.0      4.2          event["timestamp"] = int(posix)                 # "timestamp": "ms-from-epoch, number",
+    79         1         21.0     21.0      1.7          event["sourceComponent"] = "HwReader"            # "sourceComponent": "HwReader",
+    80         1         26.0     26.0      2.1          event["sourceIp"] = self.ip                      # "sourceIp": "We might need this",
+    81         1         21.0     21.0      1.7          event["event"] = event_name                      # "event": "SET_THROTTLE",
+    82         1         29.0     29.0      2.4          event["station"] = self.station                  # "station": "HELM",
+    83         1         29.0     29.0      2.4          event["payload"] = payload                       # "payload": {"value": 100}
+    84                                           
+    85         1         18.0     18.0      1.5          return event
+
+Total time: 0.000216 s
+File: EventMaker.py
+Function: payloader at line 87
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    87                                               @profile
+    88                                               def payloader(input_name, value, fields, settings):
+    89                                                   '''
+    90                                                   Packs the payload for the event
+    91                                                   Searches the dict of events for payload configurations
+    92                                                   and interprits how to combine it with the [value].
+    93                                                   '''
+    94         1         25.0     25.0     11.6          payload = {}
+    95                                           
+    96         1         18.0     18.0      8.3          try:
+    97         1         30.0     30.0     13.9              if "name" in fields[0]:
+    98         1         20.0     20.0      9.3                  value_name = fields[0]["name"]
+    99                                           
+   100                                                           # Check if a [set_value] has been defined [value_name]
+   101                                                           # It is used if defined.
+   102         1         22.0     22.0     10.2                  if 'value' in settings[input_name]:
+   103         1         31.0     31.0     14.4                      if value_name in settings[input_name]["value"]:
+   104         1         28.0     28.0     13.0                          set_value = settings[input_name]['value'][value_name]
+   105         1         26.0     26.0     12.0                          payload[value_name] = set_value
+   106                                           
+   107                                                           # If "possibleValues" are defined and no predefined
+   108                                                           # value is set, cycles through the list.
+   109                                                           # Uses [value] as index for [possible] values
+   110                                                           elif "possibleValues" in fields[0]:
+   111                                                               possible = fields[0]["possibleValues"]
+   112                                                               payload[value_name] = possible[value]
+   113                                           
+   114                                                           # If nothing else, then the plain value is used
+   115                                                           else:
+   116                                                               payload[value_name] = value
+   117                                           
+   118                                                   ##else: The event is a plain event, no "value" or "payload" is delivered
+   119                                                   except IndexError:
+   120                                                       pass
+   121                                           
+   122         1         16.0     16.0      7.4          return payload
+
+Total time: 0 s
+File: EventMaker.py
+Function: run at line 124
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   124                                               @profile
+   125                                               def run(self):
+   126                                           
+   127                                                   logger = Logger(__name__)
+   128                                                   logger.info("EventMaker thread started")
+   129                                           
+   130                                                   # Configures the UDP-Sender and creates an instance
+   131                                                   udpIP = self.inputConfig.udp_ip         #.255
+   132                                                   udpPort = self.inputConfig.udp_port     #22100
+   133                                           
+   134                                                   udpSender = UdpSender(udpIP, udpPort)
+   135                                           
+   136                                                   try:
+   137                                                       # Main Loop
+   138                                                       while True:
+   139                                           
+   140                                                           start_time = time.time()
+   141                                           
+   142                                                           # Gets a new input message from queue
+   143                                                           item = self.inputQueue.get()
+   144                                                           ##print(" >>>", item[0], item[1])
+   145                                           
+   146                                                           # A new event is created
+   147                                                           event = EventMaker.event(self, item[0], item[1])
+   148                                           
+   149                                                           # Prints a pretty json formatted event
+   150                                                           #print(json.dumps(event, sort_keys=False, indent=4))
+   151                                                           ##self.eventQueue.put(event)                        # If we decide to go with a threading solution
+   152                                           
+   153                                                           logger.info("Event created %s - %s" % (event["event"], str(event["payload"]).strip("{''}")))
+   154                                           
+   155                                                           end_time = time.time()
+   156                                                           cycle_length = int((end_time - start_time) * 1000)
+   157                                                           # logger.info("EventMaker cycle time: You were served in: %i ms" % cycle_length)
+   158                                                           logger.debug("EventMaker cycle time: %i ms" % cycle_length)
+   159                                           
+   160                                           
+   161                                                           start_time = time.time()
+   162                                                           udpSender.run(json.dumps(event))    # SEND HERE #
+   163                                                           end_time = time.time()
+   164                                                           cycle_length = int((end_time - start_time) * 1000)
+   165                                                           logger.debug("udpSender delivery time: %i ms" % cycle_length)
+   166                                           
+   167                                                           # Sends the message (single threaded)
+   168                                                           # udpSender.run(json.dumps(event))
+   169                                           
+   170                                                           # Sleeping is relevant only in TESTING.
+   171                                                           # In use, the Tread runs as fast as it can
+   172                                                           # and waits for the input queue...
+   173                                                           # this should validated on a single core Pi-0-W
+   174                                                           #sleep(self.cycleTime)
+   175                                           
+   176                                                   except KeyboardInterrupt:
+   177                                                       pass
+   178                                                   finally:
+   179                                                       pass
+
