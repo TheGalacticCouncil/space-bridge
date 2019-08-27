@@ -36,19 +36,6 @@ class InputPoller(threading.Thread):
         logger = Logger(__name__)
         logger.info("InputPoller thread started")
 
-        q = 0   #Counter for a performance metric
-
-        # Analog Init
-        a_value=[]
-        for i in range(len(self.analogInput)):
-            a_value.append(0)
-
-        # Encoder Init
-        counter=[]
-        for i in range(len(self.encoderInput)):
-            counter.append(0)
-
-
         # PERFORMANCE IMPROVEMENTS
         # Precalculates ranges for polling "for" statements
         #
@@ -67,6 +54,14 @@ class InputPoller(threading.Thread):
         buttonInput = self.buttonInput
         switchInput = self.switchInput
         inputQueue = self.inputQueue
+
+        # Analog Init
+        a_value = [0 for i in analog_range]
+
+        # Encoder Init
+        counter = [0 for i in encoder_range]
+
+        q = 0   #Counter for a performance metric
 
         try:
 

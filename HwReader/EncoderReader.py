@@ -61,11 +61,11 @@ class EncoderInput():
     @profile
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
-        counter += delta*self.step
+        counter += delta * self.step
         if self.minimum != None and self.maximum != None:
             if counter > self.maximum:
                 counter = self.maximum
-            if counter < self.minimum:
+            elif counter < self.minimum:
                 counter = self.minimum
         return counter
 
@@ -99,7 +99,7 @@ class EncoderInput():
             self.counter = counter
             return counter, changed, self.name
         else:
-            return self.counter, changed, self.name
+            return counter, changed, self.name
 
 
 # Module can be run directly to test its function

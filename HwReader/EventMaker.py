@@ -165,7 +165,7 @@ class EventMaker(threading.Thread):
                 logger.debug("udpSender delivery time: %i ms" % cycle_length)
 
                 # Sends the message (single threaded)
-                udpSender.run(json.dumps(event))
+                # udpSender.run(json.dumps(event))
 
                 # Sleeping is relevant only in TESTING.
                 # In use, the Tread runs as fast as it can
@@ -182,11 +182,15 @@ if __name__ == '__main__':
     from queue import Queue
     import eventConfig
 
-    # inQ = Queue(1)
-    # eQ = Queue(0)
-    # eventTypes = eventConfig.EventConfig()
-    # inputConfig = InputConfig()
-    # a = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
-    # #print(a.event("LOAD_TUBE", 1, 0))
-    # event = EventMaker.event(a, "LOAD_TUBE", 1)
+    inQ = Queue(1)
+    eQ = Queue(0)
+    eventTypes = eventConfig.EventConfig()
+    inputConfig = InputConfig()
+    event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    #print(event.event("ButtonTest", 1))
+    #event = EventMaker.event(event, "LOAD_TUBE", 1)
+    udpIP = "192.168.10.255"
+    udpPort = 22100
+    udpSender = UdpSender(udpIP, udpPort)
+    udpSender.run(json.dumps(event.event("ButtonTest", 1)))
 
