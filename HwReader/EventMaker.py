@@ -33,15 +33,13 @@ class EventMaker(threading.Thread):
         self.ip = myIP.myIP()
 
     @profile
-    def event(self, input_name, value):
+    def event(self, input_name, value, settings):
         '''
         Formats the event input in to an event.
         - Takes the input name and value as inputs
         - Translates the input name to an event name
         ...
         '''
-
-        settings = InputConfig.settings(self.inputConfig)
 
         # Collects event data
         #
@@ -51,10 +49,9 @@ class EventMaker(threading.Thread):
         # Therefore the timestamp may be at most 0.1 ms
         # too small.
 
-        posix = time.time() * 1000
-        event = {}
-        payload = {}
-        event_name = InputConfig.eventName(self.inputConfig , input_name)
+        posix = int(time.time() * 1000)
+
+        event_name = InputConfig.eventName(self.inputConfig, input_name)
 
         # Makes the payload
         #
@@ -63,7 +60,7 @@ class EventMaker(threading.Thread):
 
         fields = self.eventConfig.event(event_name)
 
-        payload = EventMaker.payloader(input_name, value, fields, settings)
+        payload = EventMaker.payloader(input_name, value, fields[0], settings)
 
         if payload == {}:
             # If a secondary event is defined, the input is a binary
@@ -75,13 +72,13 @@ class EventMaker(threading.Thread):
 
         # Formats the event
         #
-        event["timestamp"] = int(posix)                 # "timestamp": "ms-from-epoch, number",
-        event["sourceComponent"] = "HwReader"            # "sourceComponent": "HwReader",
-        event["sourceIp"] = self.ip                      # "sourceIp": "We might need this",
-        event["event"] = event_name                      # "event": "SET_THROTTLE",
-        event["station"] = self.station                  # "station": "HELM",
-        event["payload"] = payload                       # "payload": {"value": 100}
-
+        event = {"timestamp": posix,                       # "timestamp": "ms-from-epoch, number",
+                "sourceComponent": "HwReader",            # "sourceComponent": "HwReader",
+                "sourceIp": self.ip,                      # "sourceIp": "We might need this",
+                "event": event_name,                      # "event": "SET_THROTTLE",
+                "station": self.station,                  # "station": "HELM",
+                "payload": payload,                       # "payload": {"value": 100}
+        }
         return event
 
     @profile
@@ -91,29 +88,29 @@ class EventMaker(threading.Thread):
         Searches the dict of events for payload configurations
         and interprits how to combine it with the [value].
         '''
-        payload = {}
 
         try:
-            if "name" in fields[0]:
-                value_name = fields[0]["name"]
+            if "name" in fields:
+                value_name = fields["name"]
+                input_setting = settings[input_name]
 
                 # Check if a [set_value] has been defined [value_name]
                 # It is used if defined.
-                if 'value' in settings[input_name]:
-                    if value_name in settings[input_name]["value"]:
-                        set_value = settings[input_name]['value'][value_name]
-                        payload[value_name] = set_value
+                if 'value' in input_setting:
+                    if value_name in input_setting["value"]:
+                        set_value = input_setting['value'][value_name]
+                        payload = {value_name: set_value}
 
                 # If "possibleValues" are defined and no predefined
                 # value is set, cycles through the list.
                 # Uses [value] as index for [possible] values
-                elif "possibleValues" in fields[0]:
-                    possible = fields[0]["possibleValues"]
-                    payload[value_name] = possible[value]
+                elif "possibleValues" in fields:
+                    possible = fields["possibleValues"]
+                    payload = {value_name: possible[value]}
 
                 # If nothing else, then the plain value is used
                 else:
-                    payload[value_name] = value
+                    payload = {value_name: value}
 
         ##else: The event is a plain event, no "value" or "payload" is delivered
         except IndexError:
@@ -133,6 +130,8 @@ class EventMaker(threading.Thread):
 
         udpSender = UdpSender(udpIP, udpPort)
 
+        settings = InputConfig.settings(self.inputConfig)
+
         try:
             # Main Loop
             while True:
@@ -144,7 +143,7 @@ class EventMaker(threading.Thread):
                 ##print(" >>>", item[0], item[1])
 
                 # A new event is created
-                event = EventMaker.event(self, item[0], item[1])
+                event = EventMaker.event(self, item[0], item[1], settings)
 
                 # Prints a pretty json formatted event
                 #print(json.dumps(event, sort_keys=False, indent=4))
@@ -187,10 +186,11 @@ if __name__ == '__main__':
     eventTypes = eventConfig.EventConfig()
     inputConfig = InputConfig()
     event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    settings = InputConfig.settings(event.inputConfig)
     #print(event.event("ButtonTest", 1))
     #event = EventMaker.event(event, "LOAD_TUBE", 1)
     udpIP = "192.168.10.255"
     udpPort = 22100
     udpSender = UdpSender(udpIP, udpPort)
-    udpSender.run(json.dumps(event.event("ButtonTest", 1)))
+    udpSender.run(json.dumps(event.event("ButtonTest", 1, settings)))
 
