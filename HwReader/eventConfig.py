@@ -40,20 +40,24 @@ class EventConfig():
 
         return eventFile
 
+    @profile
     def events(self):
         '''
         Generates a dictinary of events
         '''
         eventTypes = EventConfig.loadEvents(self)
 
-        events={}
-        for eventType in eventTypes:
-            eventName = eventType["name"]
-            eventData = eventType["fields"]
-            events[eventName] = eventData
+        events = {eventType["name"]: eventType["fields"] for eventType in eventTypes}
+
+        # events={}
+        # for eventType in eventTypes:
+        #     eventName = eventType["name"]
+        #     eventData = eventType["fields"]
+        #     events[eventName] = eventData
 
         return events
 
+    @profile
     def event(self, name):
         '''
         takes an event name as parameter and returns

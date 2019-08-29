@@ -62,32 +62,33 @@ class AnalogInput():
           the value will be converted to int)
         """
 
-        clip_min = self.clip_min
-        clip_max = self.clip_max
+        value = self.analogInput.value          #self.analogInput.value
 
-        value = AnalogInput.readRaw(self)          #self.analogInput.value
+        clip_min = self.clip_min
 
         # Scaling
-        value = (value-clip_min)/(clip_max-clip_min)
+        value = (value-clip_min)/(self.clip_max-clip_min)
 
         #Clipping
         if value < 0.0:
             value = 0.0
-        if value > 1.0:
+        elif value > 1.0:
             value = 1.0
 
         # after processing is done, "value" is stored in "self.value"
         # This is done despite it being done in readRaw, because
         # this time the value is also filtered. The old value remains correct.
-        self.value = value
-        return self.value
 
-    def rescale(self):
+        # self.value = value    # disabled for now. No real use, but a hit to performance
+        return value
+
+    @profile
+    def rescale(self, value):
         '''Re-scales an input to match the event format requirement'''
-        self.value
-        self.maximum
-        self.minimum
-        value = self.value * (self.maximum-self.minimum) + self.minimum
+        # self.value
+        # self.maximum
+        # self.minimum
+        value = value * (self.maximum-self.minimum) + self.minimum
         return int(value)
 
     @profile
@@ -113,16 +114,16 @@ class AnalogInput():
         """
         changed = False
 
-        AnalogInput.read(self)                    #value is read in to self.value
+        value = AnalogInput.read(self)                    #
 
-        delta = abs(self.value - self.oldValue)
+        delta = abs(value - self.oldValue)
 
         if delta > self.threshold:
             changed = True
             #oldValue is updated only if changed = True
-            self.oldValue = self.value
+            self.oldValue = value
             # Value is rescaled and changed in to an int
-            value = AnalogInput.rescale(self)
+            value = AnalogInput.rescale(self, value)
             return value, changed, self.name
         else:
             return None, changed, self.name
