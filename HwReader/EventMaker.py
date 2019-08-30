@@ -49,7 +49,7 @@ class EventMaker(threading.Thread):
         # Therefore the timestamp may be at most 0.1 ms
         # too small.
 
-        posix = int(time.time() * 1000)
+        posix = time.time() * 1000
 
         event_name = InputConfig.eventName(self.inputConfig, input_name)
 
@@ -72,12 +72,12 @@ class EventMaker(threading.Thread):
 
         # Formats the event
         #
-        event = {"timestamp": posix,                       # "timestamp": "ms-from-epoch, number",
+        event = {"timestamp": int(posix),                       # "timestamp": "ms-from-epoch, number",
                 "sourceComponent": "HwReader",            # "sourceComponent": "HwReader",
                 "sourceIp": self.ip,                      # "sourceIp": "We might need this",
                 "event": event_name,                      # "event": "SET_THROTTLE",
                 "station": self.station,                  # "station": "HELM",
-                "payload": payload,                       # "payload": {"value": 100}
+                "payload": payload                       # "payload": {"value": 100}
         }
         return event
 
@@ -180,17 +180,23 @@ class EventMaker(threading.Thread):
 if __name__ == '__main__':
     from queue import Queue
     import eventConfig
+    from random import random
 
     inQ = Queue(1)
     eQ = Queue(0)
     eventTypes = eventConfig.EventConfig()
     inputConfig = InputConfig()
-    event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
-    settings = InputConfig.settings(event.inputConfig)
+    eventmaker = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    settings = InputConfig.settings(eventmaker.inputConfig)
     #print(event.event("ButtonTest", 1))
     #event = EventMaker.event(event, "LOAD_TUBE", 1)
+    #event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
     udpIP = "192.168.10.255"
     udpPort = 22100
     udpSender = UdpSender(udpIP, udpPort)
-    udpSender.run(json.dumps(event.event("ButtonTest", 1, settings)))
 
+    # Pushes 1000 random events throughEventMaker to generate good data.
+    #
+    for i in range(1000):
+        value = int(random() * 100)
+        udpSender.run(json.dumps(eventmaker.event("TestInput1", value, settings)))
