@@ -22,6 +22,7 @@ class PushButton():
 
         self.last_state = False
 
+    @profile
     def read(self):
         """
         Reads the push button state.
@@ -57,6 +58,7 @@ class SwitchInput():
 
         self.last_state = False
 
+    @profile
     def read(self):
         """
         Reads the switch state.

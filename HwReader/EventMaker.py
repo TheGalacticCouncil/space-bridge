@@ -32,6 +32,7 @@ class EventMaker(threading.Thread):
         self.station = station
         self.ip = myIP.myIP()
 
+    @profile
     def event(self, input_name, value):
         '''
         Formats the event input in to an event.
@@ -83,6 +84,7 @@ class EventMaker(threading.Thread):
 
         return event
 
+    @profile
     def payloader(input_name, value, fields, settings):
         '''
         Packs the payload for the event
@@ -175,15 +177,28 @@ class EventMaker(threading.Thread):
         finally:
             pass
 
+
 if __name__ == '__main__':
     from queue import Queue
     import eventConfig
+    from random import random
 
-    # inQ = Queue(1)
-    # eQ = Queue(0)
-    # eventTypes = eventConfig.EventConfig()
-    # inputConfig = InputConfig()
-    # a = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
-    # #print(a.event("LOAD_TUBE", 1, 0))
-    # event = EventMaker.event(a, "LOAD_TUBE", 1)
+    inQ = Queue(1)
+    eQ = Queue(0)
+    eventTypes = eventConfig.EventConfig()
+    inputConfig = InputConfig()
+    eventmaker = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    settings = InputConfig.settings(eventmaker.inputConfig)
+    #print(event.event("ButtonTest", 1))
+    #event = EventMaker.event(event, "LOAD_TUBE", 1)
+    #event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
+    udpIP = "192.168.10.255"
+    udpPort = 22100
+    udpSender = UdpSender(udpIP, udpPort)
+
+    # Pushes 1000 random events throughEventMaker to generate good data.
+    #
+    for i in range(1000):
+        value = int(random() * 100)
+        udpSender.run(json.dumps(eventmaker.event("TestInput1", value)))
 

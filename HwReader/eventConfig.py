@@ -40,6 +40,7 @@ class EventConfig():
 
         return eventFile
 
+    @profile
     def events(self):
         '''
         Generates a dictinary of events
@@ -54,6 +55,7 @@ class EventConfig():
 
         return events
 
+    @profile
     def event(self, name):
         '''
         takes an event name as parameter and returns

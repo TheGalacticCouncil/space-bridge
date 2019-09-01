@@ -62,6 +62,7 @@ class InputConfig():
 
         return settings
 
+    @profile
     def loadConfig(self, eventConfig):
         '''
         Extracts from the config file and event.json,
@@ -162,6 +163,7 @@ class InputConfig():
         self.station
         return cycle
 
+    @profile
     def collectInputs(self):
         '''
         Collects inputs:
