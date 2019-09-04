@@ -1,0 +1,8 @@
+##### Preliminary Requirements.txt #####
+############# For HwReader #############
+#
+# Warning! This file has not yet been tested
+
+RPi
+gpiozero
+#json
