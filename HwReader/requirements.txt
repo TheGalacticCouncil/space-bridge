@@ -3,6 +3,6 @@
 #
 # Warning! This file has not yet been tested
 
-RPi
+RPi.GPIO
 gpiozero
 #json
