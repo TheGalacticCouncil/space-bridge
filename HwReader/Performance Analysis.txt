@@ -1,0 +1,20 @@
+
+
+udpSender() -300 탎 -34 %
+EventMaker:
+  - event() -166 탎 -15 %
+  - payloader()  -19 탎 -11 %
+InputPoller()
+  - polling -40 탎  -5 %
+AnalogReader -114 탎  -3 %
+EncoderReader -100 탎 -10 %* Unreliable measurements. Anomaly propagation
+ButtonInput   0 탎  0 % can be optimized for -85 탎 >60%
+
+
+
+ - Analog rescale() could be integrated (-200 탎)
+ - Encoder read() variable += variable is slower than variable += 1
+   see if (if/elif/else) could be simplifyed to (if/else except?)
+ - check Analog rescale() elif logic. Unusual exec tiems!
+ - Button read() remove GPIO re-initialization (-85 탎 >60%)
+ - event config: test list comp at different lengths...
