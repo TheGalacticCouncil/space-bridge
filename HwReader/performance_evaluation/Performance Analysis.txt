@@ -1,4 +1,4 @@
-Performance evaluation of proposed optimizations
+﻿Performance evaluation of proposed optimizations
 
 26.8.2019 
 Valtteri Ojala
@@ -119,4 +119,3 @@ ButtonInput   -31 µS -17 %
  - AnalogReader: There was something wrong with the optimization.
    Returning the problematic lines to stock yealded a large
    improvement.
- - 
