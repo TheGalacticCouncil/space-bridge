@@ -47,10 +47,10 @@ class EncoderInput():
         dtState = GPIO.input(self.dtPin)
 
         if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
+            if dtState != clockState:# and dtState == 1:
+                counter += dtState                          # if dt state is 1, it is added
+            else: #elif dtState == clockState and dtState == 1:
+                counter -= dtState                          # if dt state is 1, it is subtracted
             # else:                                         # Default action for else is "nothing" anyway.
             #     pass                                      # No need to write it
 
@@ -58,22 +58,21 @@ class EncoderInput():
 
         return counter
 
+
     @profile
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
+
         counter += delta * self.step
-        minimum = self.minimum
-        maximum = self.maximum
-        #if minimum != None and maximum != None:
-        try:
-            if counter > maximum:
-                counter = maximum
-            # elif counter < minimum:
-            elif minimum > counter:
-                counter = minimum
+        try:        #if minimum != None and maximum != None:
+            if counter > self.maximum:
+                counter = self.maximum
+            elif counter < self.minimum:
+                counter = self.minimum
         except TypeError:
             pass
         return counter
+
 
     @profile
     def increment(self, counter=None):

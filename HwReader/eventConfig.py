@@ -47,13 +47,15 @@ class EventConfig():
         '''
         eventTypes = EventConfig.loadEvents(self)
 
-        events = {eventType["name"]: eventType["fields"] for eventType in eventTypes}
+        # List comprehension performed poorly in the one-off type situation
+        # Performance loss was 10x
+        # events = {eventType["name"]: eventType["fields"] for eventType in eventTypes}
 
-        # events={}
-        # for eventType in eventTypes:
-        #     eventName = eventType["name"]
-        #     eventData = eventType["fields"]
-        #     events[eventName] = eventData
+        events={}
+        for eventType in eventTypes:
+            eventName = eventType["name"]
+            eventData = eventType["fields"]
+            events[eventName] = eventData
 
         return events
 
