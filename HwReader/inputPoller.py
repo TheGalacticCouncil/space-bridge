@@ -134,7 +134,7 @@ class InputPoller(threading.Thread):
                 #
                 end_time = time()
                 cycle_length = (end_time - start_time)
-                if q >= 5000:
+                if q >= 1000:
                     q = 0
                     logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
                 q += 1
