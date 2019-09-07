@@ -30,7 +30,7 @@ class InputPoller(threading.Thread):
         self.cycleTime = sleep
         self.inputQueue = inputQueue
         
-    @profile
+
     def run(self):
 
         logger = Logger(__name__)
@@ -134,7 +134,7 @@ class InputPoller(threading.Thread):
                 #
                 end_time = time()
                 cycle_length = (end_time - start_time)
-                if q >= 200:
+                if q >= 5000:
                     q = 0
                     logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
                 q += 1

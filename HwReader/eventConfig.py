@@ -40,7 +40,7 @@ class EventConfig():
 
         return eventFile
 
-    @profile
+
     def events(self):
         '''
         Generates a dictinary of events
@@ -59,13 +59,14 @@ class EventConfig():
 
         return events
 
-    @profile
+
     def event(self, name):
         '''
         takes an event name as parameter and returns
         the event format.
         '''
         return self._events[name]
+
 
     def minimum(self, name):
         '''
@@ -77,6 +78,7 @@ class EventConfig():
         except:
             minimum = 0
         return minimum
+
 
     def maximum(self, name):
         '''
@@ -100,6 +102,7 @@ class EventConfig():
 
         return maximum
 
+
     def test(self):
         '''
         Prints out neatly the json
@@ -114,6 +117,7 @@ class EventConfig():
                 except IndexError:
                     pass
             print()
+
 
 if __name__ == "__main__":
     pass

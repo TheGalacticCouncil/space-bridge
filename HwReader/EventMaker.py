@@ -32,7 +32,7 @@ class EventMaker(threading.Thread):
         self.station = station
         self.ip = myIP.myIP()
 
-    @profile
+
     def event(self, input_name, value, settings):
         '''
         Formats the event input in to an event.
@@ -81,7 +81,7 @@ class EventMaker(threading.Thread):
         }
         return event
 
-    @profile
+
     def payloader(input_name, value, fields, settings):
         '''
         Packs the payload for the event
@@ -118,7 +118,7 @@ class EventMaker(threading.Thread):
 
         return payload
 
-    @profile
+
     def run(self):
 
         logger = Logger(__name__)
@@ -176,6 +176,7 @@ class EventMaker(threading.Thread):
             pass
         finally:
             pass
+
 
 if __name__ == '__main__':
     from queue import Queue
