@@ -47,12 +47,12 @@ class EncoderInput():
         dtState = GPIO.input(self.dtPin)
 
         if clockState != self.previousClockState:
-            if dtState != clockState: #and dtState == 1:
-                counter += dtState                          # if dt state is 1, it is added
-            else:                                           # if dtState == clockState:
-                counter -= dtState                          # if dt state is 1, it is subtracted
-            # else:
-            #     pass
+            if dtState != clockState and dtState == 1:
+                counter += 1                                # if dt state is 1, it is added
+            elif dtState == clockState and dtState == 1:
+                counter -= 1                                # if dt state is 1, it is subtracted
+            # else:                                         # Default action for else is "nothing" anyway.
+            #     pass                                      # No need to write it
 
         self.previousClockState = clockState
 
@@ -68,7 +68,8 @@ class EncoderInput():
         try:
             if counter > maximum:
                 counter = maximum
-            elif counter < minimum:
+            # elif counter < minimum:
+            elif minimum > counter:
                 counter = minimum
         except TypeError:
             pass

@@ -100,7 +100,7 @@ class AnalogInput():
         if self.trigger == 0:
             return self.update()
         else:
-            GPIO.setmode(GPIO.BCM)
+            #GPIO.setmode(GPIO.BCM)                             # No need to setup again
             triggered = GPIO.input(self.trigger) == GPIO.LOW
             if triggered:
                 return self.update()
@@ -123,7 +123,10 @@ class AnalogInput():
             #oldValue is updated only if changed = True
             self.oldValue = value
             # Value is rescaled and changed in to an int
-            value = AnalogInput.rescale(self, value)
+            # rescale() is not used for this, to avoid one extra call
+            # Value is rounded to int using int(). It is faster than round(), 
+            # though loses accuracy, as it is always rounded down.
+            value = int(value * (self.maximum-self.minimum) + self.minimum)
             return value, changed, self.name
         else:
             return None, changed, self.name

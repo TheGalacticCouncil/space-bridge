@@ -72,7 +72,7 @@ class EventMaker(threading.Thread):
 
         # Formats the event
         #
-        event = {"timestamp": int(posix),                       # "timestamp": "ms-from-epoch, number",
+        event = {"timestamp": int(posix),                 # "timestamp": "ms-from-epoch, number",
                 "sourceComponent": "HwReader",            # "sourceComponent": "HwReader",
                 "sourceIp": self.ip,                      # "sourceIp": "We might need this",
                 "event": event_name,                      # "event": "SET_THROTTLE",
