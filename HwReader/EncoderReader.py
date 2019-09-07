@@ -48,9 +48,9 @@ class EncoderInput():
 
         if clockState != self.previousClockState:
             if dtState != clockState:# and dtState == 1:
-                counter += dtState                          # if dt state is 1, it is added
+                counter += 1                                # if dt state is 1, it is added
             else: #elif dtState == clockState and dtState == 1:
-                counter -= dtState                          # if dt state is 1, it is subtracted
+                counter -= 1                                # if dt state is 1, it is subtracted
             # else:                                         # Default action for else is "nothing" anyway.
             #     pass                                      # No need to write it
 
