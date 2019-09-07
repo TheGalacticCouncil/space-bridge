@@ -95,3 +95,28 @@ ButtonInput   -31 µS -17 %
  - Revert Encoder rescale(), unexpected performance degredation,
    Reverting to (almost) original.
    In total a -100 µs improvement could be realized
+
+
+= Profile 5 Analysis = 
+
+udpSender() -300 µs -34 %
+EventMaker:
+  - event() -167 µs -15 %
+  - payloader()  -20 µs -11 %
+InputPoller()
+  - polling  -113 µs  -18 %
+  - w.inputs -248 µs  -8 %
+AnalogReader -600 µs  -18 %
+EncoderReader -80 µs  -8 %
+ButtonInput   -31 µS -17 %
+
+
+ = Observatrions =
+
+ - AnalogReader is very dependant on speed at witch ADC
+   can be read. (large variance (2100-2500 µs)) no changes 
+   were made since last run, but the result improved 250 µs
+ - AnalogReader: There was something wrong with the optimization.
+   Returning the problematic lines to stock yealded a large
+   improvement.
+ - 
