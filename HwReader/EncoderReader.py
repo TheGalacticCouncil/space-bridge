@@ -101,7 +101,27 @@ class EncoderInput():
         else:
             return self.counter, changed, self.name
 
-
+        
+    def interrupt_callback(self, counter == None):
+        """
+        Interrupt callback function to be called when
+        """
+        if counter == None:
+            counter = self.counter
+            
+        delta = EncoderInput.read(self)
+        counter = EncoderInput.rescale(self, counter, delta)
+        self.counter = counter
+        
+        # QUEUEING:
+        # There is thinking to be done, about the zero debth queue. Is it still the way to go.
+        try:
+            self.inputQueue.get_nowait()
+        except Empty:
+            pass
+        self.inputQueue.put((self.name, counter))   # We should use tuples, not lists for queue entries
+        
+        
 # Module can be run directly to test its function
 if __name__ == "__main__":
 
