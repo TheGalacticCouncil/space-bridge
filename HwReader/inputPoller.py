@@ -47,6 +47,26 @@ class InputPoller(threading.Thread):
         for i in range(len(self.encoderInput)):
             counter.append(0)
 
+        # DEFINE INTERRUPT CALLBACKS
+        #
+        # ENCODER is read
+        #
+        for i in range(len(self.encoderInput)):
+            encoder_callback = lambda channel, counter=counter[i]: self.encoderInput[i].interrupt_increment(counter)
+            GPIO.add_event_detect(channel, GPIO.RISING, callback=encoder_callback
+            
+            
+            ######################
+            #counter[i], changed, name = self.encoderInput[i].interrupt_increment(counter[i])
+            #if changed == True:
+            #    try:
+            #        self.inputQueue.get_nowait()
+            #    except Empty:
+            #        pass
+            #    self.inputQueue.put([name, counter[i]])
+                             
+      
+      
         try:
 
             # Main Loop
@@ -78,14 +98,14 @@ class InputPoller(threading.Thread):
                 # queue and adds a new entry to it.
                 # The operation is non-blocking.
                 #
-                for i in range(len(self.encoderInput)):
-                    counter[i], changed, name = self.encoderInput[i].increment(counter[i])
-                    if changed == True:
-                        try:
-                            self.inputQueue.get_nowait()
-                        except Empty:
-                            pass
-                        self.inputQueue.put([name, counter[i]])
+                # for i in range(len(self.encoderInput)):
+                #     counter[i], changed, name = self.encoderInput[i].increment(counter[i])
+                #     if changed == True:
+                #         try:
+                #             self.inputQueue.get_nowait()
+                #         except Empty:
+                #             pass
+                #         self.inputQueue.put([name, counter[i]])
 
                 # BUTTON is read
                 #
