@@ -333,6 +333,8 @@ export class EventHandler {
             // case "SHOW_TACTICAL":
             //     console.log("SHOW_TACTICAL: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
+            default:
+                throw(new Error("Event type not recognized."));
         }
     }
 }

@@ -15,7 +15,7 @@ export class RequestSender {
 
   send(request: any) {
 
-    console.log(request);
+    console.log(`Request in Sender: ${request}`);
     if (request.method === "get") {
       axios.get(`${this.url}/${request.path}`)
       .catch(err => {

@@ -11,7 +11,7 @@ const requestSender: RequestSender = new RequestSender();
 
 server.on("error", err => {
   console.log(`Server shutdown due to following error:\n ${err}`);
-  server.close;
+  server.close();
 });
 
 server.on("listening", () => {
