@@ -16,7 +16,8 @@
         "object-literal-sort-keys": false,
         "arrow-parens": false,
         "no-console": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "member-access": false
     },
     "rulesDirectory": []
 }
