@@ -25,7 +25,7 @@ class EncoderInput():
         self.minimum = minimum
         self.step = step
 
-        self.counter = 0
+        #self.counter = 0
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -48,11 +48,11 @@ class EncoderInput():
 
         if clockState != self.previousClockState:
             if dtState != clockState and dtState == 1:
-                counter += 1
+                counter += 1                                # if dt state is 1, it is added
             elif dtState == clockState and dtState == 1:
-                counter -= 1
-            else:
-                pass
+                counter -= 1                                # if dt state is 1, it is subtracted
+            # else:                                         # Default action for else is "nothing" anyway.
+            #     pass                                      # No need to write it
 
         self.previousClockState = clockState
 
@@ -61,12 +61,15 @@ class EncoderInput():
 
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
-        counter += delta*self.step
-        if self.minimum != None and self.maximum != None:
+
+        counter += delta * self.step
+        try:        #if minimum != None and maximum != None:
             if counter > self.maximum:
                 counter = self.maximum
-            if counter < self.minimum:
+            elif counter < self.minimum:
                 counter = self.minimum
+        except TypeError:
+            pass
         return counter
 
 
@@ -83,9 +86,10 @@ class EncoderInput():
           by giving a value as parameter.
         """
 
+        # HIT TO PERFORMANCE. SUPPORT DISCONTINUED
         # If no counter override is defined, self.counter is used
-        if counter == None:
-            counter = self.counter
+        # if counter == None:
+        #     counter = self.counter
 
         changed=False
 
@@ -96,10 +100,10 @@ class EncoderInput():
             changed = True
             counter = EncoderInput.rescale(self, counter, delta)
 
-            self.counter = counter
+            #self.counter = counter
             return counter, changed, self.name
         else:
-            return self.counter, changed, self.name
+            return counter, changed, self.name
 
 
 # Module can be run directly to test its function

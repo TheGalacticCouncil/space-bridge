@@ -15,11 +15,15 @@ class UdpSender():
         self.broadcast_ip = broadcast_ip
         self.port = port
 
+        self.network = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.network.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        self.sendto = self.network.sendto
+
+
     def run(self, message):
         byte_message = bytearray(message,"utf-8")
-        network = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        network.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        network.sendto(byte_message, (self.broadcast_ip, self.port))
+        self.sendto(byte_message, (self.broadcast_ip, self.port))
+
 
 if __name__ == '__main__':
 

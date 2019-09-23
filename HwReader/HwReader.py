@@ -95,16 +95,13 @@ else:
     sleep(0.5)
 
 try:
-    while True:
+    while dont_stop:
         if inputThread.is_alive() and eventThread.is_alive():
-            if dont_stop:
-                try:
-                    dont_stop = keyQueue.get_nowait()
-                except Empty:
-                    pass
-                sleep(0.5)
-            else:
-                break
+            try:
+                dont_stop = keyQueue.get_nowait()
+            except Empty:
+                pass
+            sleep(0.5)
         else:
             logger.critical("A thread has crashed. Terminating")
             break

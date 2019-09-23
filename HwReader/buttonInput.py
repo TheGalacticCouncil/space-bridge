@@ -19,8 +19,14 @@ class PushButton():
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
+        if self.invert == True:                             # Inversion is done in init, not read()
+            self.level = GPIO.LOW
+        else:
+            self.level = GPIO.HIGH
 
         self.last_state = False
+
 
     def read(self):
         """
@@ -28,11 +34,8 @@ class PushButton():
         Returns True, if the button is pressed. 
         """
 
-        if self.invert == True:
-            state = GPIO.input(self.pin) == GPIO.LOW
-        else:
-            state = GPIO.input(self.pin) == GPIO.HIGH
-
+        state = GPIO.input(self.pin) == self.level          # Compares the input to a chosen level
+                                                            # Logic Hign or logic Low
         if state == True:
             if state != self.last_state:
                 self.last_state = True
@@ -56,6 +59,7 @@ class SwitchInput():
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.last_state = False
+
 
     def read(self):
         """
