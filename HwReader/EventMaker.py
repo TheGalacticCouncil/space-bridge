@@ -163,9 +163,6 @@ class EventMaker(threading.Thread):
                 cycle_length = int((end_time - start_time) * 1000)
                 logger.debug("udpSender delivery time: %i ms" % cycle_length)
 
-                # Sends the message (single threaded)
-                # udpSender.run(json.dumps(event))
-
                 # Sleeping is relevant only in TESTING.
                 # In use, the Tread runs as fast as it can
                 # and waits for the input queue...
