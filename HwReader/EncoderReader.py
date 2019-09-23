@@ -28,8 +28,8 @@ class EncoderInput():
         #self.counter = 0
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.previousClockState = GPIO.input(self.clockPin)
 
