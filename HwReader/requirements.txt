@@ -5,4 +5,5 @@
 
 RPi.GPIO
 gpiozero
+PyYaml
 #json
