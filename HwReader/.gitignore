@@ -18,6 +18,7 @@ config.yml
 
 # My stuff and other
 old_*
+*.lprof
 __*
 .vscode
 *.code-workspace
