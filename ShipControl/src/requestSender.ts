@@ -1,4 +1,5 @@
 import axios from "axios";
+import IRequest from "./models/IRequest";
 
 const config: any = require("../config.json");
 
@@ -14,24 +15,24 @@ export class RequestSender {
     this.url = this.serverAddress + ":" + this.serverPort;
   }
 
-  public send(request: any) {
+  public async send(request: IRequest): Promise<void> {
 
     // console.log(`Request in Sender: ${request}`);
     if (request.method === "get") {
 
-      axios.get(`${this.url}/${request.path}`)
+      return axios.get(`${this.url}/${request.path}`)
+      .then(() => Promise.resolve())
       .catch(err => {
-        console.log(err);
+        throw(err);
       });
+
     } else if (request.method === "post") {
 
-      axios.post(`${this.url}/${request.path}`, request.body)
+      return axios.post(`${this.url}/${request.path}`, request.body)
+      .then(() => Promise.resolve())
       .catch(err => {
-        console.log(err);
+        throw(err);
       });
-    } else {
-
-      console.log("Unknown method!");
     }
   }
 }

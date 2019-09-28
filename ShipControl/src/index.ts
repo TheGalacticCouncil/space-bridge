@@ -3,6 +3,7 @@ import { AddressInfo } from "net";
 import { EventHandler } from "./eventHandler";
 import { RequestSender } from "./requestSender";
 import validator from "event-validator";
+import IRequest from "./models/IRequest";
 
 const server: dgram.Socket = dgram.createSocket("udp4");
 
@@ -25,7 +26,7 @@ server.on("message", message => {
     .then((event: any) => {
       return eventHandler.handleEvent(event);
     })
-    .then((request: string) => {
+    .then((request: IRequest) => {
       return requestSender.send(request);
     })
     .catch(err => {

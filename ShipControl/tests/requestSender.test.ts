@@ -1,5 +1,7 @@
 import axios from "axios";
 
+import IGetRequest from "../src/models/IGetRequest";
+import IPostRequest from "../src/models/IPostRequest";
 import {RequestSender} from "../src/requestSender";
 
 describe("RequestSender", () => {
@@ -17,8 +19,9 @@ describe("RequestSender", () => {
         const mockPost = jest.fn().mockResolvedValue(true);
         axios.post = mockPost;
 
-        const request = {
-            method: "get"
+        const request: IGetRequest = {
+            method: "get",
+            path: ""
         };
 
         requestSender.send(request);
@@ -35,32 +38,16 @@ describe("RequestSender", () => {
         const mockPost = jest.fn().mockResolvedValue(true);
         axios.post = mockPost;
 
-        const request = {
-            method: "post"
+        const request: IPostRequest = {
+            method: "post",
+            body: "",
+            path: ""
         };
 
         requestSender.send(request);
 
         expect(mockGet).toHaveBeenCalledTimes(0);
         expect(mockPost).toHaveBeenCalledTimes(1);
-    });
-
-    it("should not send invalid request", () => {
-        const requestSender = new RequestSender();
-
-        const mockGet = jest.fn().mockResolvedValue(true);
-        axios.get = mockGet;
-        const mockPost = jest.fn().mockResolvedValue(true);
-        axios.post = mockPost;
-
-        const request = {
-            method: "invalid"
-        };
-
-        requestSender.send(request);
-
-        expect(mockGet).toHaveBeenCalledTimes(0);
-        expect(mockPost).toHaveBeenCalledTimes(0);
     });
 
     afterAll(() => {

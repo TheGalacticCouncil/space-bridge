@@ -1,192 +1,158 @@
-import _ from "lodash";
+import IGetRequest from "./models/IGetRequest";
+import IPostRequest from "./models/IPostRequest";
 
-let request = {
-  method: "",
-  body: "",
-  path: ""
-};
+const GET = "get";
+const POST = "post";
 
+export const setReactorPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Reactor, ${powerLevel})`
+});
 
-export function setReactorPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Reactor, ${powerLevel})`;
-  return request;
-}
+export const setBeamWeaponsPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Beamweapons, ${powerLevel})`
+});
 
-export function setBeamWeaponsPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Beamweapons, ${powerLevel})`;
-  return request;
-}
+export const setMissileSystemPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Missilesystem, ${powerLevel})`
+});
 
-export function setMissileSystemPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Missilesystem, ${powerLevel})`;
-  return request;
-}
+export const setManeuveringPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Maneuver, ${powerLevel})`
+});
 
-export function setManeuveringPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Maneuver, ${powerLevel})`;
-  return request;
-}
+export const setImpulseEnginePower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Impulse, ${powerLevel})`
+});
 
-export function setImpulseEnginePower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Impulse, ${powerLevel})`;
-  return request;
-}
+export const setJumpDrivePower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${powerLevel})`
+});
 
-export function setJumpDrivePower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${powerLevel})`;
-  return request;
-}
+export const setWarpDrivePower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Warp, ${powerLevel})`
+});
 
-export function setWarpDrivePower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Warp, ${powerLevel})`;
-  return request;
-}
+export const setFrontShieldPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Frontshield, ${powerLevel})`
+});
 
-export function setFrontShieldPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Frontshield, ${powerLevel})`;
-  return request;
-}
+export const setRearShieldPower = (powerLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Rearshield, ${powerLevel})`
+});
 
-export function setRearShieldPower(powerLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Rearshield, ${powerLevel})`;
-  return request;
-}
+export const setReactorCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Reactor, ${coolantLevel})`
+});
 
-export function setReactorCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Reactor, ${coolantLevel})`;
-  return request;
-}
+export const setBeamWeaponsCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Beamweapons, ${coolantLevel})`
+});
 
-export function setBeamWeaponsCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Beamweapons, ${coolantLevel})`;
-  return request;
-}
+export const setMissileSystemCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Missilesystem, ${coolantLevel})`
+});
 
-export function setMissileSystemCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Missilesystem, ${coolantLevel})`;
-  return request;
-}
+export const setManeuveringCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Maneuver, ${coolantLevel})`
+});
 
-export function setManeuveringCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Maneuver, ${coolantLevel})`;
-  return request;
-}
+export const setImpulseEngineCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Impulse, ${coolantLevel})`
+});
 
-export function setImpulseEngineCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Impulse, ${coolantLevel})`;
-  return request;
-}
+export const setJumpDriveCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${coolantLevel})`
+});
 
-export function setJumpDriveCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${coolantLevel})`;
-  return request;
-}
+export const setWarpDriveCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Warp, ${coolantLevel})`
+});
 
-export function setWarpDriveCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Warp, ${coolantLevel})`;
-  return request;
-}
+export const setFrontShieldCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Frontshield, ${coolantLevel})`
+});
 
-export function setFrontShieldCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Frontshield, ${coolantLevel})`;
-  return request;
-}
+export const setRearShieldCoolant = (coolantLevel: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua=commandSetSystemPowerRequest(Rearshield, ${coolantLevel})`
+});
 
-export function setRearShieldCoolant(coolantLevel: number) {
-  request.method = "get";
-  request.path = `set.lua=commandSetSystemPowerRequest(Rearshield, ${coolantLevel})`;
-  return request;
-}
+export const loadTube = (tubeId: number, ammoType: string): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandLoadTube(${tubeId}, "${ammoType}")`
+});
 
-export function loadTube(tubeId: number, ammoType: string) {
+export const unloadTube = (tubeId: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandUnloadTube(${tubeId})`
+});
 
-  request.method = "get";
-  request.path = `set.lua?commandLoadTube(${tubeId}, "${ammoType}")`;
-  return request;
-}
-
-export function unloadTube(tubeId: number) {
-
-  request.method = "get";
-  request.path = `set.lua?commandUnloadTube(${tubeId})`;
-  return request;
-}
-
-export function fireTube(tubeId: number) {
-  request.method = "post";
-  request.path = "exec.lua";
-  request.body = `
+export const fireTube = (tubeId: number): IPostRequest => ({
+  method: POST,
+  path: "exec.lua",
+  body: `
         us = getPlayerShip(-1)
         target = us:getTarget()
         if target == nil then
           us:commandFireTube(${tubeId}, 0)
         else
           us:commandFireTubeAtTarget(${tubeId}, target)
-        end`;
-  return request;
-}
+        end`
+});
 
-export function setBeamTarget(target: string) {
-  request.method = "get";
-  request.path = `set.lua?commandSetBeamSystemTarget(${target})`;
-  return request;
-}
+export const setBeamTarget = (target: string): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetBeamSystemTarget(${target})`
+});
 
-export function setBeamFrequency(frequency: number) {
-  request.method = "get";
-  request.path = `set.lua?commandSetBeamFrequency(${frequency})`;
-  return request;
-}
+export const setBeamFrequency = (frequency: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetBeamFrequency(${frequency})`
+});
 
-export function setShieldFrequency(frequency: number) {
-  request.method = "get";
-  request.path = `set.lua?commandSetShieldFrequencySelection(${frequency})`;
-  return request;
-}
+export const setShieldFrequency = (frequency: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetShieldFrequencySelection(${frequency})`
+});
 
-export function increaseShieldFrequency() {
-  request.method = "get";
-  request.path = `set.lua?commandSetNextShieldFrequencySelection()`;
-  return request;
-}
+export const increaseShieldFrequency = () => ({
+  method: GET,
+  path: `set.lua?commandSetNextShieldFrequencySelection()`
+});
 
-export function decreaseShieldFrequency() {
-  request.method = "get";
-  request.path = `set.lua?commandSetPreviousShieldFrequencySelection()`;
-  return request;
-}
+export const decreaseShieldFrequency = () => ({
+  method: GET,
+  path: `set.lua?commandSetPreviousShieldFrequencySelection()`
+});
 
-export function calibrateShields(frequency: number) {
-  request.method = "get";
-  request.path = `set.lua?commandSetShieldFrequency(${frequency})`;
-  return request;
-}
+export const calibrateShields = (frequency: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetShieldFrequency(${frequency})`
+});
 
-export function shieldsUp() {
-  request.method = "get";
-  request.path = "set.lua?commandSetShields(true)";
-  return request;
-}
+export const shieldsUp = () => ({
+  method: GET,
+  path: "set.lua?commandSetShields(true)"
+});
 
-export function shieldsDown() {
-  request.method = "get";
-  request.path = "set.lua?commandSetShields(false)";
-  return request;
-}
+export const shieldsDown = () => ({
+  method: GET,
+  path: "set.lua?commandSetShields(false)"
+});
