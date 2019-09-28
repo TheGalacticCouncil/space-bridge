@@ -26,6 +26,7 @@ class EncoderInput():
         self.step = step
 
         #self.counter = 0
+        self.substep = 0
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -62,14 +63,44 @@ class EncoderInput():
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
 
-        counter += delta * self.step
-        try:        #if minimum != None and maximum != None:
+        # NORMAL OPERATION
+        # SENSITIVITY INCREASED
+        #
+        if self.step >= 0:
+            counter += delta * self.step
+
+        # SENSITIVITY IS DECREASED
+        # "substeps" are used
+        #
+        elif self.step < 0:                   
+            # Count, if delta is or isn't passed on
+            self.substep += delta
+
+            # if substeps reach [-step], substeps is reset
+            # and delta is passed on
+            if self.substep == -(self.step):
+                self.substep = 0
+
+            # if substeps reach [step], substeps is reset
+            # and delta is passed on
+            elif self.substep == self.step:
+                self.substep = 0
+
+            else:
+                # if substeps are less, delta is reset
+                # and substeps keep building up
+                delta = 0
+
+            counter += delta
+
+        try:                            # if minimum != None and maximum != None:
             if counter > self.maximum:
                 counter = self.maximum
             elif counter < self.minimum:
                 counter = self.minimum
         except TypeError:
             pass
+
         return counter
 
 
