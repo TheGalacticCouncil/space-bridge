@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import axios from "axios";
 import IRequest from "./models/IRequest";
 
@@ -15,24 +17,29 @@ export class RequestSender {
     this.url = this.serverAddress + ":" + this.serverPort;
   }
 
-  public async send(request: IRequest): Promise<void> {
+  public async send(requests: IRequest[]): Promise<void> {
 
-    // console.log(`Request in Sender: ${request}`);
-    if (request.method === "get") {
+    _.forEach(requests, async (request: IRequest): Promise<void> => {
 
-      return axios.get(`${this.url}/${request.path}`)
-      .then(() => Promise.resolve())
-      .catch(err => {
-        throw(err);
-      });
+      // console.log(`Request in Sender: ${request}`);
+      if (request.method === "get") {
 
-    } else if (request.method === "post") {
+        await axios.get(`${this.url}/${request.path}`)
+        .then(() => Promise.resolve())
+        .catch(err => {
+          throw(err);
+        });
 
-      return axios.post(`${this.url}/${request.path}`, request.body)
-      .then(() => Promise.resolve())
-      .catch(err => {
-        throw(err);
-      });
-    }
+      } else {
+
+        await axios.post(`${this.url}/${request.path}`, request.body)
+        .then(() => Promise.resolve())
+        .catch(err => {
+          throw(err);
+        });
+      }
+    });
+
+    return Promise.resolve();
   }
 }

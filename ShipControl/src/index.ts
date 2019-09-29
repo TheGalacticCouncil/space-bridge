@@ -26,8 +26,8 @@ server.on("message", message => {
     .then((event: any) => {
       return eventHandler.handleEvent(event);
     })
-    .then((request: IRequest) => {
-      return requestSender.send(request);
+    .then((requests: IRequest[]) => {
+      return requestSender.send(requests);
     })
     .catch(err => {
       console.log("Invalid event!");

@@ -1,98 +1,159 @@
+import EAmmoType from "./models/EAmmoType";
+import ESystem from "./models/ESystem";
+import IBeamTarget from "./models/IBeamTarget";
 import IGetRequest from "./models/IGetRequest";
 import IPostRequest from "./models/IPostRequest";
 
 const GET = "get";
 const POST = "post";
 
+export const selectReactor = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.REACTOR}")`
+});
+
+export const selectBeamWeapons = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.BEAM_WEAPONS}")`
+});
+
+export const selectMissileSystem = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.MISSILE_SYSTEM}")`
+});
+
+export const selectManeuvering = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.MANEUVERING}")`
+});
+
+export const selectImpulseEngine = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.IMPULSE_ENGINES}")`
+});
+
+// Warp + Jump on same hardware component will create a problem here.
+// Incorrect deselects, detect correct from EE?
+export const selectJumpDrive = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.JUMP_DRIVE}")`
+});
+
+export const selectWarpDrive = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.WARP_DRIVE}")`
+});
+
+export const selectFrontShield = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.FRONT_SHIELD_GENERATOR}")`
+});
+
+export const selectRearShield = (): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSelectSystem("${ESystem.REAR_SHIELD_GENERATOR}")`
+});
+
 export const setReactorPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Reactor, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.REACTOR}", ${powerLevel})`
 });
 
 export const setBeamWeaponsPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Beamweapons, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.BEAM_WEAPONS}", ${powerLevel})`
 });
 
 export const setMissileSystemPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Missilesystem, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.MISSILE_SYSTEM}", ${powerLevel})`
 });
 
 export const setManeuveringPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Maneuver, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.MANEUVERING}", ${powerLevel})`
 });
 
 export const setImpulseEnginePower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Impulse, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.IMPULSE_ENGINES}", ${powerLevel})`
 });
 
 export const setJumpDrivePower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.JUMP_DRIVE}", ${powerLevel})`
 });
 
 export const setWarpDrivePower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Warp, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.WARP_DRIVE}", ${powerLevel})`
 });
 
 export const setFrontShieldPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Frontshield, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.FRONT_SHIELD_GENERATOR}", ${powerLevel})`
 });
 
 export const setRearShieldPower = (powerLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Rearshield, ${powerLevel})`
+  path: `set.lua?commandSetSystemPowerRequest("${ESystem.REAR_SHIELD_GENERATOR}", ${powerLevel})`
 });
 
 export const setReactorCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Reactor, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.REACTOR}", ${coolantLevel  / 10})`
 });
 
 export const setBeamWeaponsCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Beamweapons, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.BEAM_WEAPONS}", ${coolantLevel  / 10})`
 });
 
 export const setMissileSystemCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Missilesystem, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.MISSILE_SYSTEM}", ${coolantLevel  / 10})`
 });
 
 export const setManeuveringCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Maneuver, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.MANEUVERING}", ${coolantLevel  / 10})`
 });
 
 export const setImpulseEngineCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Impulse, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.IMPULSE_ENGINES}", ${coolantLevel / 10})`
 });
 
 export const setJumpDriveCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Jumpdrive, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.JUMP_DRIVE}", ${coolantLevel  / 10})`
 });
 
 export const setWarpDriveCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Warp, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.WARP_DRIVE}", ${coolantLevel  / 10})`
 });
 
 export const setFrontShieldCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Frontshield, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.FRONT_SHIELD_GENERATOR}",${coolantLevel  / 10})`
 });
 
 export const setRearShieldCoolant = (coolantLevel: number): IGetRequest => ({
   method: GET,
-  path: `set.lua=commandSetSystemPowerRequest(Rearshield, ${coolantLevel})`
+  path: `set.lua?commandSetSystemCoolantRequest("${ESystem.REAR_SHIELD_GENERATOR}", ${coolantLevel  / 10})`
 });
+
+export const selectAmmoType = (ammoType: EAmmoType): IGetRequest => {
+
+  const ammo = EAmmoType[`${ammoType}`];
+
+  return {
+    method: GET,
+    path: `set.lua?commandSelectWeapon("${ammo}")`
+  };
+
+};
 
 export const loadTube = (tubeId: number, ammoType: string): IGetRequest => ({
   method: GET,
@@ -109,10 +170,21 @@ export const fireTube = (tubeId: number): IGetRequest => ({
   path: `set.lua?commandFireTubeAtCurrentTarget(${tubeId})`,
 });
 
-export const setBeamTarget = (target: string): IGetRequest => ({
-  method: GET,
-  path: `set.lua?commandSetBeamSystemTarget(${target})`
-});
+export const setBeamTarget = (target: IBeamTarget): IGetRequest => {
+
+  let system: string;
+
+  if (target === "HULL") {
+    system = "Hull";
+  } else {
+    system = ESystem[`${target}`];
+  }
+
+  return {
+    method: GET,
+    path: `set.lua?commandSetBeamSystemTarget("${system}")`
+  };
+};
 
 export const setBeamFrequency = (frequency: number): IGetRequest => ({
   method: GET,
@@ -124,12 +196,12 @@ export const setShieldFrequency = (frequency: number): IGetRequest => ({
   path: `set.lua?commandSetShieldFrequencySelection(${frequency})`
 });
 
-export const increaseShieldFrequency = () => ({
+export const increaseShieldFrequency = (): IGetRequest => ({
   method: GET,
   path: `set.lua?commandSetNextShieldFrequencySelection()`
 });
 
-export const decreaseShieldFrequency = () => ({
+export const decreaseShieldFrequency = (): IGetRequest => ({
   method: GET,
   path: `set.lua?commandSetPreviousShieldFrequencySelection()`
 });
@@ -167,4 +239,14 @@ export const setAimLock = (enabled: boolean): IGetRequest => ({
 export const setAimAngle = (angle: number): IGetRequest => ({
   method: GET,
   path: `set.lua?commandSetAimAngle(${angle})`
+});
+
+export const startRepair = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandSetAutoRepair(true)"
+});
+
+export const stopRepair = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandSetAutoRepair(false)"
 });

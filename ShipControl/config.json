@@ -1,4 +1,4 @@
 {
-    "serverAddress": "http://192.168.1.95",
+    "serverAddress": "http://192.168.1.80",
     "serverPort": "8080"
 }
