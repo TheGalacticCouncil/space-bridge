@@ -65,6 +65,7 @@ Huomioita:
 |Mine|
 |EMP|
 |HVLI|
+|None|
 
 | ESystem |
 ---
@@ -128,6 +129,9 @@ PlayerSpaceship::commanSetAimAngle(float angle)
 
 // Fire tube at current target (either auto or manual)
 PlayerSpaceship::commandFireTubeAtCurrentTarget()
+
+// Select weapon on UI
+PlayerSpaceship::commandSelectWeapon(EMissileWeapons selected_weapon)
 
 ```
 
