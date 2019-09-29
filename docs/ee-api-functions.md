@@ -126,6 +126,9 @@ PlayerSpaceship::commandSetAimLock(bool enabled)
 // Set angle on manual aim (0-360)
 PlayerSpaceship::commanSetAimAngle(float angle)
 
+// Fire tube at current target (either auto or manual)
+PlayerSpaceship::commandFireTubeAtCurrentTarget()
+
 ```
 
 Huomioita:
