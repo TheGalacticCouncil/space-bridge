@@ -325,6 +325,10 @@
         "fields": []
     },
     {
+        "name": "REVOKE_CONFIRM_SELF_DESTRUCT",
+        "fields": []
+    },
+    {
         "name": "CANCEL_SELF_DESTRUCT",
         "fields": []
     },
