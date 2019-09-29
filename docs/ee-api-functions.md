@@ -105,12 +105,27 @@ SpaceShip:commandSetNextShieldFrequencySelection()
 // Select previous shield frequency
 SpaceShip:commandSetPreviousShieldFrequencySelection()
 
+// Enable/disable shields
 PlayerSpaceship:commandSetShields(bool enabled)
 
 // 0-20, 0=400THz, 20=800THz
 PlayerSpaceship:commandSetBeamFrequency(int32_t frequency)
 
 PlayerSpaceship:commandSetBeamSystemTarget(ESystem system)
+
+// Cycle through targets
+PlayerSpaceship::commandNextTarget()
+PlayerSpaceship::commandPreviousTarget()
+
+// Calibrate shields to (previously) selected frequency
+PlayerSpaceship::commandCalibrateShields()
+
+// Set state of aim lock
+PlayerSpaceship::commandSetAimLock(bool enabled)
+
+// Set angle on manual aim (0-360)
+PlayerSpaceship::commanSetAimAngle(float angle)
+
 ```
 
 Huomioita:
