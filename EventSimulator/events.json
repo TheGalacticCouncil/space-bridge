@@ -93,6 +93,50 @@
         ]
     },
     {
+        "name": "SELECT_REACTOR",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_BEAM_WEAPONS",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_MISSILE_SYSTEM",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_MANEUVERING",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_IMPULSE_ENGINES",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_JUMP_DRIVE",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_WARP_DRIVE",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_FRONT_SHIELD_GENERATOR",
+        "fields": []
+    },
+
+    {
+        "name": "SELECT_REAR_SHIELD_GENERATOR",
+        "fields": []
+    },
+    {
         "name": "SET_SUBSYSTEM_POWER",
         "fields": [
             {
@@ -611,7 +655,7 @@
                 "possibleValues": [
                     "HULL",
                     "REACTOR",
-                    "BEAM",
+                    "BEAM_WEAPONS",
                     "MISSILE_SYSTEM",
                     "MANEUVERING",
                     "IMPULSE_ENGINES",
