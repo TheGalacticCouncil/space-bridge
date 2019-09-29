@@ -169,6 +169,13 @@ PlayerSpaceship:commandCancelSelfDestruct()
 
 // Tämä tullaan korvaamaan custom funktiolla, joka vain aloittaa laskennan samantien.
 PlayerSpaceship:commandConfirmDestructCode(int8_t index, uint32_t code)
+
+// Confirm self destruction without using codes
+PlayerSpaceship::commandConfirmSelfDestruct()
+
+// Select system to work on
+PlayerSpaceship::commandSelectSystem(ESystem)
+
 ```
 
 Huomioita:
