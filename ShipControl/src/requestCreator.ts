@@ -104,17 +104,9 @@ export const unloadTube = (tubeId: number): IGetRequest => ({
   path: `set.lua?commandUnloadTube(${tubeId})`
 });
 
-export const fireTube = (tubeId: number): IPostRequest => ({
-  method: POST,
-  path: "exec.lua",
-  body: `
-        us = getPlayerShip(-1)
-        target = us:getTarget()
-        if target == nil then
-          us:commandFireTube(${tubeId}, 0)
-        else
-          us:commandFireTubeAtTarget(${tubeId}, target)
-        end`
+export const fireTube = (tubeId: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandFireTubeAtCurrentTarget(${tubeId})`,
 });
 
 export const setBeamTarget = (target: string): IGetRequest => ({
@@ -142,17 +134,37 @@ export const decreaseShieldFrequency = () => ({
   path: `set.lua?commandSetPreviousShieldFrequencySelection()`
 });
 
-export const calibrateShields = (frequency: number): IGetRequest => ({
+export const calibrateShields = (): IGetRequest => ({
   method: GET,
-  path: `set.lua?commandSetShieldFrequency(${frequency})`
+  path: `set.lua?commandCalibrateShields()`
 });
 
-export const shieldsUp = () => ({
+export const shieldsUp = (): IGetRequest => ({
   method: GET,
   path: "set.lua?commandSetShields(true)"
 });
 
-export const shieldsDown = () => ({
+export const shieldsDown = (): IGetRequest => ({
   method: GET,
   path: "set.lua?commandSetShields(false)"
+});
+
+export const nextTarget = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandNextTarget()"
+});
+
+export const previousTarget = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandPreviousTarget()"
+});
+
+export const setAimLock = (enabled: boolean): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetAimLock(${enabled})`
+});
+
+export const setAimAngle = (angle: number): IGetRequest => ({
+  method: GET,
+  path: `set.lua?commandSetAimAngle(${angle})`
 });

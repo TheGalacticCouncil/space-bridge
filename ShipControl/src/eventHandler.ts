@@ -196,12 +196,12 @@ export class EventHandler {
             case "UNLOAD_TUBE":
                 return requestCreator.unloadTube(message.payload.tubeId);
 
-            // case "TARGET_NEXT_ENEMY":
-            //     console.log("TARGET_NEXT_ENEMY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "TARGET_PREVIOUS_ENEMY":
-            //     console.log("TARGET_PREVIOUS_ENEMY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+            case "TARGET_NEXT_ENEMY":
+                return requestCreator.nextTarget();
+
+            case "TARGET_PREVIOUS_ENEMY":
+                return requestCreator.previousTarget();
+
             case "SET_BEAM_TARGET":
                 this.setBeamTarget(message.payload.value);
                 return requestCreator.setBeamTarget(message.payload.value);
@@ -232,7 +232,7 @@ export class EventHandler {
                 return requestCreator.decreaseShieldFrequency();
 
             case "CALIBRATE_SHIELDS":
-                return requestCreator.calibrateShields(message.payload.value);
+                return requestCreator.calibrateShields();
 
             case "SHIELDS_UP":
                 return requestCreator.shieldsUp()
@@ -240,15 +240,14 @@ export class EventHandler {
             case "SHIELDS_DOWN":
                 return requestCreator.shieldsDown();
 
-            // case "MANUAL_TARGETING":
-            //     console.log("MANUAL_TARGETING: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "AUTOMATIC_TARGETING":
-            //     console.log("AUTOMATIC_TARGETING: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "MISSILE_TARGET_ANGLE":
-            //     console.log("MISSILE_TARGET_ANGLE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+            case "MANUAL_TARGETING":
+                return requestCreator.setAimLock(false);
+
+            case "AUTOMATIC_TARGETING":
+                return requestCreator.setAimLock(true);
+
+            case "MISSILE_TARGET_ANGLE":
+                return requestCreator.setAimAngle(message.payload.value);
             // case "PREPARE_WAYPOINT_PLACEMENT":
             //     console.log("PREPARE_WAYPOINT_PLACEMENT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
