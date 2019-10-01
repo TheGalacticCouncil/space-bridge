@@ -90,18 +90,24 @@ class InputPoller(threading.Thread):
 
                 # ENCODER is read
                 #
-                # If a new value is received, purges the
-                # queue and adds a new entry to it.
-                # The operation is non-blocking.
+                # When a new value is received, 
+                # Poller tries to put the input in queue (non-blocking).
+                # If the queue is full, the oldes input will be removed
+                # Finally the input is placed in the queue.
+                # To ensure the delivery of the second attempt the 
+                # operaion is blocking.
                 #
                 for i in encoder_range:
                     counter[i], changed, name = encoderInput[i].increment(counter[i])
                     if changed == True:
                         try:
-                            inputQueue.get_nowait()
-                        except Empty:
-                            pass
-                        inputQueue.put([name, counter[i]])
+                            inputQueue.put_nowait([name, counter[i]])
+                        except:
+                            try:
+                                inputQueue.get_nowait()
+                            except Empty:
+                                pass
+                            inputQueue.put([name, counter[i]])
 
                 # BUTTON is read
                 #
