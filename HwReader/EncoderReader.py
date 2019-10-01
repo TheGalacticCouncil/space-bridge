@@ -63,6 +63,8 @@ class EncoderInput():
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
 
+        changed = True
+
         # NORMAL OPERATION
         # SENSITIVITY INCREASED
         #
@@ -72,17 +74,19 @@ class EncoderInput():
         # SENSITIVITY IS DECREASED
         # "substeps" are used
         #
-        elif self.step < 0:                   
-            # Count, if delta is or isn't passed on
+        elif self.step < 0:
+            # INCREMENT SUBSTEP
             self.substep += delta
 
-            # if substeps reach [-step], substeps is reset
-            # and delta is passed on
+            # IF FULL (+) STEP IS REACHED,
+            # substeps is reset and
+            # delta is passed on
             if self.substep == -(self.step):
                 self.substep = 0
 
-            # if substeps reach [step], substeps is reset
-            # and delta is passed on
+            # IF FULL (-) STEP IS REACHED,
+            # substeps is reset and
+            # delta is passed on
             elif self.substep == self.step:
                 self.substep = 0
 
@@ -90,6 +94,7 @@ class EncoderInput():
                 # if substeps are less, delta is reset
                 # and substeps keep building up
                 delta = 0
+                changed = False
 
             counter += delta
 
@@ -101,7 +106,7 @@ class EncoderInput():
         except TypeError:
             pass
 
-        return counter
+        return counter, changed
 
 
     def increment(self, counter=None):
@@ -128,8 +133,7 @@ class EncoderInput():
 
         # If input has changed
         if abs(delta) > 0:
-            changed = True
-            counter = EncoderInput.rescale(self, counter, delta)
+            counter, changed = EncoderInput.rescale(self, counter, delta)
 
             #self.counter = counter
             return counter, changed, self.name
