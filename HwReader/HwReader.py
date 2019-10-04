@@ -73,11 +73,14 @@ station = inputConfig.station
 # creates appropriate input instances from config file
 aInput, eInput, bInput, sInput = InputConfig.collectInputs(inputConfig)
 
-# Creates input and key-press queues with debth: 1 (item) each.
-# event Queue is infinite for now
-inputQueue = Queue(1)
+# Creates input queue with debth: 2 (items).
+#  This is to allow up to two events to be placed in the queue
+#  from the same source.
+# Creates key-press queue with debth: 1 (item).
+# event Queue is un-used for now
+inputQueue = Queue(2)
 keyQueue = Queue(1)
-eventQueue = Queue(0)
+eventQueue =  None # Queue(0)
 
 # Creates threads
 inputThread = InputPoller(aInput, eInput, bInput, sInput, cycleTime, inputQueue)

@@ -52,22 +52,22 @@ TestInput1:
   type: encoder
   clk: 17
   dt: 24
-#  step: 1
+  step: 1
 
-# TestInput2:
-  # event: TARGET_NEXT_ENEMY
-  # event2: TARGET_PREVIOUS_ENEMY
-  # type: encoder
-  # clk: 17
-  # dt: 24
-# step: 1 # optional
-
-TestInput3:
-  event: SET_SHIELD_FREQUENCY
+TestInput2:
+  event: TARGET_NEXT_ENEMY
+  event2: TARGET_PREVIOUS_ENEMY
   type: encoder
   clk: 17
   dt: 24
-  step: -15
+  step: -5 # optional
+
+#TestInput3:
+#  event: SET_SHIELD_FREQUENCY
+#  type: encoder
+#  clk: 17
+#  dt: 24
+#  step: -15
 
 ButtonTest:
   event: LOAD_TUBE
