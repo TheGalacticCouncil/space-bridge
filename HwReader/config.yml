@@ -55,11 +55,10 @@ TestInput1:
   step: 10
 
 TestInput2:
-  event: TARGET_NEXT_ENEMY
-  event2: TARGET_PREVIOUS_ENEMY
+  event: SET_THROTTLE
   type: encoder
-  clk: 21
-  dt: 20
+  clk: 17
+  dt: 24
   step: 1 # optional
 
 ButtonTest:

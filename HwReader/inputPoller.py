@@ -102,7 +102,7 @@ class InputPoller(threading.Thread):
                     if changed == True:
                         try:
                             inputQueue.put_nowait([name, counter[i]])
-                        except:
+                        except Full:
                             try:
                                 inputQueue.get_nowait()
                             except Empty:
