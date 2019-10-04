@@ -596,10 +596,6 @@
         ]
     },
     {
-        "name": "LOAD_REAR_TUBE",
-        "fields": []
-    },
-    {
         "name": "FIRE_TUBE",
         "fields": [
             {
