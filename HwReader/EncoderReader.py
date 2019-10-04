@@ -26,6 +26,7 @@ class EncoderInput():
         self.step = step
 
         #self.counter = 0
+        self.substep = 0
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -62,15 +63,50 @@ class EncoderInput():
     def rescale(self, counter, delta):
         '''Re-scales an input to requirement'''
 
-        counter += delta * self.step
-        try:        #if minimum != None and maximum != None:
+        changed = True
+
+        # NORMAL OPERATION
+        # SENSITIVITY INCREASED
+        #
+        if self.step >= 0:
+            counter += delta * self.step
+
+        # SENSITIVITY IS DECREASED
+        # "substeps" are used
+        #
+        elif self.step < 0:
+            # INCREMENT SUBSTEP
+            self.substep += delta
+
+            # IF FULL (+) STEP IS REACHED,
+            # substeps is reset and
+            # delta is passed on
+            if self.substep == -(self.step):
+                self.substep = 0
+
+            # IF FULL (-) STEP IS REACHED,
+            # substeps is reset and
+            # delta is passed on
+            elif self.substep == self.step:
+                self.substep = 0
+
+            else:
+                # if substeps are less, delta is reset
+                # and substeps keep building up
+                delta = 0
+                changed = False
+
+            counter += delta
+
+        try:                            # if minimum != None and maximum != None:
             if counter > self.maximum:
                 counter = self.maximum
             elif counter < self.minimum:
                 counter = self.minimum
         except TypeError:
             pass
-        return counter
+
+        return counter, changed
 
 
     def increment(self, counter=None):
@@ -97,8 +133,7 @@ class EncoderInput():
 
         # If input has changed
         if abs(delta) > 0:
-            changed = True
-            counter = EncoderInput.rescale(self, counter, delta)
+            counter, changed = EncoderInput.rescale(self, counter, delta)
 
             #self.counter = counter
             return counter, changed, self.name
