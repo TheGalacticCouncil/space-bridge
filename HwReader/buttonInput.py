@@ -3,7 +3,7 @@
 # J.V.Ojala 10.03.2019
 # ButtonInput
 
-from RPi import GPIO
+from GPIO import GPIO
 
 class PushButton():
     """

@@ -3,7 +3,7 @@
 # J.V.Ojala 17.01.2019
 # inputPoller (HwReader)
 
-from RPi import GPIO
+from GPIO import GPIO
 from time import sleep, time
 import threading
 #from queue import Queue
