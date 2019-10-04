@@ -60,7 +60,11 @@ class EventMaker(threading.Thread):
 
         fields = self.eventConfig.event(event_name)
 
-        payload = EventMaker.payloader(input_name, value, fields[0], settings)
+        if len(fields) != 0:
+            payload = EventMaker.payloader(input_name, value, fields[0], settings)
+        else:
+            # The event is a plain event, no "value" or "payload" is delivered
+            payload = {}
 
         if payload == {}:
             # If a secondary event is defined, the input is a binary
@@ -89,32 +93,30 @@ class EventMaker(threading.Thread):
         and interprits how to combine it with the [value].
         '''
 
-        try:
-            if "name" in fields:
-                value_name = fields["name"]
-                input_setting = settings[input_name]
 
-                # Check if a [set_value] has been defined [value_name]
-                # It is used if defined.
-                if 'value' in input_setting:
-                    if value_name in input_setting["value"]:
-                        set_value = input_setting['value'][value_name]
-                        payload = {value_name: set_value}
+        if "name" in fields:
+            value_name = fields["name"]
+            input_setting = settings[input_name]
 
-                # If "possibleValues" are defined and no predefined
-                # value is set, cycles through the list.
-                # Uses [value] as index for [possible] values
-                elif "possibleValues" in fields:
-                    possible = fields["possibleValues"]
-                    payload = {value_name: possible[value]}
+            # Check if a [set_value] has been defined [value_name]
+            # It is used if defined.
+            if 'value' in input_setting:
+                if value_name in input_setting["value"]:
+                    set_value = input_setting['value'][value_name]
+                    payload = {value_name: set_value}
 
-                # If nothing else, then the plain value is used
-                else:
-                    payload = {value_name: value}
+            # If "possibleValues" are defined and no predefined
+            # value is set, cycles through the list.
+            # Uses [value] as index for [possible] values
+            elif "possibleValues" in fields:
+                possible = fields["possibleValues"]
+                payload = {value_name: possible[value]}
+
+            # If nothing else, then the plain value is used
+            else:
+                payload = {value_name: value}
 
         ##else: The event is a plain event, no "value" or "payload" is delivered
-        except IndexError:
-            pass
 
         return payload
 
