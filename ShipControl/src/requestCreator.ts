@@ -32,8 +32,6 @@ export const selectImpulseEngine = (): IGetRequest => ({
   path: `set.lua?commandSelectSystem("${ESystem.IMPULSE_ENGINES}")`
 });
 
-// Warp + Jump on same hardware component will create a problem here.
-// Incorrect deselects, detect correct from EE?
 export const selectJumpDrive = (): IGetRequest => ({
   method: GET,
   path: `set.lua?commandSelectSystem("${ESystem.JUMP_DRIVE}")`
@@ -249,4 +247,19 @@ export const startRepair = (): IGetRequest => ({
 export const stopRepair = (): IGetRequest => ({
   method: GET,
   path: "set.lua?commandSetAutoRepair(false)"
+});
+
+export const activateSelfDestruct = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandActivateSelfDestruct()"
+});
+
+export const cancelSelfDestruct = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandCancelSelfDestruct()"
+});
+
+export const confirmSelfDestruct = (): IGetRequest => ({
+  method: GET,
+  path: "set.lua?commandConfirmSelfDestruct()"
 });

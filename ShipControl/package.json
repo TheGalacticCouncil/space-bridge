@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --watch",
     "coverage": "jest --coverage",
     "build": "tsc",
     "start": "npm run build -- && node dist/index.js",

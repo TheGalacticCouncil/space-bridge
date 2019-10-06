@@ -24,7 +24,7 @@ describe("RequestSender", () => {
             path: ""
         };
 
-        requestSender.send(request);
+        requestSender.send([request]);
 
         expect(mockGet).toHaveBeenCalledTimes(1);
         expect(mockPost).toHaveBeenCalledTimes(0);
@@ -44,7 +44,7 @@ describe("RequestSender", () => {
             path: ""
         };
 
-        requestSender.send(request);
+        requestSender.send([request]);
 
         expect(mockGet).toHaveBeenCalledTimes(0);
         expect(mockPost).toHaveBeenCalledTimes(1);
