@@ -50,8 +50,9 @@ AnalogInp:
 TestInput1:
   event: MISSILE_TARGET_ANGLE
   type: encoder
-  clk: 17
-  dt: 24
+  #clk: 17
+  clk: 108
+  dt: 109
   step: 1
 
 TestInput2:
@@ -72,7 +73,7 @@ TestInput2:
 ButtonTest:
   event: LOAD_TUBE
   type: push_button
-  pin: 16
+  pin: 110
   invert: True
   value:
     tubeId: 0123

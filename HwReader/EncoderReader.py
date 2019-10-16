@@ -8,7 +8,7 @@ name = EncoderInput(clock, dt)
 name.read([counter])
 """
 
-from RPi import GPIO
+from GPIO import GPIO
 
 class EncoderInput():
     """
