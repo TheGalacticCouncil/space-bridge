@@ -1,4 +1,7 @@
+import _ from "lodash";
+
 import axios from "axios";
+import IRequest from "./models/IRequest";
 
 const config: any = require("../config.json");
 
@@ -7,27 +10,36 @@ export class RequestSender {
   serverAddress: string;
   serverPort: string;
   url: string;
-  constructor () {
-    this.serverAddress = config.serverAddress;
-    this.serverPort = config.serverPort;
+
+  constructor() {
+    this.serverAddress = config.server.address;
+    this.serverPort = config.server.port;
     this.url = this.serverAddress + ":" + this.serverPort;
   }
 
-  send(request: any) {
+  public async send(requests: IRequest[]): Promise<void> {
 
-    console.log(request);
-    if (request.method === "get") {
-      axios.get(`${this.url}/${request.path}`)
-      .catch(err => {
-        console.log(err);
-      });
-    } else if (request.method === "post") {
-      axios.post(`${this.url}/${request.path}`, request.body)
-      .catch(err => {
-        console.log(err);
-      });
-    } else {
-      console.log("Unknown method!");
-    }
+    _.forEach(requests, async (request: IRequest): Promise<void> => {
+
+      // console.log(`Request in Sender: ${request}`);
+      if (request.method === "get") {
+
+        await axios.get(`${this.url}/${request.path}`)
+        .then(() => Promise.resolve())
+        .catch(err => {
+          throw(err);
+        });
+
+      } else {
+
+        await axios.post(`${this.url}/${request.path}`, request.body)
+        .then(() => Promise.resolve())
+        .catch(err => {
+          throw(err);
+        });
+      }
+    });
+
+    return Promise.resolve();
   }
 }

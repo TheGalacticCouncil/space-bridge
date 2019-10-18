@@ -34,6 +34,23 @@ import_time = int((end_time - start_time)*1000)
 
 logger = Logger(__name__)
 
+license="""
+   HwReader Copyright 2019 JValtteri
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+print("\n\n\n\n"+license+"\n")
+
 logger.debug("Module imports compleate in %i ms" % import_time)
 
 start_time = time()
@@ -56,11 +73,14 @@ station = inputConfig.station
 # creates appropriate input instances from config file
 aInput, eInput, bInput, sInput = InputConfig.collectInputs(inputConfig)
 
-# Creates input and key-press queues with debth: 1 (item) each.
-# event Queue is infinite for now
-inputQueue = Queue(1)
+# Creates input queue with debth: 2 (items).
+#  This is to allow up to two events to be placed in the queue
+#  from the same source.
+# Creates key-press queue with debth: 1 (item).
+# event Queue is un-used for now
+inputQueue = Queue(2)
 keyQueue = Queue(1)
-eventQueue = Queue(0)
+eventQueue =  None # Queue(0)
 
 # Creates threads
 inputThread = InputPoller(aInput, eInput, bInput, sInput, cycleTime, inputQueue)
@@ -95,16 +115,13 @@ else:
     sleep(0.5)
 
 try:
-    while True:
+    while dont_stop:
         if inputThread.is_alive() and eventThread.is_alive():
-            if dont_stop:
-                try:
-                    dont_stop = keyQueue.get_nowait()
-                except Empty:
-                    pass
-                sleep(0.5)
-            else:
-                break
+            try:
+                dont_stop = keyQueue.get_nowait()
+            except Empty:
+                pass
+            sleep(0.5)
         else:
             logger.critical("A thread has crashed. Terminating")
             break

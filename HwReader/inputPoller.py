@@ -3,7 +3,7 @@
 # J.V.Ojala 17.01.2019
 # inputPoller (HwReader)
 
-from RPi import GPIO
+from GPIO import GPIO
 from time import sleep, time
 import threading
 #from queue import Queue
@@ -29,23 +29,39 @@ class InputPoller(threading.Thread):
 
         self.cycleTime = sleep
         self.inputQueue = inputQueue
+        
 
     def run(self):
 
         logger = Logger(__name__)
         logger.info("InputPoller thread started")
 
-        q = 0   #Counter for a performance metric
+        # PERFORMANCE IMPROVEMENTS
+        # Precalculates ranges for polling "for" statements
+        #
+        analog_range = range(len(self.analogInput))
+        encoder_range = range(len(self.encoderInput))
+        button_range = range(len(self.buttonInput))
+        switch_range = range(len(self.switchInput))
+        #
+        #
+        # Converts class objects to local objects 
+        # to reduce refrencing and improve performance
+        #
+        cycleTime = self.cycleTime
+        analogInput = self.analogInput
+        encoderInput = self.encoderInput
+        buttonInput = self.buttonInput
+        switchInput = self.switchInput
+        inputQueue = self.inputQueue
 
         # Analog Init
-        a_value=[]
-        for i in range(len(self.analogInput)):
-            a_value.append(0)
+        a_value = [0 for i in analog_range]
 
         # Encoder Init
-        counter=[]
-        for i in range(len(self.encoderInput)):
-            counter.append(0)
+        counter = [0 for i in encoder_range]
+
+        q = 0   #Counter for a performance metric
 
         # DEFINE INTERRUPT CALLBACKS
         #
@@ -84,28 +100,34 @@ class InputPoller(threading.Thread):
                 # Discarding a few intermediary values will not hurt
                 # accuarcy, but improves responciveness a great deal.
                 #
-                for i in range(len(self.analogInput)):
-                    a_value[i], changed, name = self.analogInput[i].readUpdate()
+                for i in analog_range:
+                    a_value[i], changed, name = analogInput[i].readUpdate()
                     if changed == True:
                         try:
-                            self.inputQueue.put_nowait([name, a_value[i]])
+                            inputQueue.put_nowait([name, a_value[i]])
                         except Full:
                             pass
 
                 # ENCODER is read
                 #
-                # If a new value is received, purges the
-                # queue and adds a new entry to it.
-                # The operation is non-blocking.
-                #
-                # for i in range(len(self.encoderInput)):
-                #     counter[i], changed, name = self.encoderInput[i].increment(counter[i])
+                # When a new value is received, 
+                # Poller tries to put the input in queue (non-blocking).
+                # If the queue is full, the oldes input will be removed
+                # Finally the input is placed in the queue.
+                # To ensure the delivery of the second attempt the 
+                # operaion is blocking.
+                
+                # for i in encoder_range:
+                #     counter[i], changed, name = encoderInput[i].increment(counter[i])
                 #     if changed == True:
                 #         try:
-                #             self.inputQueue.get_nowait()
-                #         except Empty:
-                #             pass
-                #         self.inputQueue.put([name, counter[i]])
+                #             inputQueue.put_nowait([name, counter[i]])
+                #         except Full:
+                #             try:
+                #                 inputQueue.get_nowait()
+                #             except Empty:
+                #                 pass
+                #             inputQueue.put([name, counter[i]])
 
                 # BUTTON is read
                 #
@@ -114,10 +136,10 @@ class InputPoller(threading.Thread):
                 # Thus, the press must be registered properly!
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
-                for i in range(len(self.buttonInput)):
-                    b_value, name = self.buttonInput[i].read()
+                for i in button_range:
+                    b_value, name = buttonInput[i].read()
                     if b_value == True:
-                        self.inputQueue.put([name, b_value])
+                        inputQueue.put([name, b_value])
 
                 # SWITCH is read
                 #
@@ -126,14 +148,16 @@ class InputPoller(threading.Thread):
                 # Thus, the press must be registered properly!
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
-                for i in range(len(self.switchInput)):
-                    s_value, name = self.switchInput[i].read()
+                for i in switch_range:
+                    s_value, name = switchInput[i].read()
                     if s_value == True or s_value == False:
-                        self.inputQueue.put([name, s_value])
+                        inputQueue.put([name, s_value])
                     else:
                         pass    # Switch returns only a True on enable
                                 # False on disable and None when not changed
 
+                # PERFORMANCE METRICS
+                #
                 end_time = time()
                 cycle_length = (end_time - start_time)
                 if q >= 1000:
@@ -141,7 +165,15 @@ class InputPoller(threading.Thread):
                     logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
                 q += 1
 
-                sleep(self.cycleTime)
+                if cycle_length < cycleTime:
+                    sleep(cycleTime - cycle_length)
+                else:
+                    #logger.debug("Cycle time exceeded: cycle %i ns" % int(cycle_length * 1000 * 1000))
+                    #print((cycle_length * 1000 * 1000))
+                    ###########################################################################
+                    # Should we reserve some minimum sleep to give other threads time to run? #
+                    ###########################################################################
+                    pass
 
         except KeyboardInterrupt:
             pass

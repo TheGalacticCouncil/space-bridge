@@ -1,28 +1,60 @@
 import _ from "lodash";
 
+import EAmmoType from "./models/EAmmoType";
+import EStation from "./models/EStation";
+import ESystem from "./models/ESystem";
+import IBeamTarget from "./models/IBeamTarget";
+import IRequest from "./models/IRequest";
 import * as requestCreator from "./requestCreator";
 
-const NOT_SELECTED = "NOT_SELECTED";
+const config: any = require("../config.json");
 
 export class EventHandler {
-    beamTarget: string;
-    beamFrequency: number;
-    selectedAmmoType: string;
+
+        beamTarget: IBeamTarget;
+        beamFrequency: number;
+        selectedAmmoType: EAmmoType;
+        stations: EStation[];
+        selfDestructActive: boolean;
+        selfDestructConfirmations: object;
+
     constructor() {
         this.beamTarget = "HULL";
-        this.selectedAmmoType = NOT_SELECTED;
+        this.beamFrequency = 0;
+        this.selectedAmmoType = EAmmoType.NONE;
+        this.stations = config.consoles;
+        this.selfDestructActive = false;
+        this.selfDestructConfirmations = {};
+
+        this.initializeSelfDestructConfirmations();
     }
 
-    selectAmmoType(newAmmoType: string) {
+    initializeSelfDestructConfirmations(): {} {
+        _.forEach(this.stations, (station) => {
+            this.selfDestructConfirmations[station] = false;
+        });
+
+        return this.selfDestructConfirmations;
+    }
+
+    selectAmmoType(newAmmoType: EAmmoType) {
         return this.selectedAmmoType = newAmmoType;
     }
 
-   increaseBeamFrequency() {
-        return this.beamFrequency++;
+    increaseBeamFrequency() {
+        if (this.beamFrequency < 20) {
+            return this.beamFrequency++;
+        }
+
+        return this.beamFrequency = 20;
     }
 
     decreaseBeamFrequency() {
-        return this.beamFrequency--;
+        if (this.beamFrequency > 0) {
+            return this.beamFrequency--;
+        }
+
+        return this.beamFrequency = 0;
     }
 
     setBeamFrequency(newFrequency: number) {
@@ -35,37 +67,101 @@ export class EventHandler {
         }
     }
 
-    setBeamTarget(newTarget: string) {
+    setBeamTarget(newTarget: IBeamTarget) {
         return this.beamTarget = newTarget;
     }
 
     nextBeamTarget() {
         switch (this.beamTarget) {
             case "HULL":
-                return this.beamTarget = "REACTOR";
-            case "REACTOR":
-                return this.beamTarget = "MISSILE_SYSTEM";
-            case "MISSILE_SYSTEM":
-                return this.beamTarget = "MANEUVERING";
-            case "MANEUVERING":
-                return this.beamTarget = "IMPULSE_ENGINES";
-            case "IMPULSE_ENGINES":
-                return this.beamTarget = "WARP_DRIVE";
-            case "WARP_DRIVE":
-                return this.beamTarget = "JUMP_DRIVE";
-            case "JUMP_DRIVE":
-                return this.beamTarget = "FRONT_SHIELD_GENERATOR";
-            case "FRONT_SHIELD_GENERATOR":
-                return this.beamTarget = "REAR_SHIELD_GENERATOR";
-            case "REAR_SHIELD_GENERATOR":
-                return this.beamTarget = "HULL";
+                return this.beamTarget = ESystem.REACTOR;
+            case ESystem.REACTOR:
+                return this.beamTarget = ESystem.MISSILE_SYSTEM;
+            case ESystem.MISSILE_SYSTEM:
+                return this.beamTarget = ESystem.MANEUVERING;
+            case ESystem.MANEUVERING:
+                return this.beamTarget = ESystem.IMPULSE_ENGINES;
+            case ESystem.IMPULSE_ENGINES:
+                return this.beamTarget = ESystem.WARP_DRIVE;
+            case ESystem.WARP_DRIVE:
+                return this.beamTarget = ESystem.JUMP_DRIVE;
+            case ESystem.JUMP_DRIVE:
+                return this.beamTarget = ESystem.FRONT_SHIELD_GENERATOR;
+            case ESystem.FRONT_SHIELD_GENERATOR:
+                return this.beamTarget = ESystem.REAR_SHIELD_GENERATOR;
+            case ESystem.REAR_SHIELD_GENERATOR:
             default:
                 return this.beamTarget = "HULL";
         }
     }
 
-    public handleEvent(message: any) {
+    activateSelfDestruct(message: any): IRequest[] {
 
+        const station: EStation = message.station;
+
+        if (station === EStation.ENGINEER) {
+            this.selfDestructActive = true;
+            this.selfDestructConfirmations[EStation.ENGINEER] = true;
+            return [requestCreator.activateSelfDestruct()];
+        }
+
+        return [];
+    }
+
+    confirmSelfDestruct(message: any): IRequest[] {
+
+        const station: EStation = message.station;
+
+        if (_.includes(this.stations, station)) {
+
+            if (this.selfDestructActive) {
+
+                this.selfDestructConfirmations[station] = true;
+
+                const allStationsConfirmed = _.every(this.selfDestructConfirmations, (stationConfirmed) => {
+                    return stationConfirmed;
+                });
+
+                if (allStationsConfirmed) {
+                    return [requestCreator.confirmSelfDestruct()];
+                }
+            }
+        }
+
+        return [];
+    }
+
+    revokeSelfDestruct(message: any): boolean {
+
+        const station: EStation = message.station;
+
+        if (_.includes(this.stations, station)) {
+
+            this.selfDestructConfirmations[station] = false;
+            return true;
+        }
+
+        return false;
+    }
+
+    cancelSelfDestruct(message: any): IRequest[] {
+
+        const station: EStation = message.station;
+
+        if (station === EStation.ENGINEER) {
+
+            this.selfDestructActive = false;
+            this.initializeSelfDestructConfirmations();
+
+            return [requestCreator.cancelSelfDestruct()];
+        }
+
+        return [];
+    }
+
+    public handleEvent(message: any): IRequest[] {
+
+        console.log(`Event of type ${message.event} received from ${message.station}`);
 
         switch (message.event) {
             // case "SET_THROTTLE":
@@ -92,59 +188,115 @@ export class EventHandler {
             // case "UNDOCK":
             //     console.log("UNDOCK: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
-            // case "SELECT_SUBSYSTEM":
-            //     console.log("SELECT_SUBSYSTEM: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "SET_SUBSYSTEM_POWER":
+            // case "SELECT_SUBSYSTEM": // THIS EVENT IS NOT USED
+            // return [requestCreator.selectSubsystem(message.payload.value)];
+
+            case "SELECT_REACTOR":
+                return [requestCreator.selectReactor()];
+
+            case "SELECT_BEAM_WEAPONS":
+                return [requestCreator.selectBeamWeapons()];
+
+            case "SELECT_MISSILE_SYSTEM":
+                return [requestCreator.selectMissileSystem()];
+
+            case "SELECT_MANEUVERING":
+                return [requestCreator.selectManeuvering()];
+
+            case "SELECT_IMPULSE_ENGINES":
+                return [requestCreator.selectImpulseEngine()];
+
+            case "SELECT_JUMP_DRIVE":
+                return [requestCreator.selectJumpDrive()];
+
+            case "SELECT_WARP_DRIVE":
+                return [requestCreator.selectWarpDrive()];
+
+            case "SELECT_FRONT_SHIELD_GENERATOR":
+                return [requestCreator.selectFrontShield()];
+
+            case "SELECT_REAR_SHIELD_GENERATOR":
+                return [requestCreator.selectRearShield()];
+
+            // case "SET_SUBSYSTEM_POWER": // THIS EVENT IS NOT USED
             //     console.log("SET_SUBSYSTEM_POWER: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             case "SET_REACTOR_POWER":
-                return requestCreator.setReactorPower(message.event.value);
+                return [requestCreator.setReactorPower(message.payload.value)];
+
             case "SET_BEAM_WEAPONS_POWER":
-                return requestCreator.setBeamWeaponsPower(message.event.value);
+                return [requestCreator.setBeamWeaponsPower(message.payload.value)];
+
             case "SET_MISSILE_SYSTEM_POWER":
-                return requestCreator.setMissileSystemPower(message.event.value);
+                return [requestCreator.setMissileSystemPower(message.payload.value)];
+
             case "SET_MANEUVERING_POWER":
-                return requestCreator.setManeuveringPower(message.event.value);
+                return [requestCreator.setManeuveringPower(message.payload.value)];
+
             case "SET_IMPULSE_ENGINES_POWER":
-                return requestCreator.setImpulseEnginePower(message.event.value);
+                return [requestCreator.setImpulseEnginePower(message.payload.value)];
+
             case "SET_JUMP_DRIVE_POWER":
-                return requestCreator.setJumpDrivePower(message.event.value);
+                return [requestCreator.setJumpDrivePower(message.payload.value)];
+
             case "SET_WARP_DRIVE_POWER":
-                return requestCreator.setWarpDrivePower(message.event.value);
+                return [requestCreator.setWarpDrivePower(message.payload.value)];
+
             case "SET_FRONT_SHIELD_GENERATOR_POWER":
-                return requestCreator.setFrontShieldPower(message.event.value);
+                return [requestCreator.setFrontShieldPower(message.payload.value)];
+
             case "SET_REAR_SHIELD_GENERATOR_POWER":
-                return requestCreator.setRearShieldPower(message.event.value);
-            // case "SET_SUBSYSTEM_COOLANT":
+                return [requestCreator.setRearShieldPower(message.payload.value)];
+
+            // case "SET_SUBSYSTEM_COOLANT": // THIS EVENT IS NOT USED
             //     console.log("SET_SUBSYSTEM_COOLANT", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             case "SET_REACTOR_COOLANT":
-                return requestCreator.setReactorCoolant(message.event.value);
+                return [requestCreator.setReactorCoolant(message.payload.value)];
+
             case "SET_BEAM_WEAPONS_COOLANT":
-                return requestCreator.setBeamWeaponsCoolant(message.event.value);
+                return [requestCreator.setBeamWeaponsCoolant(message.payload.value)];
+
+            case "SET_MISSILE_SYSTEM_COOLANT":
+                return [requestCreator.setMissileSystemCoolant(message.payload.value)];
+
             case "SET_MANEUVERING_COOLANT":
-                return requestCreator.setManeuveringCoolant(message.event.value);
+                return [requestCreator.setManeuveringCoolant(message.payload.value)];
+
             case "SET_IMPULSE_ENGINES_COOLANT":
-                return requestCreator.setImpulseEngineCoolant(message.event.value);
+                return [requestCreator.setImpulseEngineCoolant(message.payload.value)];
+
+            case "SET_JUMP_DRIVE_COOLANT":
+                return [requestCreator.setJumpDriveCoolant(message.payload.value)];
+
             case "SET_WARP_DRIVE_COOLANT":
-                return requestCreator.setWarpDriveCoolant(message.event.value);
+                return [requestCreator.setWarpDriveCoolant(message.payload.value)];
+
             case "SET_FRONT_SHIELD_GENERATOR_COOLANT":
-                return requestCreator.setFrontShieldCoolant(message.event.value);
+                return [requestCreator.setFrontShieldCoolant(message.payload.value)];
+
             case "SET_REAR_SHIELD_GENERATOR_COOLANT":
-                return requestCreator.setRearShieldCoolant(message.event.value);
-            // case "REPAIR":
-            //     console.log("REPAIR: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "ACTIVATE_SELF_DESTRUCT":
-            //     console.log("ACTIVATE_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "CONFIRM_SELF_DESTRUCT":
-            //     console.log("CONFIRM_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "CANCEL_SELF_DESTRUCT":
-            //     console.log("CANCEL_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+                return [requestCreator.setRearShieldCoolant(message.payload.value)];
+
+            case "REPAIR":
+                return [
+                    requestCreator.startRepair(),
+                    requestCreator.stopRepair()
+                ];
+
+            case "ACTIVATE_SELF_DESTRUCT":
+                return this.activateSelfDestruct(message);
+
+            case "CANCEL_SELF_DESTRUCT":
+                return this.cancelSelfDestruct(message);
+
+            case "CONFIRM_SELF_DESTRUCT":
+                return this.confirmSelfDestruct(message);
+
+            case "REVOKE_CONFIRM_SELF_DESTRUCT":
+                this.revokeSelfDestruct(message);
+                return [];
+
             // case "SET_ZOOM_LEVEL":
             //     console.log("SET_ZOOM_LEVEL: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
@@ -166,89 +318,82 @@ export class EventHandler {
 
 
 
-            // TODO: Replace returning rejected promises with more elegant solutions when events don't cause requests.
-
-            // This should be modified when EE UI allows selecting weapon types through HTTP API
             case "SELECT_WEAPON":
-                this.selectAmmoType(message.payload.value);
-                return Promise.reject(); // more elegant solution for events which do not send requests?
+                return [requestCreator.selectAmmoType(message.payload.value)];
 
             case "LOAD_TUBE":
                 if (_.has(message.payload, "weapon")) {
                     this.selectAmmoType(message.payload.weapon);
                 }
-                return requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType);
+                return [requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType)];
 
             case "LOAD_OR_UNLOAD_TUBE":
                 if (_.has(message.payload, "weapon")) {
                     this.selectAmmoType(message.payload.weapon);
                 }
 
-                requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType);
-                return requestCreator.unloadTube(message.payload.tubeId);
+                return [
+                    requestCreator.loadTube(message.payload.tubeId, this.selectedAmmoType),
+                    requestCreator.unloadTube(message.payload.tubeId)
+                ];
 
-            // case "LOAD_REAR_TUBE":
-            //     console.log("LOAD_REAR_TUBE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
             case "FIRE_TUBE":
-                return requestCreator.fireTube(message.payload.tubeId);
+                return [requestCreator.fireTube(message.payload.tubeId)];
 
             case "UNLOAD_TUBE":
-                return requestCreator.unloadTube(message.payload.tubeId);
+                return [requestCreator.unloadTube(message.payload.tubeId)];
 
-            // case "TARGET_NEXT_ENEMY":
-            //     console.log("TARGET_NEXT_ENEMY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "TARGET_PREVIOUS_ENEMY":
-            //     console.log("TARGET_PREVIOUS_ENEMY: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+            case "TARGET_NEXT_ENEMY":
+                return [requestCreator.nextTarget()];
+
+            case "TARGET_PREVIOUS_ENEMY":
+                return [requestCreator.previousTarget()];
+
             case "SET_BEAM_TARGET":
                 this.setBeamTarget(message.payload.value);
-                return requestCreator.setBeamTarget(message.payload.value);
+                return [requestCreator.setBeamTarget(message.payload.value)];
 
             case "NEXT_BEAM_TARGET":
                 this.nextBeamTarget();
-                return this.setBeamTarget(this.beamTarget);
+                return [requestCreator.setBeamTarget(this.beamTarget)];
 
             case "SET_BEAM_FREQUENCY":
-                this.setBeamFrequency(message.payload.value);
-                return Promise.reject(); // more elegant solution for events which do not send requests?
+                return [requestCreator.setBeamFrequency(message.payload.value)];
 
             case "NEXT_BEAM_FREQUENCY":
                 this.increaseBeamFrequency();
-                return requestCreator.setBeamFrequency(this.beamFrequency);
+                return [requestCreator.setBeamFrequency(this.beamFrequency)];
 
             case "PREVIOUS_BEAM_FREQUENCY":
                 this.decreaseBeamFrequency();
-                return requestCreator.setBeamFrequency(this.beamFrequency);
+                return [requestCreator.setBeamFrequency(this.beamFrequency)];
 
             case "SET_SHIELD_FREQUENCY":
-                return requestCreator.setShieldFrequency(message.payload.value);
+                return [requestCreator.setShieldFrequency(message.payload.value)];
 
             case "NEXT_SHIELD_FREQUENCY":
-                return requestCreator.increaseShieldFrequency();
+                return [requestCreator.increaseShieldFrequency()];
 
             case "PREVIOUS_SHIELD_FREQUENCY":
-                return requestCreator.decreaseShieldFrequency();
+                return [requestCreator.decreaseShieldFrequency()];
 
             case "CALIBRATE_SHIELDS":
-                return requestCreator.calibrateShields(message.payload.value);
+                return [requestCreator.calibrateShields()];
 
             case "SHIELDS_UP":
-                return requestCreator.shieldsUp()
+                return [requestCreator.shieldsUp()];
 
             case "SHIELDS_DOWN":
-                return requestCreator.shieldsDown();
+                return [requestCreator.shieldsDown()];
 
-            // case "MANUAL_TARGETING":
-            //     console.log("MANUAL_TARGETING: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "AUTOMATIC_TARGETING":
-            //     console.log("AUTOMATIC_TARGETING: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "MISSILE_TARGET_ANGLE":
-            //     console.log("MISSILE_TARGET_ANGLE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+            case "MANUAL_TARGETING":
+                return [requestCreator.setAimLock(false)];
+
+            case "AUTOMATIC_TARGETING":
+                return [requestCreator.setAimLock(true)];
+
+            case "MISSILE_TARGET_ANGLE":
+                return [requestCreator.setAimAngle(message.payload.value)];
             // case "PREPARE_WAYPOINT_PLACEMENT":
             //     console.log("PREPARE_WAYPOINT_PLACEMENT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
@@ -333,6 +478,10 @@ export class EventHandler {
             // case "SHOW_TACTICAL":
             //     console.log("SHOW_TACTICAL: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
+            default:
+                throw (new Error("Event type not recognized."));
         }
     }
 }
+
+export default EventHandler;

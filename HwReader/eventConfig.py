@@ -40,11 +40,16 @@ class EventConfig():
 
         return eventFile
 
+
     def events(self):
         '''
         Generates a dictinary of events
         '''
         eventTypes = EventConfig.loadEvents(self)
+
+        # List comprehension performed poorly in the one-off type situation
+        # Performance loss was 10x
+        # events = {eventType["name"]: eventType["fields"] for eventType in eventTypes}
 
         events={}
         for eventType in eventTypes:
@@ -54,12 +59,14 @@ class EventConfig():
 
         return events
 
+
     def event(self, name):
         '''
         takes an event name as parameter and returns
         the event format.
         '''
         return self._events[name]
+
 
     def minimum(self, name):
         '''
@@ -71,6 +78,7 @@ class EventConfig():
         except:
             minimum = 0
         return minimum
+
 
     def maximum(self, name):
         '''
@@ -94,6 +102,7 @@ class EventConfig():
 
         return maximum
 
+
     def test(self):
         '''
         Prints out neatly the json
@@ -108,6 +117,7 @@ class EventConfig():
                 except IndexError:
                     pass
             print()
+
 
 if __name__ == "__main__":
     pass

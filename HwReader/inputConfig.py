@@ -27,21 +27,25 @@ class InputConfig():
         self.udp_ip = '192.168.10.255'
         self.udp_port = 41114 
 
+
     def settings(self):
         '''Returns the full input settings dict'''
 
         return self._settings
+
 
     def eventName(self, name):
         '''returns the primary event_name of the input [name]'''
         event_name = self._settings[name]["event"]
         return event_name
 
+
     def setting(self, name):
         '''returns the configuration for a single input
         [name], as dict.'''
 
         return self._settings[name]
+
 
     def readConfig(self):
         """
@@ -61,6 +65,7 @@ class InputConfig():
         configfile.close()
 
         return settings
+
 
     def loadConfig(self, eventConfig):
         '''
@@ -161,6 +166,7 @@ class InputConfig():
         self._switchConfig = switch
         self.station
         return cycle
+
 
     def collectInputs(self):
         '''

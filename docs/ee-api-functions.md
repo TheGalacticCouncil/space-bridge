@@ -65,6 +65,7 @@ Huomioita:
 |Mine|
 |EMP|
 |HVLI|
+|None|
 
 | ESystem |
 ---
@@ -105,12 +106,33 @@ SpaceShip:commandSetNextShieldFrequencySelection()
 // Select previous shield frequency
 SpaceShip:commandSetPreviousShieldFrequencySelection()
 
+// Enable/disable shields
 PlayerSpaceship:commandSetShields(bool enabled)
 
 // 0-20, 0=400THz, 20=800THz
 PlayerSpaceship:commandSetBeamFrequency(int32_t frequency)
 
 PlayerSpaceship:commandSetBeamSystemTarget(ESystem system)
+
+// Cycle through targets
+PlayerSpaceship::commandNextTarget()
+PlayerSpaceship::commandPreviousTarget()
+
+// Calibrate shields to (previously) selected frequency
+PlayerSpaceship::commandCalibrateShields()
+
+// Set state of aim lock
+PlayerSpaceship::commandSetAimLock(bool enabled)
+
+// Set angle on manual aim (0-360)
+PlayerSpaceship::commanSetAimAngle(float angle)
+
+// Fire tube at current target (either auto or manual)
+PlayerSpaceship::commandFireTubeAtCurrentTarget()
+
+// Select weapon on UI
+PlayerSpaceship::commandSelectWeapon(EMissileWeapons selected_weapon)
+
 ```
 
 Huomioita:
@@ -147,6 +169,13 @@ PlayerSpaceship:commandCancelSelfDestruct()
 
 // Tämä tullaan korvaamaan custom funktiolla, joka vain aloittaa laskennan samantien.
 PlayerSpaceship:commandConfirmDestructCode(int8_t index, uint32_t code)
+
+// Confirm self destruction without using codes
+PlayerSpaceship::commandConfirmSelfDestruct()
+
+// Select system to work on
+PlayerSpaceship::commandSelectSystem(ESystem)
+
 ```
 
 Huomioita:

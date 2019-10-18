@@ -12,7 +12,7 @@ name.read()
 # For ANALOG INPUT you need
 # an MCP3008 AD converter chip
 
-from RPi import GPIO            # Raspberry GPIO pins
+from GPIO import GPIO            # Raspberry GPIO pins
 from gpiozero import MCP3008    # A/D converter
 
 
@@ -45,12 +45,14 @@ class AnalogInput():
         if trigger != 0:
             GPIO.setup(self.trigger, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+
     def readRaw(self):
         """
         Reads the value and stores the old value in buffer
         """
         self.value = self.analogInput.value    # new value is read and stored
         return self.value
+
 
     def read(self):
         """
@@ -60,33 +62,35 @@ class AnalogInput():
           the value will be converted to int)
         """
 
-        clip_min = self.clip_min
-        clip_max = self.clip_max
+        value = self.analogInput.value          #self.analogInput.value
 
-        value = AnalogInput.readRaw(self)          #self.analogInput.value
+        clip_min = self.clip_min
 
         # Scaling
-        value = (value-clip_min)/(clip_max-clip_min)
+        value = (value-clip_min)/(self.clip_max-clip_min)
 
         #Clipping
         if value < 0.0:
             value = 0.0
-        if value > 1.0:
+        elif value > 1.0:
             value = 1.0
 
         # after processing is done, "value" is stored in "self.value"
         # This is done despite it being done in readRaw, because
         # this time the value is also filtered. The old value remains correct.
-        self.value = value
-        return self.value
 
-    def rescale(self):
+        # self.value = value    # disabled for now. No real use, but a hit to performance
+        return value
+
+
+    def rescale(self, value):
         '''Re-scales an input to match the event format requirement'''
-        self.value
-        self.maximum
-        self.minimum
-        value = self.value * (self.maximum-self.minimum) + self.minimum
+        # self.value
+        # self.maximum
+        # self.minimum
+        value = value * (self.maximum-self.minimum) + self.minimum
         return int(value)
+
 
     def readUpdate(self):
         """
@@ -96,12 +100,13 @@ class AnalogInput():
         if self.trigger == 0:
             return self.update()
         else:
-            GPIO.setmode(GPIO.BCM)
+            #GPIO.setmode(GPIO.BCM)                             # No need to setup again
             triggered = GPIO.input(self.trigger) == GPIO.LOW
             if triggered:
                 return self.update()
             else:
                 return None, False, self.name
+
 
     def update(self):
         """
@@ -109,16 +114,19 @@ class AnalogInput():
         """
         changed = False
 
-        AnalogInput.read(self)                    #value is read in to self.value
+        value = AnalogInput.read(self)                    #
 
-        delta = abs(self.value - self.oldValue)
+        delta = abs(value - self.oldValue)
 
         if delta > self.threshold:
             changed = True
             #oldValue is updated only if changed = True
-            self.oldValue = self.value
+            self.oldValue = value
             # Value is rescaled and changed in to an int
-            value = AnalogInput.rescale(self)
+            # rescale() is not used for this, to avoid one extra call
+            # Value is rounded to int using int(). It is faster than round(), 
+            # though loses accuracy, as it is always rounded down.
+            value = int(value * (self.maximum-self.minimum) + self.minimum)
             return value, changed, self.name
         else:
             return None, changed, self.name

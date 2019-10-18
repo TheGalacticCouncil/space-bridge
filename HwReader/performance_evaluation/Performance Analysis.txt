@@ -1,0 +1,121 @@
+﻿Performance evaluation of proposed optimizations
+
+26.8.2019 
+Valtteri Ojala
+RasPiW-Zero
+
+Test setup:
+Encoder is turned back and forth several times to generate events.
+Code and configs can be found through git.
+
+
+ = Original code (old observations) =
+
+InputPoller	0.455 -  0.642	ms 
+EventMaker	8     -	10 	    ms
+udpSender	  3     -  4	    ms
+
+
+ = Original code (Profile 0) =
+
+InputPoller	 0.398 -  0.442 ms 
+EventMaker	15     - 56 	  ms
+udpSender	   2     -  4	    ms
+
+notes:
+Couple anomalous InputPoller times were discarded. ~1.500 ms each
+At the same time also EventMaker and UdpSender times spiked, 
+99-313 ms and 7 ms respectively.
+
+ = Precalculated for-ranges in InpP (Case 1) =
+
+InputPoller	 0.348 -  0.351
+EventMaker	12.    - 51.
+udpSender	 2.    -  4.
+
+notes:
+A single longer 0.494 InputPoller cycle was observed. It was far enough 
+above the rest that it was considered an anomaly and discarded.
+
+IP performance improvement was calculated at about 10 - 20%.
+10% for minimum time and 20% for maximum. 10% is within variation, 
+but 20 seems significant.
+
+ = Localized instances (Case 2) =
+
+Case 2 was recorded, but was incomplete in some way, so 
+no in debth review was done.
+
+
+= Note =
+Further values are in microseconds.
+
+
+ = Profile 3.1 Analysis = 
+
+udpSender() -300 µs -34 %
+EventMaker:
+  - event() -166 µs -15 %
+  - payloader()  -19 µs -11 %
+InputPoller()
+  - polling -88 µs  -5 %
+AnalogReader -114 µs  -3 %
+EncoderReader -30 µs -3 %* Unreliable measurements. Anomaly propagation
+ButtonInput   0 µs  0 % can be optimized for -85 µs >60%
+
+
+ = Observatrions =
+
+ - Analog rescale() could be integrated (-200 �s)                   # done
+ - Encoder read() variable += variable is slower than variable += 1  # done
+   see if (if/elif/else) could be simplifyed to (if/else except?)    # is...?
+ - check Encoder rescale() elif logic. Unusual exec tiems!            # done
+ - Button read() remove GPIO re-initialization (-85 �s >60%)        # kindoff
+ - event config: test list comp at different lengths...              # 
+
+
+ = Profile 4 Analysis = 
+
+udpSender() -300 µs -34 %
+EventMaker:
+  - event() -155 µs -14 %
+  - payloader()  -20 µs -11 %
+InputPoller()
+  - polling  -113 µs  -18 %
+  - w.inputs -248 µs  -8 %
+AnalogReader -376 µs  -12 %
+EncoderReader +20 µs +2 %* Unreliable measurements. Anomaly propagation
+ButtonInput   -31 µS -17 %
+
+
+ = Observatrions =
+
+ - Encoder read() variable += variable is not necessarelly slower 
+   than variable += 1. Reverting to previous
+ - Revert Encoder rescale(), unexpected performance degredation,
+   Reverting to (almost) original.
+   In total a -100 µs improvement could be realized
+
+
+= Profile 5 Analysis = 
+
+udpSender() -300 µs -34 %
+EventMaker:
+  - event() -167 µs -15 %
+  - payloader()  -20 µs -11 %
+InputPoller()
+  - polling  -113 µs  -18 %
+  - w.inputs -248 µs  -8 %
+AnalogReader -600 µs  -18 %
+EncoderReader -80 µs  -8 %
+ButtonInput   -31 µS -17 %
+
+
+ = Observatrions =
+
+ - AnalogReader is very dependant on speed at witch ADC
+   can be read. (large variance (2100-2500 µs)) no changes 
+   were made since last run, but the result improved 250 µs
+ - AnalogReader: There was something wrong with the optimization.
+   Returning the problematic lines to stock yealded a large
+   improvement.

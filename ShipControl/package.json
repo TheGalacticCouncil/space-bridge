@@ -7,9 +7,11 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watch",
+    "coverage": "jest --coverage",
     "build": "tsc",
-    "start": "npm run build -- && node dist/index.js"
+    "start": "npm run build -- && node dist/index.js",
+    "start-dev": "ts-node-dev src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@types/chai": "4.1.6",
+    "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.117",
     "@types/mocha": "5.2.5",
     "@types/mock-fs": "3.6.30",
@@ -36,10 +39,14 @@
     "@types/node-cron": "2.0.0",
     "@types/sinon": "5.0.5",
     "chai": "4.2.0",
+    "jest": "^24.9.0",
     "mocha": "5.2.0",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "sinon": "7.0.0",
     "source-map-support": "0.5.9",
-    "ts-node": "7.0.1"
+    "ts-jest": "^24.1.0",
+    "ts-node": "7.0.1",
+    "ts-node-dev": "^1.0.0-pre.42",
+    "tslint": "^5.20.0"
   }
 }

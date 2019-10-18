@@ -5,4 +5,6 @@
 
 RPi.GPIO
 gpiozero
+PyYaml
 #json
+git+git://github.com/JValtteri/mcp23017@master#egg=mcp23017

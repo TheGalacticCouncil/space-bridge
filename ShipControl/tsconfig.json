@@ -9,7 +9,7 @@
         "allowJs": true,
         "target": "es2017",
         "moduleResolution": "node",
-        "types": ["node"],
+        "types": ["node", "jest"],
         "forceConsistentCasingInFileNames": true,
         "strictPropertyInitialization": false,
         "noImplicitAny": false
@@ -20,5 +20,6 @@
     "exclude": [
         "node_modules",
         "./src/**/*.spec.ts"
-    ]
+    ],
+    "typeAcquisition": {"include": ["jest"]}
 }
