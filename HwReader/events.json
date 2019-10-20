@@ -599,6 +599,17 @@
         ]
     },
     {
+        "name": "SET_BEAM_TARGET_NUMERIC",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 9
+            }
+        ]
+    },
+    {
         "name": "NEXT_BEAM_TARGET",
         "fields": []
     },
