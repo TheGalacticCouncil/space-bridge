@@ -3,7 +3,7 @@
 # J.V.Ojala 10.03.2019
 # ButtonInput
 
-from GPIO import GPIO
+from mcp23017 import GPIO
 
 class PushButton():
     """
