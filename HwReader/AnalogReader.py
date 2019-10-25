@@ -12,7 +12,7 @@ name.read()
 # For ANALOG INPUT you need
 # an MCP3008 AD converter chip
 
-from GPIO import GPIO            # Raspberry GPIO pins
+from mcp23017 import GPIO            # Raspberry GPIO pins
 from gpiozero import MCP3008    # A/D converter
 
 
