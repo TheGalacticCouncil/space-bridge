@@ -272,6 +272,7 @@ TargetEncoder0a:
   type: encoder
   clk: 27
   dt: 22
+
   step: 1
 
 TargetEncoder0b:
