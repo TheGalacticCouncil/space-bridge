@@ -49,6 +49,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>$(IncludePath)</IncludePath>
     <RemotePostBuildEventUseInBuild>false</RemotePostBuildEventUseInBuild>
+    <RemoteDebuggerCommandArguments>-m 4 17 -p 0</RemoteDebuggerCommandArguments>
+    <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <IncludePath>$(IncludePath)</IncludePath>
