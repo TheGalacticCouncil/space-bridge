@@ -12,8 +12,8 @@ export class RequestSender {
   url: string;
 
   constructor() {
-    this.serverAddress = config.serverAddress;
-    this.serverPort = config.serverPort;
+    this.serverAddress = config.server.address;
+    this.serverPort = config.server.port;
     this.url = this.serverAddress + ":" + this.serverPort;
   }
 

@@ -1,32 +1,60 @@
 import _ from "lodash";
 
 import EAmmoType from "./models/EAmmoType";
+import EStation from "./models/EStation";
 import ESystem from "./models/ESystem";
 import IBeamTarget from "./models/IBeamTarget";
 import IRequest from "./models/IRequest";
 import * as requestCreator from "./requestCreator";
 
+const config: any = require("../config.json");
+
 export class EventHandler {
 
-    beamTarget: IBeamTarget;
-    beamFrequency: number;
-    selectedAmmoType: EAmmoType;
+        beamTarget: IBeamTarget;
+        beamFrequency: number;
+        selectedAmmoType: EAmmoType;
+        stations: EStation[];
+        selfDestructActive: boolean;
+        selfDestructConfirmations: object;
 
     constructor() {
         this.beamTarget = "HULL";
+        this.beamFrequency = 0;
         this.selectedAmmoType = EAmmoType.NONE;
+        this.stations = config.consoles;
+        this.selfDestructActive = false;
+        this.selfDestructConfirmations = {};
+
+        this.initializeSelfDestructConfirmations();
+    }
+
+    initializeSelfDestructConfirmations(): {} {
+        _.forEach(this.stations, (station) => {
+            this.selfDestructConfirmations[station] = false;
+        });
+
+        return this.selfDestructConfirmations;
     }
 
     selectAmmoType(newAmmoType: EAmmoType) {
         return this.selectedAmmoType = newAmmoType;
     }
 
-   increaseBeamFrequency() {
-        return this.beamFrequency++;
+    increaseBeamFrequency() {
+        if (this.beamFrequency < 20) {
+            return this.beamFrequency++;
+        }
+
+        return this.beamFrequency = 20;
     }
 
     decreaseBeamFrequency() {
-        return this.beamFrequency--;
+        if (this.beamFrequency > 0) {
+            return this.beamFrequency--;
+        }
+
+        return this.beamFrequency = 0;
     }
 
     setBeamFrequency(newFrequency: number) {
@@ -62,14 +90,78 @@ export class EventHandler {
             case ESystem.FRONT_SHIELD_GENERATOR:
                 return this.beamTarget = ESystem.REAR_SHIELD_GENERATOR;
             case ESystem.REAR_SHIELD_GENERATOR:
-                return this.beamTarget = "HULL";
             default:
                 return this.beamTarget = "HULL";
         }
     }
 
+    activateSelfDestruct(message: any): IRequest[] {
+
+        const station: EStation = message.station;
+
+        if (station === EStation.ENGINEER) {
+            this.selfDestructActive = true;
+            this.selfDestructConfirmations[EStation.ENGINEER] = true;
+            return [requestCreator.activateSelfDestruct()];
+        }
+
+        return [];
+    }
+
+    confirmSelfDestruct(message: any): IRequest[] {
+
+        const station: EStation = message.station;
+
+        if (_.includes(this.stations, station)) {
+
+            if (this.selfDestructActive) {
+
+                this.selfDestructConfirmations[station] = true;
+
+                const allStationsConfirmed = _.every(this.selfDestructConfirmations, (stationConfirmed) => {
+                    return stationConfirmed;
+                });
+
+                if (allStationsConfirmed) {
+                    return [requestCreator.confirmSelfDestruct()];
+                }
+            }
+        }
+
+        return [];
+    }
+
+    revokeSelfDestruct(message: any): boolean {
+
+        const station: EStation = message.station;
+
+        if (_.includes(this.stations, station)) {
+
+            this.selfDestructConfirmations[station] = false;
+            return true;
+        }
+
+        return false;
+    }
+
+    cancelSelfDestruct(message: any): IRequest[] {
+
+        const station: EStation = message.station;
+
+        if (station === EStation.ENGINEER) {
+
+            this.selfDestructActive = false;
+            this.initializeSelfDestructConfirmations();
+
+            return [requestCreator.cancelSelfDestruct()];
+        }
+
+        return [];
+    }
+
     public handleEvent(message: any): IRequest[] {
 
+        console.log(`Event of type ${message.event} received from ${message.station}`);
 
         switch (message.event) {
             // case "SET_THROTTLE":
@@ -97,7 +189,7 @@ export class EventHandler {
             //     console.log("UNDOCK: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             // case "SELECT_SUBSYSTEM": // THIS EVENT IS NOT USED
-                // return [requestCreator.selectSubsystem(message.payload.value)];
+            // return [requestCreator.selectSubsystem(message.payload.value)];
 
             case "SELECT_REACTOR":
                 return [requestCreator.selectReactor()];
@@ -192,15 +284,19 @@ export class EventHandler {
                     requestCreator.stopRepair()
                 ];
 
-            // case "ACTIVATE_SELF_DESTRUCT":
-            //     console.log("ACTIVATE_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "CONFIRM_SELF_DESTRUCT":
-            //     console.log("CONFIRM_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
-            // case "CANCEL_SELF_DESTRUCT":
-            //     console.log("CANCEL_SELF_DESTRUCT: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
+            case "ACTIVATE_SELF_DESTRUCT":
+                return this.activateSelfDestruct(message);
+
+            case "CANCEL_SELF_DESTRUCT":
+                return this.cancelSelfDestruct(message);
+
+            case "CONFIRM_SELF_DESTRUCT":
+                return this.confirmSelfDestruct(message);
+
+            case "REVOKE_CONFIRM_SELF_DESTRUCT":
+                this.revokeSelfDestruct(message);
+                return [];
+
             // case "SET_ZOOM_LEVEL":
             //     console.log("SET_ZOOM_LEVEL: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
@@ -222,9 +318,6 @@ export class EventHandler {
 
 
 
-            // TODO: Replace returning rejected promises with more elegant solutions when events don't cause requests.
-
-            // This should be modified when EE UI allows selecting weapon types through HTTP API
             case "SELECT_WEAPON":
                 return [requestCreator.selectAmmoType(message.payload.value)];
 
@@ -244,9 +337,6 @@ export class EventHandler {
                     requestCreator.unloadTube(message.payload.tubeId)
                 ];
 
-            // case "LOAD_REAR_TUBE":
-            //     console.log("LOAD_REAR_TUBE: ", message.event, "-----NOT_IMPLEMENTED!!-----");
-            //     break;
             case "FIRE_TUBE":
                 return [requestCreator.fireTube(message.payload.tubeId)];
 
@@ -389,7 +479,9 @@ export class EventHandler {
             //     console.log("SHOW_TACTICAL: ", message.event, "-----NOT_IMPLEMENTED!!-----");
             //     break;
             default:
-                throw(new Error("Event type not recognized."));
+                throw (new Error("Event type not recognized."));
         }
     }
 }
+
+export default EventHandler;
