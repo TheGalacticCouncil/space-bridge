@@ -10,6 +10,13 @@ import yaml
 from logger import Logger
 
 
+class ConfigurationError(Exception):
+    """Exception raised for errors in the configuration.
+
+    Attributes:
+        message -- Configuration refrenced a pin that is out of range of sane GPIO
+    """
+
 class InputConfig():
 
     def __init__(self):
@@ -103,6 +110,10 @@ class InputConfig():
                         eventConfig.maximum(self.eventName(name)),
                         config['trigger']
                         ])
+                    
+                    if config['trigger'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
 
                 # ENCODER
                 elif config["type"] == "encoder":
@@ -115,6 +126,14 @@ class InputConfig():
                         eventConfig.maximum(self.eventName(name)),
                         config['step'] 
                         ])
+                    
+                    if config['clk'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
+                        
+                    if config['dt'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
 
                 # BUTTONS AND SWITCHES
                 elif config["type"] in ["push_button", "switch"]:
@@ -130,7 +149,15 @@ class InputConfig():
                     else:
                         ##print("switch detected")
                         switch.append(button_conf)
-
+                        
+                    if config['pin'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], name))
+                        
+                    elif config['pin'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
+                        
                 # GENERAL SETTINGS
                 elif config["type"] == "config":
                     self.logger.debug("Settings")
