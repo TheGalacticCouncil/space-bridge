@@ -289,15 +289,15 @@ TargetEncoder0b:
 ShieldEncoder:
   event: SET_SHIELD_FREQUENCY
   type: encoder
-  clk: 29
-  dt: 31
+  clk: 5
+  dt: 6
   step: 1
 
 BeamEncoder:
   event: SET_BEAM_FREQUENCY
   type: encoder
-  clk: 33
-  dt: 35
+  clk: 13
+  dt: 19
   step: 1
 
 
