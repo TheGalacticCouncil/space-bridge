@@ -111,9 +111,9 @@ class InputConfig():
                         config['trigger']
                         ])
                     
-                    if analog[-1]['trigger'] in range(28, 100):
-                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'trigger'".format(analog[-1]['trigger'], analog[-1][1]))
-                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'trigger'".format(analog[-1]['trigger'], analog[-1][1]))
+                    if config['trigger'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
 
                 # ENCODER
                 elif config["type"] == "encoder":
@@ -127,13 +127,13 @@ class InputConfig():
                         config['step'] 
                         ])
                     
-                    if encoder[-1]['clk'] in range(28, 100):
-                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'clk'".format(encoder[-1]['clk'], encoder[-1][2]))
-                        raise IndexError("Invalid GPIO address '{}' for '{}': 'clk'".format(encoder[-1]['clk'], encoder[-1][2]))
+                    if config['clk'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
                         
-                    if encoder[-1]['dt'] in range(28, 100):
-                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'dt'".format(encoder[-1]['dt'], encoder[-1][2]))
-                        raise IndexError("Invalid GPIO address '{}' for '{}': 'dt'".format(encoder[-1]['dt'], encoder[-1][2]))
+                    if config['dt'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
 
                 # BUTTONS AND SWITCHES
                 elif config["type"] in ["push_button", "switch"]:
@@ -150,13 +150,13 @@ class InputConfig():
                         ##print("switch detected")
                         switch.append(button_conf)
                         
-                    if button[-1]['pin'] in range(28, 100):
-                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(button[-1]['pin'], button[-1][1]))
-                        raise IndexError("Invalid GPIO address '{}' for '{}': 'pin'".format(button[-1]['pin'], button[-1][1]))
+                    if config['pin'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], name))
                         
-                    elif switch[-1]['pin'] in range(28, 100):
-                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(switch[-1]['pin'], switch[-1][1]))
-                        raise IndexError("Invalid GPIO address '{}' for '{}': 'pin'".format(switch[-1]['pin'], switch[-1][1]))
+                    elif config['pin'] in range(28, 100):
+                        self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
+                        raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
                         
                 # GENERAL SETTINGS
                 elif config["type"] == "config":
