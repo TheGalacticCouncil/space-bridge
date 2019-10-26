@@ -1,0 +1,87 @@
+# Next iteration of a config file
+# Replaces 'config.txt' AND 'event.txt'
+#
+# Syntax
+# YAML syntax
+#
+# Following are configuration examples of 
+# different types of inputs.
+# 
+# FullyDefined:
+#   event: AN_EVENT
+#   event2: UN_EVENT
+#   type: encoder
+#   clk: 17
+#   dt: 24
+#   step: 1
+#   value:
+#     payload: heavy
+#
+#AnalogInp:
+#  event: SET_THROTTLE
+#  type: analog
+#  channel: 0
+#  threshold: 0.01
+#  decimals: 9
+#  min_clip: 0.00245
+#  max_clip: 0.998
+#  trigger: 12             # Pin defining the enable
+#  offset: 
+#  maximum: 
+
+General:
+  type: config            # config
+  cycle: 0.001            # Recommended 0.001
+  station: Test Station   # HELM, ENGINEERING, SCIENCE
+  udp_ip: 192.168.10.255
+  udp_port: 41114
+
+AnalogInp:
+  event: SET_THROTTLE
+  type: analog
+  channel: 0
+  threshold: 0.01
+  min_clip: 0.00245
+  max_clip: 0.998
+  trigger: 12
+#  min: not implemented ** Should be auto-read from event!
+#  max: not implemented
+
+TestInput1:
+  event: MISSILE_TARGET_ANGLE
+  type: encoder
+  #clk: 17
+  clk: 108
+  dt: 109
+  step: 1
+
+TestInput2:
+  event: TARGET_NEXT_ENEMY
+  event2: TARGET_PREVIOUS_ENEMY
+  type: encoder
+  clk: 17
+  dt: 24
+  step: -5 # optional
+
+#TestInput3:
+#  event: SET_SHIELD_FREQUENCY
+#  type: encoder
+#  clk: 17
+#  dt: 24
+#  step: -15
+
+ButtonTest:
+  event: LOAD_TUBE
+  type: push_button
+  pin: 110
+  invert: True
+  value:
+    tubeId: 0123
+    weapon: NUKE
+
+# SwitchTest:
+#   event: SHIELDS_UP
+#   event2: SHIELDS_DOWN
+#   type: switch
+#   pin: 12
+#   invert: True
