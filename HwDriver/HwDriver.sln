@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HwDriver", "HwDriver\HwDriver.vcxproj", "{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Debug|ARM.ActiveCfg = Debug|ARM
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Debug|ARM.Build.0 = Debug|ARM
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Debug|ARM64.Build.0 = Debug|ARM64
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Release|ARM.ActiveCfg = Release|ARM
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Release|ARM.Build.0 = Release|ARM
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Release|ARM64.ActiveCfg = Release|ARM64
+		{32DB5C91-5F2E-4BD3-A900-B7879A383DA2}.Release|ARM64.Build.0 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E4BE8FD-DE06-48E0-A4EC-FE49D89C6584}
+	EndGlobalSection
+EndGlobal

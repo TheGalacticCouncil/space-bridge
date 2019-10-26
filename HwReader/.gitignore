@@ -7,11 +7,11 @@ __pycache__
 __init__*
 
 # Own scripts
-*.sh
+# *.sh
 
 # Test code
 test*
-config.yml
+#config.yml
 
 # Logs
 *.log
