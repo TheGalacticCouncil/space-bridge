@@ -69,7 +69,7 @@ class InputPoller(threading.Thread):
         #
         for i in range(len(self.encoderInput)):
             encoder_callback = lambda channel, counter=counter[i]: self.encoderInput[i].interrupt_increment(counter)
-            GPIO.add_event_detect(channel, GPIO.RISING, callback=encoder_callback
+            GPIO.add_event_detect(channel, GPIO.RISING, callback=encoder_callback)
             
             
             ######################

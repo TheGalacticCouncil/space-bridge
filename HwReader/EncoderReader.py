@@ -25,7 +25,7 @@ class EncoderInput():
         self.minimum = minimum
         self.step = step
 
-        #self.counter = 0
+        self.counter = 0
         self.substep = 0
 
         GPIO.setmode(GPIO.BCM)
@@ -141,7 +141,7 @@ class EncoderInput():
             return counter, changed, self.name
 
         
-    def interrupt_callback(self, counter == None):
+    def interrupt_callback(self, counter=None):
         """
         Interrupt callback function to be called when
         """
