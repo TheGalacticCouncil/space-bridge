@@ -15,7 +15,7 @@ class EncoderInput():
     An object to read an encoder input.
     """
 
-    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
+    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1, interrupt=True):
 
         self.name = name
         self.clockPin = clk
@@ -33,6 +33,16 @@ class EncoderInput():
         GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.previousClockState = GPIO.input(self.clockPin)
+
+        # USE IN INTERRUPT MODE:
+        #
+        if interrupt==True:
+
+            # DEFINE INTERRUPT CALLBACKS
+            #
+            # ENCODER is read
+            #
+            GPIO.add_event_detect(clk, GPIO.BOTH, callback=self.interrupt_callback)
 
 
     def read(self, counter=0):
@@ -151,16 +161,14 @@ class EncoderInput():
         delta = EncoderInput.read(self)
         counter = EncoderInput.rescale(self, counter, delta)
         self.counter = counter
+
+        ### CONTINUE HERE
+
+    def probe(self):
         
-        # QUEUEING:
-        # There is thinking to be done, about the zero debth queue. Is it still the way to go.
-        try:
-            self.inputQueue.get_nowait()
-        except Empty:
-            pass
-        self.inputQueue.put((self.name, counter))   # We should use tuples, not lists for queue entries
-        
-        
+        return self.counter, changed, self.name
+
+
 # Module can be run directly to test its function
 if __name__ == "__main__":
 

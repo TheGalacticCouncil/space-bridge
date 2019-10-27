@@ -59,17 +59,12 @@ class InputPoller(threading.Thread):
         a_value = [0 for i in analog_range]
 
         # Encoder Init
-        counter = [0 for i in encoder_range]
+        # No longer used. Counter is in encoder class.
+        # counter = [0 for i in encoder_range]
 
         q = 0   #Counter for a performance metric
 
-        # DEFINE INTERRUPT CALLBACKS
-        #
-        # ENCODER is read
-        #
-        for i in range(len(self.encoderInput)):
-            encoder_callback = lambda channel, counter=counter[i]: self.encoderInput[i].interrupt_increment(counter)
-            GPIO.add_event_detect(channel, GPIO.RISING, callback=encoder_callback)
+        # MOVED INTERRUPT CALLBACKS T0 ENCODER INPUT
             
             
             ######################
@@ -117,17 +112,18 @@ class InputPoller(threading.Thread):
                 # To ensure the delivery of the second attempt the 
                 # operaion is blocking.
                 
-                # for i in encoder_range:
-                #     counter[i], changed, name = encoderInput[i].increment(counter[i])
-                #     if changed == True:
-                #         try:
-                #             inputQueue.put_nowait([name, counter[i]])
-                #         except Full:
-                #             try:
-                #                 inputQueue.get_nowait()
-                #             except Empty:
-                #                 pass
-                #             inputQueue.put([name, counter[i]])
+                for i in encoder_range:
+                    #counter[i], changed, name = encoderInput[i].increment(counter[i])
+                    counter, changed, name = encoderInput[i].probe()
+                    if changed == True:
+                        try:
+                            inputQueue.put_nowait([name, counter[i]])
+                        except Full:
+                            try:
+                                inputQueue.get_nowait()
+                            except Empty:
+                                pass
+                            inputQueue.put([name, counter[i]])
 
                 # BUTTON is read
                 #
