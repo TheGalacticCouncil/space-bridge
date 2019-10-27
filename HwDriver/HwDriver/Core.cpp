@@ -4,6 +4,9 @@
 #include "MotorDriver.h"
 #include "ProgramOptions.h"
 
+// FOr testing purposes
+#include "BroadcastEventReceiver.h"
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -21,6 +24,10 @@ int Core::start(int argumentCount, char* argumentVector[])
     // Parse the CLI options
     if (_cliOptions->parse(argumentCount, argumentVector) > 0)
         return -1; // TODO: Should we actually return the value from parse?
+
+	// DEBUG: Start event receiver
+	BroadcastEventReceiver er;
+	er.start();
 
     // Create motors
     _motors = _initMotors();
