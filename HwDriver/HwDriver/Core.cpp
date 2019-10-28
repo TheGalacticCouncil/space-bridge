@@ -5,7 +5,8 @@
 #include "ProgramOptions.h"
 
 // FOr testing purposes
-#include "BroadcastEventReceiver.h"
+//#include "BroadcastEventReceiver.h"
+#include "EventReader.h"
 
 #include <iostream>
 #include <chrono>
@@ -26,8 +27,21 @@ int Core::start(int argumentCount, char* argumentVector[])
         return -1; // TODO: Should we actually return the value from parse?
 
 	// DEBUG: Start event receiver
-	BroadcastEventReceiver er;
-	er.start();
+	//BroadcastEventReceiver er;
+	////er.asyncStart();
+ //   EventReader er;
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+ //   std::this_thread::sleep_for(std::chrono::seconds(10));
+ //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
 
     // Create motors
     _motors = _initMotors();
@@ -58,10 +72,11 @@ std::vector<std::unique_ptr<IMotor>> Core::_initMotors()
         //RawReader test = RawReader(positionPin, _hw);
 
         // Create IPositionFeedback for the MotorDriver
-        std::unique_ptr<IPositionFeedback> position = std::make_unique<RawReader>(RawReader(positionPin, _hw));
+        //std::unique_ptr<IPositionFeedback> position = std::make_unique<RawReader>(RawReader(positionPin, _hw));
+        std::unique_ptr<IPositionFeedback> position = std::make_unique<EventReader>();
 
         // Create IMotor from MotorDriver
-        motors.push_back(std::make_unique<MotorDriver>(MotorDriver(std::move(position), pin1, pin2)));
+        motors.push_back(std::make_unique<MotorDriver>(std::move(position), pin1, pin2));
 
         //for (int k = 0; k < 100; ++k) {
         //    std::cout << "Drivin:\t" << test.readCurrentValue() << "\n";

@@ -4,6 +4,12 @@
 #include <cmath>
 #include <iostream>
 
+const int CALIBRATION_DRIVE_TIME_EXTRA{ 200000 };
+const int ACCURACY_PROMILLE{ 35 }; // 1 promille = 0.1 percentage
+const int MAX_WOBBLE_COUNT{ 10 };
+const int MAX_LOOP_ITERATIONS{ 1000 };
+const int LOOP_SLEEP_MICROS{ 1000 };
+
 MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, unsigned pin1, unsigned pin2)
     : _position(std::move(positionFeedback)), _pin1(pin1), _pin2(pin2)
 {
@@ -16,13 +22,13 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, un
 
     // Find out minimum and maximum value of the position of the motor
     gpioPWM(_pin1, 255);
-    gpioSleep(PI_TIME_RELATIVE, 0, CALIBRATION_DRIVE_TIME);
+    gpioSleep(PI_TIME_RELATIVE, 1, CALIBRATION_DRIVE_TIME_EXTRA);
     gpioPWM(_pin1, 0);
 
     _maxValue = _position->readCurrentValue();
 
     gpioPWM(_pin2, 255);
-    gpioSleep(PI_TIME_RELATIVE, 0, CALIBRATION_DRIVE_TIME);
+    gpioSleep(PI_TIME_RELATIVE, 1, CALIBRATION_DRIVE_TIME_EXTRA);
     gpioPWM(_pin2, 0);
 
     _minValue = _position->readCurrentValue();
@@ -39,7 +45,7 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, un
     }
 
     _valueRange = _maxValue - _minValue;
-    _maxDeviation = round(_valueRange * (ACCURACY_PROMILLE / 1000));
+    _maxDeviation = std::round(_valueRange * ((float)ACCURACY_PROMILLE / (float)1000));
 
     // For debug purposes
     std::cout << "MotorDriver::MotorDriver() - Values\n"
@@ -54,14 +60,19 @@ int MotorDriver::driveToValue(unsigned targetValue)
     int distance;
     distance = targetValue - _position->readCurrentValue();
 
-    if (abs(distance) < _maxDeviation)
+    if (std::abs(distance) < _maxDeviation)
         return distance;
 
-    for (int i = 0; abs(distance) > _maxDeviation; ++i) {
+    float speedMultiplier = 1.0f;
+
+    for (int i = 0; std::abs(distance) > _maxDeviation; ++i) {
+        if (std::abs(distance) < _maxDeviation * 3)
+            speedMultiplier = 0.85f;
+
         if (distance > 0)
-            _increase(255);
+            _increase(std::round(255 * speedMultiplier));
         else
-            _decrease(255);
+            _decrease(std::round(255 * speedMultiplier));
 
         //if (i > MAX_WOBBLE_COUNT) {
         //    // Not good, we overshoot multiple times...
@@ -69,6 +80,10 @@ int MotorDriver::driveToValue(unsigned targetValue)
 
         //    break;
         //}
+
+        if (i > MAX_LOOP_ITERATIONS / 2) {
+            std::cout << "Iteration " << i << " in motor control loop.\nSpeed:\t" << std::round(255 * speedMultiplier) << "\n";
+        }
 
         if (i > MAX_LOOP_ITERATIONS) {
             // Not good.

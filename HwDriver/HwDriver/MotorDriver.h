@@ -42,11 +42,5 @@ private:
     unsigned _pin2;
 
     MotorState _state{ MotorState::Stopped };
-
-    const int CALIBRATION_DRIVE_TIME{ 700000 };
-    const int ACCURACY_PROMILLE{ 10 }; // 1 promille = 0.1 percentage
-    const int MAX_WOBBLE_COUNT{ 10 };
-    const int MAX_LOOP_ITERATIONS{ 1000 };
-    const int LOOP_SLEEP_MICROS{ 1000 };
 };
 
