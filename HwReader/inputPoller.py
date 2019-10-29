@@ -133,7 +133,7 @@ class InputPoller(threading.Thread):
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
                 for i in button_range:
-                    b_value, name = buttonInput[i].read()
+                    b_value, name = buttonInput[i].probe()
                     if b_value == True:
                         inputQueue.put([name, b_value])
 

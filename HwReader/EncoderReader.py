@@ -155,7 +155,9 @@ class EncoderInput():
         Probes state of the encoder
         Returnes the stored values from the <encoder instance>
         """
-        return self.counter, self.changed, self.name
+        changed = self.changed      # Reads the changed state
+        self.changed = False        # Resets the changed state
+        return self.counter, changed, self.name
 
 
 # Module can be run directly to test its function

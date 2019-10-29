@@ -11,11 +11,15 @@ class PushButton():
     If the button input is default HIGH, the input can be inverted.
     """
     
-    def __init__(self, pin, name='', invert=False):
+    def __init__(self, pin, name='', invert=True, interrupt=True, debounse=300):
 
         self.name = name
         self.pin = pin
         self.invert = invert
+
+        self.state = False
+        # self.last_state = False
+        self.changed = False
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -25,7 +29,23 @@ class PushButton():
         else:
             self.level = GPIO.HIGH
 
-        self.last_state = False
+        if interrupt==True:
+            if invert == True:
+                GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.read, bouncetime=debounse)
+            else:
+                GPIO.add_event_detect(pin, GPIO.RISING, callback=self.read, bouncetime=debounse)
+
+
+    def probe(self):
+        """
+        Probes state of the putton
+        Returnes the stored values from the <button instance>
+        """
+
+        state = self.state          # Reads the changed state
+        self.state = False          # Resets the changed state
+
+        return state, self.name
 
 
     def read(self):
@@ -37,13 +57,16 @@ class PushButton():
         state = GPIO.input(self.pin) == self.level          # Compares the input to a chosen level
                                                             # Logic Hign or logic Low
         if state == True:
-            if state != self.last_state:
-                self.last_state = True
-                return True, self.name
+            # if state != self.last_state:
+            #     self.last_state = True
+            # return True, self.name
+            self.state = True
         else:
-            self.last_state = False
+            # self.last_state = False
+            self.state = False
         
         return False, self.name
+
 
 class SwitchInput():
     """
