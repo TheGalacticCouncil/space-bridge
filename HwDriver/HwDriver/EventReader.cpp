@@ -1,19 +1,20 @@
 #include "EventReader.h"
-#include "BroadcastEventReceiver.h"
+#include "IEventReceiver.h"
 #include "includes/nlohmann/json.hpp"
+#include "NetworkManager.h"
 #include <memory>
 
 using json = nlohmann::json;
 
-EventReader::EventReader(std::string eventName, unsigned minValue, unsigned maxValue) :
-    _minValue(minValue), _maxValue(maxValue), _eventReceiver{std::make_unique<BroadcastEventReceiver>(eventName)}
+EventReader::EventReader(std::shared_ptr<NetworkManager> networkManager, std::string eventName, unsigned minValue, unsigned maxValue) :
+    _minValue(minValue), _maxValue(maxValue), _eventName(eventName), _eventReceiver(networkManager->getEventReceiver())
 {
-    _eventReceiver->asyncStart();
+    _eventReceiver->addEventToListen(_eventName);
 }
 
 unsigned EventReader::readCurrentValue()
 {
-    std::shared_ptr<json> eventJson = _eventReceiver->getEvent();
+    std::shared_ptr<json> eventJson = _eventReceiver->getLatestEvent(_eventName);
 
     if (eventJson == nullptr)
         return 0; // TODO: Should we throw instead?

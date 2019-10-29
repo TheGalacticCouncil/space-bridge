@@ -3,6 +3,7 @@
 #include "HwManager.h"
 #include "MotorDriver.h"
 #include "ProgramOptions.h"
+#include "NetworkManager.h"
 
 // FOr testing purposes
 //#include "BroadcastEventReceiver.h"
@@ -14,7 +15,8 @@
 
 // For debugoV
 
-Core::Core()
+Core::Core():
+    _networkManager(std::make_shared<NetworkManager>())
 {
     _hw = std::make_shared<HwManager>();
     _cliOptions = std::make_unique<ProgramOptions>();
@@ -42,6 +44,9 @@ int Core::start(int argumentCount, char* argumentVector[])
  //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
  //   std::this_thread::sleep_for(std::chrono::seconds(10));
  //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
+
+    // Start servers
+    _networkManager->startServers();
 
     // Create motors
     _motors = _initMotors();
@@ -73,7 +78,7 @@ std::vector<std::unique_ptr<IMotor>> Core::_initMotors()
 
         // Create IPositionFeedback for the MotorDriver
         //std::unique_ptr<IPositionFeedback> position = std::make_unique<RawReader>(RawReader(positionPin, _hw));
-        std::unique_ptr<IPositionFeedback> position = std::make_unique<EventReader>();
+        std::unique_ptr<IPositionFeedback> position = std::make_unique<EventReader>(_networkManager);
 
         // Create IMotor from MotorDriver
         motors.push_back(std::make_unique<MotorDriver>(std::move(position), pin1, pin2));

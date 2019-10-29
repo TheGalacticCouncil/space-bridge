@@ -2,13 +2,14 @@
 #include "IPositionFeedback.h"
 #include <memory>
 
-class BroadcastEventReceiver;
+class NetworkManager;
+class IEventReceiver;
 
 class EventReader :
     public IPositionFeedback
 {
 public:
-    EventReader(std::string eventName = "MOTOR_POSITION", unsigned minValue = 0, unsigned maxValue = 1024);
+    EventReader(std::shared_ptr<NetworkManager> networkManager, std::string eventName = "MOTOR_POSITION", unsigned minValue = 0, unsigned maxValue = 1024);
     ~EventReader();
 
     unsigned readCurrentValue();
@@ -16,6 +17,7 @@ public:
 private:
     unsigned _minValue;
     unsigned _maxValue;
-    std::unique_ptr<BroadcastEventReceiver> _eventReceiver;
+    std::string _eventName;
+    std::shared_ptr<IEventReceiver> _eventReceiver;
 };
 

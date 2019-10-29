@@ -1,5 +1,7 @@
 #pragma once
 
+// DEPRECATED!!!
+
 #define ASIO_STANDALONE
 #include "includes/asio.hpp"
 #include "includes/nlohmann/json.hpp"
@@ -7,6 +9,8 @@
 #include <thread>
 #include <vector>
 #include <atomic>
+
+class NetworkManager;
 
 using json = nlohmann::json;
 
@@ -17,7 +21,7 @@ using json = nlohmann::json;
 class BroadcastEventReceiver
 {
 public:
-    BroadcastEventReceiver(std::string eventToListen = "ANALOG_POSITION");
+    BroadcastEventReceiver(std::shared_ptr<NetworkManager> networkManager, std::string eventToListen = "ANALOG_POSITION");
     ~BroadcastEventReceiver();
 
 	void syncStart();
