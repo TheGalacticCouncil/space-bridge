@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="ADC.cpp" />
-    <ClCompile Include="BroadcastEventReceiver.cpp" />
     <ClCompile Include="CapacitivePin.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="HwManager.cpp" />
@@ -12,10 +11,11 @@
     <ClCompile Include="ProgramOptions.cpp" />
     <ClCompile Include="RawReader.cpp" />
     <ClCompile Include="EventReader.cpp" />
+    <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="UdpEventReceiver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADC.h" />
-    <ClInclude Include="BroadcastEventReceiver.h" />
     <ClInclude Include="CapacitivePin.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="HwManager.h" />
@@ -544,5 +544,8 @@
     <ClInclude Include="includes\nlohmann\json.hpp" />
     <ClInclude Include="includes\nlohmann\json_fwd.hpp" />
     <ClInclude Include="EventReader.h" />
+    <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="UdpEventReceiver.h" />
+    <ClInclude Include="IEventReceiver.h" />
   </ItemGroup>
 </Project>

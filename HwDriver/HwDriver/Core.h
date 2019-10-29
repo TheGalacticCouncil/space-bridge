@@ -5,6 +5,7 @@
 class IMotor;
 class IHwAccess;
 class ProgramOptions;
+class NetworkManager;
 
 class Core
 {
@@ -20,5 +21,6 @@ private:
     std::vector<std::unique_ptr<IMotor>> _motors;
     std::shared_ptr<IHwAccess> _hw{ nullptr };
     std::unique_ptr<ProgramOptions> _cliOptions;
+    std::shared_ptr<NetworkManager> _networkManager;
 };
 

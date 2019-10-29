@@ -83,7 +83,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ADC.cpp" />
-    <ClCompile Include="BroadcastEventReceiver.cpp" />
     <ClCompile Include="CapacitivePin.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="EventReader.cpp" />
@@ -91,16 +90,18 @@
     <ClCompile Include="ioBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MotorDriver.cpp" />
+    <ClCompile Include="NetworkManager.cpp" />
     <ClCompile Include="ProgramOptions.cpp" />
     <ClCompile Include="RawReader.cpp" />
+    <ClCompile Include="UdpEventReceiver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADC.h" />
-    <ClInclude Include="BroadcastEventReceiver.h" />
     <ClInclude Include="CapacitivePin.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="EventReader.h" />
     <ClInclude Include="HwManager.h" />
+    <ClInclude Include="IEventReceiver.h" />
     <ClInclude Include="IHwAccess.h" />
     <ClInclude Include="IInput.h" />
     <ClInclude Include="IMotor.h" />
@@ -623,8 +624,10 @@
     <ClInclude Include="ioBase.h" />
     <ClInclude Include="IPositionFeedback.h" />
     <ClInclude Include="MotorDriver.h" />
+    <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="ProgramOptions.h" />
     <ClInclude Include="RawReader.h" />
+    <ClInclude Include="UdpEventReceiver.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>

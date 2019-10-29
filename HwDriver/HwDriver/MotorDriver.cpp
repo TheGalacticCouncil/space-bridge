@@ -5,8 +5,8 @@
 #include <iostream>
 
 const int CALIBRATION_DRIVE_TIME_EXTRA{ 200000 };
-const int ACCURACY_PROMILLE{ 35 }; // 1 promille = 0.1 percentage
-const int MAX_WOBBLE_COUNT{ 10 };
+const int ACCURACY_PROMILLE{ 25 }; // 1 promille = 0.1 percentage
+const int MAX_WOBBLE_COUNT{ 10 }; // Not used currently
 const int MAX_LOOP_ITERATIONS{ 1000 };
 const int LOOP_SLEEP_MICROS{ 1000 };
 
@@ -66,7 +66,7 @@ int MotorDriver::driveToValue(unsigned targetValue)
     float speedMultiplier = 1.0f;
 
     for (int i = 0; std::abs(distance) > _maxDeviation; ++i) {
-        if (std::abs(distance) < _maxDeviation * 3)
+        if (std::abs(distance) < _maxDeviation * 4)
             speedMultiplier = 0.85f;
 
         if (distance > 0)

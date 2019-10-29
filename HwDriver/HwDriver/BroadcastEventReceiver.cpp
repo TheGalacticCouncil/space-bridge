@@ -1,6 +1,7 @@
 #include "BroadcastEventReceiver.h"
 #include "includes/asio.hpp"
 #include "includes/nlohmann/json.hpp"
+#include "NetworkManager.h"
 #include <iostream>
 #include <thread>
 #include <memory>
@@ -11,12 +12,9 @@ using json = nlohmann::json;
 
 const int BUFFER_SIZE = 512;
 
-BroadcastEventReceiver::BroadcastEventReceiver(std::string eventToListen) :
-    _bufferVector(BUFFER_SIZE, 0), _eventToListen(eventToListen)
+BroadcastEventReceiver::BroadcastEventReceiver(std::shared_ptr<NetworkManager> networkManager, std::string eventToListen) :
+    _bufferVector(BUFFER_SIZE, 0), _eventToListen(eventToListen), _io_context(networkManager->getIoContext())
 {
-	// TODO: Make sure that we use only one io_context in the program!!!
-	_io_context = std::make_shared<asio::io_context>();
-
 	// TODO: Get rid of hard-coded port
 	_socket = std::make_unique<udp::socket>(*_io_context, udp::endpoint(udp::v4(), 41114));
 
