@@ -79,10 +79,12 @@
     </RemotePostBuildEvent>
     <ClCompile>
       <CppLanguageStandard>c++14</CppLanguageStandard>
+      <AdditionalIncludeDirectories>%(ClCompile.AdditionalIncludeDirectories);/usr/include;%(AdditionalIncludeDirectories);/root/projects/HwDriver/includes</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ADC.cpp" />
+    <ClCompile Include="AnalogApiProvider.cpp" />
     <ClCompile Include="CapacitivePin.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="EventReader.cpp" />
@@ -97,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADC.h" />
+    <ClInclude Include="AnalogApiProvider.h" />
     <ClInclude Include="CapacitivePin.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="EventReader.h" />

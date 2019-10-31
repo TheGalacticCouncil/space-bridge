@@ -5,13 +5,16 @@
 #include <iostream>
 
 const int CALIBRATION_DRIVE_TIME_EXTRA{ 200000 };
-const int ACCURACY_PROMILLE{ 25 }; // 1 promille = 0.1 percentage
+//const int ACCURACY_PROMILLE{ 30 }; // 1 promille = 0.1 percentage
 const int MAX_WOBBLE_COUNT{ 10 }; // Not used currently
 const int MAX_LOOP_ITERATIONS{ 1000 };
 const int LOOP_SLEEP_MICROS{ 1000 };
+const int MAX_PWM{ 240 };
+const int MIN_PWM{ 230 };
+const int PWM_RANGE{ MAX_PWM - MIN_PWM };
 
-MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, unsigned pin1, unsigned pin2)
-    : _position(std::move(positionFeedback)), _pin1(pin1), _pin2(pin2)
+MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, int pin1, int pin2, int accuracyPromille)
+    : _position(std::move(positionFeedback)), _optionCount(10), _pin1(pin1), _pin2(pin2), _previousSpeed(0), _previousOptionIndex(0), ACCURACY_PROMILLE(accuracyPromille)
 {
     // Initiate PWM driving
     gpioSetMode(_pin1, PI_OUTPUT);
@@ -19,6 +22,10 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, un
 
     gpioPWM(_pin1, 0);
     gpioPWM(_pin2, 0);
+
+    // Set frequency to max
+    gpioSetPWMfrequency(_pin1, 1000000);
+    gpioSetPWMfrequency(_pin2, 1000000);
 
     // Find out minimum and maximum value of the position of the motor
     gpioPWM(_pin1, 255);
@@ -46,15 +53,16 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, un
 
     _valueRange = _maxValue - _minValue;
     _maxDeviation = std::round(_valueRange * ((float)ACCURACY_PROMILLE / (float)1000));
+    _optionValueRange = std::round((float)_valueRange / (float)_optionCount);
 
     // For debug purposes
     std::cout << "MotorDriver::MotorDriver() - Values\n"
-        << "_minValue:\t" << _minValue << "\n"
-        << "_maxValue:\t" << _maxValue << "\n"
-        << "_maxDeviation:\t" << _maxDeviation << "\n";
+        << "_minValue:\t"           << _minValue            << "\n"
+        << "_maxValue:\t"           << _maxValue            << "\n"
+        << "_maxDeviation:\t"       << _maxDeviation        << "\n";
 }
 
-int MotorDriver::driveToValue(unsigned targetValue)
+int MotorDriver::driveToValue(int targetValue)
 {
     // Get distance from current value
     int distance;
@@ -102,7 +110,7 @@ int MotorDriver::driveToValue(unsigned targetValue)
     return distance;
 }
 
-float MotorDriver::driveToPercentage(unsigned targetPercentage)
+float MotorDriver::driveToPercentage(int targetPercentage)
 {
     return 0.0f;
 }
@@ -117,15 +125,42 @@ float MotorDriver::readPercentage()
     return 0.0f;
 }
 
+void MotorDriver::setOperatingMode(OperatingMode mode, int optionCount)
+{
+    _mode = mode;
+
+    if (mode == OperatingMode::Guide) {
+        _optionCount = optionCount;
+        //_optionValueRange = std::round((float)_valueRange / (float)_optionCount);
+        _optionValueRange = std::round((float)_valueRange / (float)(_optionCount - 1));
+
+        std::cout << "Option values:\n"
+            << "_optionCount:\t" << _optionCount << "\n"
+            << "_optionValueRange:\t" << _optionValueRange << "\n";
+    }
+
+}
+
+void MotorDriver::tick()
+{
+    if (_mode != OperatingMode::Guide)
+        return;
+
+    _applyGuideTorque();
+}
+
 void MotorDriver::_stop()
 {
+    if (_state == MotorState::Stopped)
+        return;
+
     gpioPWM(_pin1, 0);
     gpioPWM(_pin2, 0);
 
     _state = MotorState::Stopped;
 }
 
-void MotorDriver::_increase(unsigned speed, unsigned durationMicros)
+void MotorDriver::_increase(int speed, int durationMicros)
 {
     if (_state != MotorState::Stopped) {
         gpioPWM(_pin1, 0);
@@ -140,7 +175,7 @@ void MotorDriver::_increase(unsigned speed, unsigned durationMicros)
     gpioPWM(_pin1, 0);
 }
 
-void MotorDriver::_increase(unsigned speed)
+void MotorDriver::_increase(int speed)
 {
     if (_state == MotorState::Decreasing)
         gpioPWM(_pin2, 0);
@@ -153,7 +188,7 @@ void MotorDriver::_increase(unsigned speed)
         _state = MotorState::Stopped;
 }
 
-void MotorDriver::_decrease(unsigned speed, unsigned durationMicros)
+void MotorDriver::_decrease(int speed, int durationMicros)
 {
     if (_state != MotorState::Stopped) {
         gpioPWM(_pin1, 0);
@@ -168,7 +203,7 @@ void MotorDriver::_decrease(unsigned speed, unsigned durationMicros)
     gpioPWM(_pin2, 0);
 }
 
-void MotorDriver::_decrease(unsigned speed)
+void MotorDriver::_decrease(int speed)
 {
     if (_state == MotorState::Increasing)
         gpioPWM(_pin1, 0);
@@ -179,4 +214,46 @@ void MotorDriver::_decrease(unsigned speed)
         _state = MotorState::Decreasing;
     else
         _state = MotorState::Stopped;
+}
+
+void MotorDriver::_drive(int speed)
+{
+    if (speed == 0)
+        _stop();
+    else if (speed > 0)
+        _increase(speed);
+    else
+        _decrease(std::abs(speed));
+}
+
+void MotorDriver::_applyGuideTorque()
+{
+    int currentPosition = _position->readCurrentValue();
+
+    // Determine the nearest option and distance from it
+    int optionIndex = currentPosition / _optionValueRange;
+    int optionMidpoint = optionIndex * _optionValueRange;
+    int distance = optionMidpoint - currentPosition;
+    bool withinDeviation = std::abs(distance) < _maxDeviation;
+
+    if (withinDeviation) {
+        _stop();
+
+        _previousOptionIndex = optionIndex;
+
+        return;
+    }
+
+    // Seems like we're going to move! But where to?
+    int previousOptionMidpoint = _previousOptionIndex * _optionValueRange;
+    int distanceFromPreviousOption = previousOptionMidpoint - currentPosition;
+    int direction = distanceFromPreviousOption > 0 ? -1 : 1;
+
+    _drive(direction * 255);
+}
+
+int MotorDriver::_normalizedSpeedToAbsolude(float speed)
+{
+    // 0 = PWM_MIN, 1 = PWM_MAX
+    return MIN_PWM + std::round(speed * PWM_RANGE);
 }

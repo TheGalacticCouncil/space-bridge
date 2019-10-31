@@ -4,6 +4,7 @@
 #include "MotorDriver.h"
 #include "ProgramOptions.h"
 #include "NetworkManager.h"
+#include "AnalogApiProvider.h"
 
 // FOr testing purposes
 //#include "BroadcastEventReceiver.h"
@@ -16,9 +17,10 @@
 // For debugoV
 
 Core::Core():
-    _networkManager(std::make_shared<NetworkManager>())
+    _networkManager(std::make_shared<NetworkManager>()), 
+    _hw(std::make_shared<HwManager>()), 
+    _analogApiProvider(std::make_unique<AnalogApiProvider>(_hw))
 {
-    _hw = std::make_shared<HwManager>();
     _cliOptions = std::make_unique<ProgramOptions>();
 }
 
@@ -28,28 +30,24 @@ int Core::start(int argumentCount, char* argumentVector[])
     if (_cliOptions->parse(argumentCount, argumentVector) > 0)
         return -1; // TODO: Should we actually return the value from parse?
 
-	// DEBUG: Start event receiver
-	//BroadcastEventReceiver er;
-	////er.asyncStart();
- //   EventReader er;
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
- //   std::this_thread::sleep_for(std::chrono::seconds(10));
- //   std::cout << "Current val:\t" << er.readCurrentValue() << "\n";
-
     // Start servers
     _networkManager->startServers();
 
     // Create motors
     _motors = _initMotors();
+
+    while (true) {
+        // Tick the motors
+        for (auto const &motor : _motors) {
+            motor->tick();
+        }
+
+        // Update the provided APIs
+        _analogApiProvider->tick();
+
+        // just a hacky way to not to utilize processor 100% :)
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
 
     return 0;
 }
@@ -73,46 +71,14 @@ std::vector<std::unique_ptr<IMotor>> Core::_initMotors()
             << "PWM pins:\t" << pin1 << " and " << pin2 << "\n"
             << "Analog input pin:\t" << positionPin << "\n";
 
-        //motors.push_back(std::make_unique<IMotor>())
-        //RawReader test = RawReader(positionPin, _hw);
-
         // Create IPositionFeedback for the MotorDriver
-        //std::unique_ptr<IPositionFeedback> position = std::make_unique<RawReader>(RawReader(positionPin, _hw));
-        std::unique_ptr<IPositionFeedback> position = std::make_unique<EventReader>(_networkManager);
+        std::unique_ptr<IPositionFeedback> position = std::make_unique<RawReader>(RawReader(positionPin, _hw));
+        //std::unique_ptr<IPositionFeedback> position = std::make_unique<EventReader>(_networkManager);
 
         // Create IMotor from MotorDriver
         motors.push_back(std::make_unique<MotorDriver>(std::move(position), pin1, pin2));
 
-        //for (int k = 0; k < 100; ++k) {
-        //    std::cout << "Drivin:\t" << test.readCurrentValue() << "\n";
-        //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        //}
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-        int val;
-
-        for (int i = 0; i < 20; ++i) {
-            val = 100;
-            std::cout << "Driving to " << val << "\n";
-            motors.back()->driveToValue(val);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            val = 700;
-            std::cout << "Driving to " << val << "\n";
-            motors.back()->driveToValue(val);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            val = 200;
-            std::cout << "Driving to " << val << "\n";
-            motors.back()->driveToValue(val);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            val = 900;
-            std::cout << "Driving to " << val << "\n";
-            motors.back()->driveToValue(val);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            val = 700;
-            std::cout << "Driving to " << val << "\n";
-            motors.back()->driveToValue(val);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        }
+        motors.back()->setOperatingMode(OperatingMode::Guide, 10U);
     }
 
     return motors;

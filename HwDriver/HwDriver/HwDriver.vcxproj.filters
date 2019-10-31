@@ -13,6 +13,7 @@
     <ClCompile Include="EventReader.cpp" />
     <ClCompile Include="NetworkManager.cpp" />
     <ClCompile Include="UdpEventReceiver.cpp" />
+    <ClCompile Include="AnalogApiProvider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ADC.h" />
@@ -547,5 +548,6 @@
     <ClInclude Include="NetworkManager.h" />
     <ClInclude Include="UdpEventReceiver.h" />
     <ClInclude Include="IEventReceiver.h" />
+    <ClInclude Include="AnalogApiProvider.h" />
   </ItemGroup>
 </Project>

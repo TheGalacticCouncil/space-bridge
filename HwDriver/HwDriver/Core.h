@@ -6,6 +6,7 @@ class IMotor;
 class IHwAccess;
 class ProgramOptions;
 class NetworkManager;
+class AnalogApiProvider;
 
 class Core
 {
@@ -22,5 +23,6 @@ private:
     std::shared_ptr<IHwAccess> _hw{ nullptr };
     std::unique_ptr<ProgramOptions> _cliOptions;
     std::shared_ptr<NetworkManager> _networkManager;
+    std::unique_ptr<AnalogApiProvider> _analogApiProvider;
 };
 
