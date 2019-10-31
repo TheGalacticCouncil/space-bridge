@@ -113,11 +113,13 @@ Each parameter for an input should be indented by two spaces.
 1. Define the *event* linked to the input. 
    - For an *input event* to be crated, the *input* must have at least one *event* linked to it.
    - The events are defined in the *events.json* and are linked to **EmptyEpsilon** API
+   
 2. Define the type of an input:
    - ```push_button``` (for buttons and switches that give a singnal only when activated)
    - ```switch``` (for buttons and switches that give a signal when activated and when deactivated)
    - ```encoder``` (for mechanical or optical (rotary) encoders, that count clicks and recodnise the direction it is turned)
    - ```analog``` (for potentiometers. Gives a smooth input from minimum value to maximum)
+   
 3. Define where the input pin or pins are connected:
    - *pin* for ```push_button``` or ```switch```
    - *clk* and *dt* for ```encoder```
@@ -133,4 +135,17 @@ Each parameter for an input should be indented by two spaces.
 4b. ```step```
    - Defined for *encoders*
    - Defines how much the *value* changes per tick
-   - 
+
+Additionally for encoder:
+
+5. ```threshold```
+   - Minimum change in raw value to trigger a new event
+   
+6. ```min_clip``` and ```max_clip```
+   - Defines clipping for input max and min
+    
+7. ```trigger```
+   - Used to create a conditional input, such as a touch sensitive input
+   - Defines the input pin that must be activated, before triggering any event
+   - If ```trigger``` is not used, set as zero ```0``` 
+
