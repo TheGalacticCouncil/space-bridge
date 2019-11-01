@@ -71,6 +71,31 @@ export class EventHandler {
         return this.beamTarget = newTarget;
     }
 
+    setBeamTargetNumeric(newTarget: number) {
+        switch(newTarget) {
+            case 1:
+                return this.beamTarget = "HULL";
+            case 2:
+                return this.beamTarget = ESystem.REACTOR;
+            case 3:
+                return this.beamTarget = ESystem.MISSILE_SYSTEM;
+            case 4:
+                return this.beamTarget = ESystem.MANEUVERING;
+            case 5:
+                return this.beamTarget = ESystem.IMPULSE_ENGINES;
+            case 6:
+                return this.beamTarget = ESystem.WARP_DRIVE;
+            case 7:
+                return this.beamTarget = ESystem.JUMP_DRIVE;
+            case 8:
+                return this.beamTarget = ESystem.FRONT_SHIELD_GENERATOR;
+            case 9:
+                return this.beamTarget = ESystem.REAR_SHIELD_GENERATOR;
+            default:
+                return this.beamTarget = "HULL";
+        }
+    }
+
     nextBeamTarget() {
         switch (this.beamTarget) {
             case "HULL":
@@ -352,6 +377,10 @@ export class EventHandler {
             case "SET_BEAM_TARGET":
                 this.setBeamTarget(message.payload.value);
                 return [requestCreator.setBeamTarget(message.payload.value)];
+
+            case "SET_BEAM_TARGET_NUMERIC":
+                this.setBeamTargetNumeric(message.payload.value);
+                return [requestCreator.setBeamTarget(this.beamTarget)];
 
             case "NEXT_BEAM_TARGET":
                 this.nextBeamTarget();
