@@ -7,6 +7,6 @@ export function validateRawEvent<T>(rawEvent: Buffer): Promise<T> {
         return validateEvent(event);
 
     } catch (e) {
-        throw new Error("Given event is malformed!");
+        return Promise.reject("Given event is malformed!");
     }
 }
