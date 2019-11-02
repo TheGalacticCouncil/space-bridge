@@ -31,9 +31,9 @@ class PushButton():
 
         if interrupt==True:
             if invert == True:
-                GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.read, bouncetime=debounse)
+                GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.read, bounce=debounse)
             else:
-                GPIO.add_event_detect(pin, GPIO.RISING, callback=self.read, bouncetime=debounse)
+                GPIO.add_event_detect(pin, GPIO.RISING, callback=self.read, bounce=debounse)
 
 
     def probe(self):
@@ -48,7 +48,7 @@ class PushButton():
         return state, self.name
 
 
-    def read(self):
+    def read(self, foo):
         """
         Reads the push button state.
         Returns True, if the button is pressed. 
