@@ -25,6 +25,9 @@ class EncoderInput():
         self.minimum = minimum
         self.step = step
 
+        self.dtState = 0
+        self.clockState = 0
+
         self.counter = 0
         self.substep = 0
         self.changed = False
@@ -43,10 +46,20 @@ class EncoderInput():
             #
             # ENCODER is read
             #
-            GPIO.add_event_detect(clk, GPIO.BOTH, callback=self.increment)
+            GPIO.add_event_detect(clk, GPIO.RISING, callback=self.clock_up, bounce=1)
+            GPIO.add_event_detect(dt, GPIO.RISING, callback=self.dt_active, bounce=1)
 
 
-    def read_tick(self, counter=0):
+    def dt_active(self, foo):
+        self.dtState = GPIO.input(self.dtPin)
+        self.increment()
+
+
+    def clock_up(self, foo=None):
+        self.clockState = 1
+
+
+    def read_tick(self):
         '''
         Reads the encoder state and increments
         the counter accordingly.
@@ -55,20 +68,19 @@ class EncoderInput():
         advanced features.
         '''
 
-        clockState = GPIO.input(self.clockPin)
-        dtState = GPIO.input(self.dtPin)
+        delta = 0
 
-        if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
-            # else:                                         # Default action for else is "nothing" anyway.
-            #     pass                                      # No need to write it
+        # if self.dtState == 1:
+        if self.dtState != self.clockState:
+            delta = 1                                # if dt state is 1, it is added
+        elif self.dtState == self.clockState:
+            delta = -1                                # if dt state is 1, it is subtracted
+        # else:                                       # Default action for else is "nothing" anyway.
+        #     pass                                    # No need to write it
 
-        self.previousClockState = clockState
+        self.clockState = 0
 
-        return counter
+        return delta
 
 
     def rescale(self, counter, delta):
@@ -120,7 +132,7 @@ class EncoderInput():
         return counter, changed
 
 
-    def increment(self):
+    def increment(self, foo=None):
         """
         - Reads the encoder,
         - increments the counter,
@@ -133,21 +145,15 @@ class EncoderInput():
           by giving a value as parameter.
         """
 
-        # HIT TO PERFORMANCE. SUPPORT DISCONTINUED
-        # If no counter override is defined, self.counter is used
-        # if counter == None:
-        #     counter = self.counter
+        self.clockState = GPIO.input(self.clockPin)
 
-        delta = EncoderInput.read_tick(self)
+        delta = self.read_tick()
 
         # If input has changed
         if abs(delta) > 0:
-            self.counter, self.changed = EncoderInput.rescale(self, self.counter, delta)
-
-            # return counter, changed, self.name
-        else:
-            pass
-            # return self.counter, changed, self.name
+            self.counter, self.changed = self.rescale(self.counter, delta)
+        # else:
+        #     pass
 
 
     def probe(self):
