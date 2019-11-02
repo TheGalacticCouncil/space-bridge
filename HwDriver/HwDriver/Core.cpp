@@ -46,7 +46,7 @@ int Core::start(int argumentCount, char* argumentVector[])
         _analogApiProvider->tick();
 
         // just a hacky way to not to utilize processor 100% :)
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
     }
 
     return 0;
