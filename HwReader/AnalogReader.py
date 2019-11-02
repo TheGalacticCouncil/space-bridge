@@ -13,8 +13,8 @@ name.read()
 # an MCP3008 AD converter chip
 
 from mcp23017 import GPIO            # Raspberry GPIO pins
-from gpiozero import MCP3008    # A/D converter
-
+#from gpiozero import MCP3008    # A/D converter
+from fileapi import MCP3008
 
 class AnalogInput():
     """
