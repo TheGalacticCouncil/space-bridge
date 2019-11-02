@@ -117,13 +117,13 @@ class InputPoller(threading.Thread):
                     counter, changed, name = encoderInput[i].probe()
                     if changed == True:
                         try:
-                            inputQueue.put_nowait([name, counter[i]])
+                            inputQueue.put_nowait([name, counter])
                         except Full:
                             try:
                                 inputQueue.get_nowait()
                             except Empty:
                                 pass
-                            inputQueue.put([name, counter[i]])
+                            inputQueue.put([name, counter])
 
                 # BUTTON is read
                 #
