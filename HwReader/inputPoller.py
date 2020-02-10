@@ -59,10 +59,25 @@ class InputPoller(threading.Thread):
         a_value = [0 for i in analog_range]
 
         # Encoder Init
-        counter = [0 for i in encoder_range]
+        # No longer used. Counter is in encoder class.
+        # counter = [0 for i in encoder_range]
 
         q = 0   #Counter for a performance metric
 
+        # MOVED INTERRUPT CALLBACKS T0 ENCODER INPUT
+            
+            
+            ######################
+            #counter[i], changed, name = self.encoderInput[i].interrupt_increment(counter[i])
+            #if changed == True:
+            #    try:
+            #        self.inputQueue.get_nowait()
+            #    except Empty:
+            #        pass
+            #    self.inputQueue.put([name, counter[i]])
+                             
+      
+      
         try:
 
             # Main Loop
@@ -96,18 +111,19 @@ class InputPoller(threading.Thread):
                 # Finally the input is placed in the queue.
                 # To ensure the delivery of the second attempt the 
                 # operaion is blocking.
-                #
+                
                 for i in encoder_range:
-                    counter[i], changed, name = encoderInput[i].increment(counter[i])
+                    #counter[i], changed, name = encoderInput[i].increment(counter[i])
+                    counter, changed, name = encoderInput[i].probe()
                     if changed == True:
                         try:
-                            inputQueue.put_nowait([name, counter[i]])
+                            inputQueue.put_nowait([name, counter])
                         except Full:
                             try:
                                 inputQueue.get_nowait()
                             except Empty:
                                 pass
-                            inputQueue.put([name, counter[i]])
+                            inputQueue.put([name, counter])
 
                 # BUTTON is read
                 #
@@ -117,7 +133,7 @@ class InputPoller(threading.Thread):
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
                 for i in button_range:
-                    b_value, name = buttonInput[i].read()
+                    b_value, name = buttonInput[i].probe()
                     if b_value == True:
                         inputQueue.put([name, b_value])
 
