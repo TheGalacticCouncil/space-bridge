@@ -10,6 +10,8 @@ const server: dgram.Socket = dgram.createSocket("udp4");
 const eventHandler: EventHandler = new EventHandler();
 const requestSender: RequestSender = new RequestSender();
 
+requestSender.startSending();
+
 server.on("error", err => {
   console.log(`Server shutdown due to following error:\n ${err}`);
   server.close();
@@ -27,7 +29,7 @@ server.on("message", message => {
       return eventHandler.handleEvent(event);
     })
     .then((requests: IRequest[]) => {
-      return requestSender.send(requests);
+      return requestSender.addToSendQueue(requests);
     })
     .catch(err => {
       console.log("Invalid event!");
