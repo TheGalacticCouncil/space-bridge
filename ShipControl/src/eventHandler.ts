@@ -344,6 +344,7 @@ export class EventHandler {
 
 
             case "SELECT_WEAPON":
+                this.selectAmmoType(message.payload.value);
                 return [requestCreator.selectAmmoType(message.payload.value)];
 
             case "LOAD_TUBE":

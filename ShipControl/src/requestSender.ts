@@ -20,7 +20,7 @@ export class RequestSender {
   }
 
   public async startSending(): Promise<void> {
-    if (!_.isEmpty(this.requestQueue)) {
+    while (!_.isEmpty(this.requestQueue)) {
 
       const request: IRequest | undefined = this.requestQueue.shift();
       if (request !== undefined) {
