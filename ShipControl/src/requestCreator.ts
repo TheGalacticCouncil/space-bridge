@@ -168,21 +168,10 @@ export const fireTube = (tubeId: number): IGetRequest => ({
   path: `set.lua?commandFireTubeAtCurrentTarget(${tubeId})`,
 });
 
-export const setBeamTarget = (target: IBeamTarget): IGetRequest => {
-
-  let system: string;
-
-  if (target === "HULL") {
-    system = "Hull";
-  } else {
-    system = ESystem[`${target}`];
-  }
-
-  return {
+export const setBeamTarget = (target: IBeamTarget): IGetRequest => ({
     method: GET,
-    path: `set.lua?commandSetBeamSystemTarget("${system}")`
-  };
-};
+    path: `set.lua?commandSetBeamSystemTarget("${target}")`
+});
 
 export const setBeamFrequency = (frequency: number): IGetRequest => ({
   method: GET,
