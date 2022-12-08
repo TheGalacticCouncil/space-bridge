@@ -15,6 +15,7 @@ class MCP3008():
         
         self.filename = "../HwDriver/testi.txt"
         self.channel = channel
+        self.value
 
 
     def read(self):
