@@ -5,9 +5,9 @@
 static int encoder_position = 0;
 
 // Function to be called when the encoder is rotated
-void encoder_callback() {
+void encoder_callback(int pin2) {
   // Increment or decrement the encoder position depending on the direction of rotation
-  if (digitalRead(0) == 0) {
+  if (digitalRead(pin2) == 0) {
     encoder_position++;
   } else {
     encoder_position--;
@@ -17,12 +17,19 @@ void encoder_callback() {
 static PyObject *
 encoder_init(PyObject *self, PyObject *args)
 {
+    int pin1, pin2;
+    // Parse the input pin number from the arguments
+    if (!PyArg_ParseTuple(args, "ii", &pin1, &pin2)) {
+        return NULL;
+    }
+
   // Initialize the wiringPi library and set the encoder pin as an input
   wiringPiSetup();
-  pinMode(0, INPUT);
+  pinMode(pin1, INPUT);
+  pinMode(pin2, INPUT);
 
   // Set up an interrupt to call the encoder_callback function when the encoder is rotated
-  wiringPiISR(0, INT_EDGE_BOTH, &encoder_callback);
+  wiringPiISR(pin1, INT_EDGE_BOTH, &encoder_callback);
 
   Py_RETURN_NONE;
 }
