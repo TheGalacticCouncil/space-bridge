@@ -55,9 +55,6 @@ class InputPoller(threading.Thread):
         switchInput = self.switchInput
         inputQueue = self.inputQueue
 
-        # Analog Init
-        a_value = [0 for i in analog_range]
-
         # Encoder Init
         counter = [0 for i in encoder_range]
 
@@ -81,10 +78,10 @@ class InputPoller(threading.Thread):
                 # accuarcy, but improves responciveness a great deal.
                 #
                 for i in analog_range:
-                    a_value[i], changed, name = analogInput[i].readUpdate()
+                    a_value, changed, name = analogInput[i].readUpdate()
                     if changed == True:
                         try:
-                            inputQueue.put_nowait([name, a_value[i]])
+                            inputQueue.put_nowait([name, a_value])
                         except Full:
                             pass
 
