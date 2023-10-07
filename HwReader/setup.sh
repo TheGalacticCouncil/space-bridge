@@ -6,6 +6,9 @@ sudo apt-get update
 sudo apt-get install python3
 sudo apt-get install python3-pip
 
+echo "Update CA-certificates"
+apt-get install -y --reinstall ca-certificates
+
 echo "Installing libraries"
 pip3 install -r requirements.txt
 
