@@ -12,6 +12,9 @@ apt-get install -y --reinstall ca-certificates
 echo "Installing libraries"
 pip3 install -r requirements.txt
 
+echo "Install Cython for Performance"
+pip install Cython
+
 echo "================="
 echo -e "\nInstall complete!"
 echo "================="
