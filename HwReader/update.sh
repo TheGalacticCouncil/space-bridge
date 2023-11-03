@@ -1,14 +1,11 @@
 #!/bin/bash
 # Setup sctipt for installing HwReader and it's dependancies
 
-#echo "Installing Python 3"
-#sudo apt-get update
-#sudo apt-get install python3
-#sudo apt-get install python3-pip
-
-echo "Installing libraries"
+echo
+echo "## Installing libraries ##"
 pip3 install -r requirements.txt
-echo "Build Cython modules"
+echo
+echo "## Building Cython modules ##"
 python setup.py build_ext --inplace
 
 echo "================="

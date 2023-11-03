@@ -1,27 +1,27 @@
 #!/bin/bash
 # Setup sctipt for installing HwReader and it's dependancies
-
-echo "Installing Python 3"
+echo
+echo "## Installing Python 3 ##"
 sudo apt-get update
 sudo apt-get install python3
 sudo apt-get install python3-pip
-
-echo "Update CA-certificates"
+echo
+echo "## Updating CA-certificates ##"
 apt-get install -y --reinstall ca-certificates
-
-echo "Installing libraries"
+echo
+echo "## Installing libraries ##"
 pip3 install -r requirements.txt
-
-echo "Install Cython for Performance"
+echo
+echo "## Installing Cython ##"
 pip install Cython
-
-echo "Build Cython modules"
+echo
+echo "## Building Cython modules ##"
 python setup.py build_ext --inplace
-
+echo
 echo "================="
 echo -e "\nInstall complete!"
 echo "================="
 echo -e "\nYou can run Hwreader by running run.sh"
-
-echo -e "\n\nCreate a config.yml that matches your hardware configuration or"
+echo
+echo -e "\nCreate a config.yml that matches your hardware configuration or"
 echo -e "copy one from config examples and name as config.yml"
