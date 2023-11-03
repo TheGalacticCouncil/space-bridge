@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# J.V.Ojala 17.01.2019 (Cython 11.2023)
+# J.V.Ojala 17.01.2019
+# Cython 02.11.2023
 # EncoderReader
 """
 Module for reading rotary encoder input.
@@ -48,7 +49,7 @@ cdef class EncoderInput():
         self.previousClockState = GPIO.input(self.clockPin)
 
 
-    def read(self, int counter=0):
+    cdef read(self, int counter=0):
         '''
         Reads the encoder state and increments
         the counter accordingly.
@@ -73,7 +74,7 @@ cdef class EncoderInput():
         return counter
 
 
-    def rescale(self, int counter, int delta):
+    cdef rescale(self, int counter, int delta):
         '''Re-scales an input to requirement'''
 
         cdef bint changed = True
