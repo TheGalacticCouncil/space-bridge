@@ -89,7 +89,7 @@ eventThread = EventMaker(eventSleep, inputQueue, eventQueue,
 listener = KeyListener(keyQueue)
 
 # and marks them daemon
-inputThread.daemon = True
+# inputThread.daemon = True  # InputPoller is defined internally
 eventThread.daemon = True
 listener.daemon = True
 
@@ -106,6 +106,7 @@ end_time = time()
 boot_length = int((end_time - start_time)*1000)
 logger.debug("Start-up complete in %i ms" % boot_length)
 logger.info("Start-up complete")
+logger.info("Press ENTER to quit")
 
 # If one or more of the treads are not up, waits a while for them to wake up.
 if inputThread.is_alive() and eventThread.is_alive():
@@ -113,6 +114,7 @@ if inputThread.is_alive() and eventThread.is_alive():
 else:
     logger.warning("Thread is not ready, waiting for it to boot.")
     sleep(0.5)
+
 
 try:
     while dont_stop:
