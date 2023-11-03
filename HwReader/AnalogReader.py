@@ -106,7 +106,7 @@ class AnalogInput():
             if triggered:
                 return self.update()
             else:
-                return None, False, self.name
+                return 0, False, self.name
 
 
     def update(self):
@@ -130,7 +130,7 @@ class AnalogInput():
             value = int(value * (self.maximum-self.minimum) + self.minimum)
             return value, changed, self.name
         else:
-            return None, changed, self.name
+            return 0, changed, self.name
 
 
 # Module can be run directly to test its function
