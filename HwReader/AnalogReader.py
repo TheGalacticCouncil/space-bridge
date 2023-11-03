@@ -21,8 +21,8 @@ class AnalogInput():
     An object to read an analog MCP3008 hardware input.
     """
 
-    def __init__(self, inputChannel, name='', threshold=0, 
-                 clip_min=0.0, clip_max=1.0, minimum=0, maximum=1, 
+    def __init__(self, inputChannel, name='', threshold=0,
+                 clip_min=0.0, clip_max=1.0, minimum=0, maximum=1,
                  trigger=0):
         # Input name
         self.name = name
@@ -94,7 +94,7 @@ class AnalogInput():
 
     def readUpdate(self):
         """
-        Returns the read value and whether it has changed from before, 
+        Returns the read value and whether it has changed from before,
         if trigger is active or 0.
         """
         if self.trigger == 0:
@@ -105,7 +105,7 @@ class AnalogInput():
             if triggered:
                 return self.update()
             else:
-                return None, False, self.name
+                return 0, False, self.name
 
 
     def update(self):
@@ -124,12 +124,12 @@ class AnalogInput():
             self.oldValue = value
             # Value is rescaled and changed in to an int
             # rescale() is not used for this, to avoid one extra call
-            # Value is rounded to int using int(). It is faster than round(), 
+            # Value is rounded to int using int(). It is faster than round(),
             # though loses accuracy, as it is always rounded down.
             value = int(value * (self.maximum-self.minimum) + self.minimum)
             return value, changed, self.name
         else:
-            return None, changed, self.name
+            return 0, changed, self.name
 
 
 # Module can be run directly to test its function
@@ -137,11 +137,11 @@ if __name__ == "__main__":
     from time import sleep
 
     analogInput=[]
-    analogInput.append(AnalogInput(inputChannel=0, 
+    analogInput.append(AnalogInput(inputChannel=0,
                                    threshold=0.01,
-                                   clip_min=0.00245, 
-                                   clip_max=0.998, 
-                                   minimum=-100, 
+                                   clip_min=0.00245,
+                                   clip_max=0.998,
+                                   minimum=-100,
                                    maximum=200))
 
     try:
