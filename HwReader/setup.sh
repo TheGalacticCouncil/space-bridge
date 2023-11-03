@@ -15,6 +15,9 @@ pip3 install -r requirements.txt
 echo "Install Cython for Performance"
 pip install Cython
 
+echo "Build Cython modules"
+python setup.py build_ext --inplace
+
 echo "================="
 echo -e "\nInstall complete!"
 echo "================="

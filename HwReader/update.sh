@@ -8,6 +8,8 @@
 
 echo "Installing libraries"
 pip3 install -r requirements.txt
+echo "Build Cython modules"
+python setup.py build_ext --inplace
 
 echo "================="
 echo -e "\nInstall complete!"
