@@ -19,7 +19,7 @@ start_time = time()
 
 from inputPoller import InputPoller
 from inputConfig import InputConfig
-from EventMaker import EventMaker
+from EventMaker import *
 from KeyListener import KeyListener
 from eventConfig import EventConfig
 from queue import Queue, Empty
@@ -90,7 +90,7 @@ listener = KeyListener(keyQueue)
 
 # and marks them daemon
 # inputThread.daemon = True  # InputPoller is defined internally
-eventThread.daemon = True
+# eventThread.daemon = True  #
 listener.daemon = True
 
 print("Press Enter to quit")

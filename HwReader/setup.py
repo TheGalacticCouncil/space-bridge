@@ -5,5 +5,6 @@ setup(
     ext_modules=cythonize([
         "EncoderReader.pyx",
         "inputPoller.pyx",
+        "EventMaker.pyx",
     ]),
 )
