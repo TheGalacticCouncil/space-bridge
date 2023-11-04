@@ -7,7 +7,6 @@
 from mcp23017 import GPIO
 from time import sleep, time
 from threading import Thread
-#from queue import Queue
 from queue import Full, Empty
 from logger import Logger
 
@@ -38,13 +37,11 @@ cdef class InputPoller():
 
     def __init__(self, list analogInput, list encoderInput, list buttonInput,
                   list switchInput, float sleep, inputQueue):
-        #threading.Thread.__init__(self)
 
         self.running = True
         PyEval_InitThreads()
         self.myThread = Thread(target=self.run, daemon=True)
         self.myThread.daemon = True
-        self.myThread.start()
 
         self.analogInput = analogInput
         self.encoderInput = encoderInput
