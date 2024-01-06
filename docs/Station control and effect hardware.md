@@ -1,12 +1,12 @@
 
 ### Control and effect elements
-BUTTON (Returns to original state after pressing. Original state = circuit is open.)
-RETRACTIVE SWITCH (Returns to original state after turning. Original state = circuit is open.)
-TOGGLE SWITCH (Remains at set state after turning.)
-FADER
-ROTARY ENCODER 20p 
-OPTIC ROTARY ENCODER 400p
-DIGITAL LED STRIP (GND/DATA/+5V Numbers indicate which leds are used for specific effect.)
+BUTTON (Returns to original state after pressing. Original state = circuit is open.)  
+RETRACTIVE SWITCH (Returns to original state after turning. Original state = circuit is open.)  
+TOGGLE SWITCH (Remains at set state after turning.)  
+FADER  
+ROTARY ENCODER 20p  
+OPTIC ROTARY ENCODER 400p  
+DIGITAL LED STRIP (GND/DATA/+5V Numbers indicate which leds are used for specific effect.)  
 
 ### Engineer Station
 >Self desturct key TOGGLE SWITCH
