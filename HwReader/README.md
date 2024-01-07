@@ -149,3 +149,7 @@ Additionally for encoder:
    - Defines the input pin that must be activated, before triggering any event
    - If ```trigger``` is not used, set as zero ```0``` 
 
+
+## Issues ##
+
+[Known Issues](https://github.com/TheGalacticCouncil/space-bridge/blob/master/HwReader/known-issues.md)
