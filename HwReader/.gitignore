@@ -28,3 +28,7 @@ __*
 
 # Unnecessary in Python 3.5
 epoch.py
+
+# Compiled C artifacts
+*.so
+*.c
