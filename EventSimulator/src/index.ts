@@ -10,7 +10,7 @@ function main() {
     }
 
     // Load events
-    const eventTypes: object[] = require("../events.json");
+    const eventTypes: object[] = require(`../${config.eventsFile}`);
     const client = dgram.createSocket("udp4");
 
     client.bind(0, "0.0.0.0", () => client.setBroadcast(true));

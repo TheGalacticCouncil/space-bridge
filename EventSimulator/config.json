@@ -1,7 +1,8 @@
 {
-    "broadcastAddress": "192.168.1.255",
+    "broadcastAddress": "10.9.2.255",
     "broadcastPort": 41114,
     "autoSend": false,
     "sendIntervalMs": 1000,
-    "disableLogging": false
+    "disableLogging": false,
+    "eventsFile": "motor-position-events.json"
 }
