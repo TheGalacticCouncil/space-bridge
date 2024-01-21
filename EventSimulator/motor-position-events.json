@@ -1,6 +1,6 @@
 [
     {
-        "name": "MOTOR_01_POSITION",
+        "name": "MOTOR_1_POSITION",
         "fields": [
             {
                 "name": "value",
@@ -11,7 +11,29 @@
         ]
     },
     {
-        "name": "MOTOR_02_POSITION",
+        "name": "MOTOR_2_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_3_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_4_POSITION",
         "fields": [
             {
                 "name": "value",

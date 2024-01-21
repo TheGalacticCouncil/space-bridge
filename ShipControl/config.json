@@ -1,6 +1,6 @@
 {
     "server": {
-        "address": "http://192.168.1.80",
+        "address": "http://192.168.110.119",
         "port": "8080"
     },
     "consoles": [

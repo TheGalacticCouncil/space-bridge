@@ -23,3 +23,8 @@ unsigned EventReader::readCurrentValue()
 }
 
 EventReader::~EventReader() = default;
+
+std::string EventReader::getEventName()
+{
+    return _eventName;
+}

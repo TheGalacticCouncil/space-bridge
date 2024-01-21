@@ -1,5 +1,6 @@
 #include "MotorDriver.h"
 #include "IPositionFeedback.h"
+#include "IMotorEnable.h"
 
 #include <cmath>
 #include <iostream>
@@ -13,8 +14,8 @@ const int MAX_PWM{ 240 };
 const int MIN_PWM{ 230 };
 const int PWM_RANGE{ MAX_PWM - MIN_PWM };
 
-MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, int pin1, int pin2, int accuracyPromille)
-    : _position(std::move(positionFeedback)), _optionCount(10), _pin1(pin1), _pin2(pin2), _previousSpeed(0), _previousOptionIndex(0), ACCURACY_PROMILLE(accuracyPromille)
+MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, int accuracyPromille)
+    : _position(std::move(positionFeedback)), _motorEnabler(std::move(motorEnabler)), _optionCount(10), _pin1(pin1), _pin2(pin2), _previousSpeed(0), _previousOptionIndex(0), ACCURACY_PROMILLE(accuracyPromille)
 {
     // Initiate PWM driving
     gpioSetMode(_pin1, PI_OUTPUT);
@@ -64,6 +65,12 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, in
 
 int MotorDriver::driveToValue(int targetValue)
 {
+    // Check if motor is enabled
+    if (!_motorEnabler->motorEnabled())
+    {
+        return 0;
+    }
+    
     // Get distance from current value
     int distance;
     distance = targetValue - _position->readCurrentValue();
@@ -74,6 +81,14 @@ int MotorDriver::driveToValue(int targetValue)
     float speedMultiplier = 1.0f;
 
     for (int i = 0; std::abs(distance) > _maxDeviation; ++i) {
+        // Check if motor is enabled
+        if (!_motorEnabler->motorEnabled())
+        {
+            _stop();
+            
+            return 0;
+        }
+        
         if (std::abs(distance) < _maxDeviation * 4)
             speedMultiplier = 0.85f;
 
@@ -229,12 +244,30 @@ void MotorDriver::_drive(int speed)
 void MotorDriver::_applyGuideTorque()
 {
     int currentPosition = _position->readCurrentValue();
+    
 
     // Determine the nearest option and distance from it
-    int optionIndex = currentPosition / _optionValueRange;
+    int optionIndex = (currentPosition+_optionValueRange/2) / _optionValueRange;
     int optionMidpoint = optionIndex * _optionValueRange;
-    int distance = optionMidpoint - currentPosition;
-    bool withinDeviation = std::abs(distance) < _maxDeviation;
+    int distance = std::abs(optionMidpoint - currentPosition);
+    
+    int maxDeviation;
+    if (_state != MotorState::Stopped)
+    {
+        maxDeviation = std::round((float)_maxDeviation * 0.75);
+    }
+    else
+    {
+        maxDeviation = _maxDeviation;
+    }
+    bool withinDeviation = distance < maxDeviation;
+    
+    std::cout 
+        << "Current position:\t" << currentPosition << "\n"
+        << "Option index:\t" << optionIndex << "\n"
+        << "Distance:\t" << distance << "\n"
+        << "Within deviation:\t" << withinDeviation << "\n";
+        
 
     if (withinDeviation) {
         _stop();
@@ -247,7 +280,17 @@ void MotorDriver::_applyGuideTorque()
     // Seems like we're going to move! But where to?
     int previousOptionMidpoint = _previousOptionIndex * _optionValueRange;
     int distanceFromPreviousOption = previousOptionMidpoint - currentPosition;
-    int direction = distanceFromPreviousOption > 0 ? -1 : 1;
+    //int direction = distanceFromPreviousOption > 0 ? -1 : 1;
+    //int direction = distance > distanceFromPreviousOption ? -1 : 1;
+    int direction; 
+    if (optionIndex == _previousOptionIndex)
+    {
+        direction = optionMidpoint - currentPosition > 0 ? -1 : 1;
+    }
+    else
+    {
+        direction = optionIndex > _previousOptionIndex ? 1 : -1;
+    }
 
     _drive(direction * 255);
 }

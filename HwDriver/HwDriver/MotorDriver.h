@@ -5,6 +5,7 @@
 #include <memory>
 
 class IPositionFeedback;
+class IMotorEnable;
 
 enum class MotorState {Increasing, Decreasing, Stopped};
 
@@ -13,7 +14,7 @@ class MotorDriver :
 {
 public:
     // Constructor for two-pin case
-    MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, int pin1, int pin2, int accuracyPromille = 30);
+    MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, int accuracyPromille = 25);
 
     // Constructor for enable-pin case
     // TODO
@@ -39,6 +40,7 @@ private:
     int _normalizedSpeedToAbsolude(float speed);
 
     std::unique_ptr<IPositionFeedback> _position;
+    std::unique_ptr<IMotorEnable> _motorEnabler;
 
     int _minValue;
     int _maxValue;

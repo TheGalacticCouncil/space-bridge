@@ -10,7 +10,7 @@
 AnalogApiProvider::AnalogApiProvider(std::shared_ptr<IHwAccess> hwAccess) :
     _hwAccess(hwAccess)
 {
-    _file.open("testi.txt", std::ios::trunc);
+    _file.open("mcp3008-output.txt", std::ios::trunc);
 }
 
 AnalogApiProvider::~AnalogApiProvider()
@@ -36,6 +36,13 @@ std::vector<int> AnalogApiProvider::_readValues()
         _hwAccess->readAnalogPin(0, 5),
         _hwAccess->readAnalogPin(0, 6),
         _hwAccess->readAnalogPin(0, 7),
+        _hwAccess->readAnalogPin(1, 1),
+        _hwAccess->readAnalogPin(1, 2),
+        _hwAccess->readAnalogPin(1, 3),
+        _hwAccess->readAnalogPin(1, 4),
+        _hwAccess->readAnalogPin(1, 5),
+        _hwAccess->readAnalogPin(1, 6),
+        _hwAccess->readAnalogPin(1, 7),
     };
 
     return values;

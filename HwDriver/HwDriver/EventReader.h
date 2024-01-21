@@ -13,6 +13,7 @@ public:
     ~EventReader();
 
     unsigned readCurrentValue();
+    std::string getEventName();
 
 private:
     unsigned _minValue;

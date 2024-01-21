@@ -1,5 +1,6 @@
 #include <csignal>
 #include <iostream>
+#include <pigpio.h>
 
 #include "Core.h"
 
@@ -16,7 +17,8 @@
 void signalHandler(int signalNumber) {
     std::cout << "Received signal:\t" << signalNumber << "\n";
 
-    //gpioTerminate();
+    // TODO: Let ioBase destructor handle this
+    gpioTerminate();
 
     exit(signalNumber);
 }

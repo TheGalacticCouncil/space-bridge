@@ -7,6 +7,7 @@ class IHwAccess;
 class ProgramOptions;
 class NetworkManager;
 class AnalogApiProvider;
+class EventReader;
 
 class Core
 {
@@ -24,5 +25,7 @@ private:
     std::unique_ptr<ProgramOptions> _cliOptions;
     std::shared_ptr<NetworkManager> _networkManager;
     std::unique_ptr<AnalogApiProvider> _analogApiProvider;
+    std::unique_ptr<EventReader> _motorTargetEventReader;
+    std::vector<std::unique_ptr<EventReader>> _motorTargetEventReaders;
 };
 
