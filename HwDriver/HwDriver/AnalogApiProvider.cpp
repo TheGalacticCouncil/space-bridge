@@ -36,6 +36,7 @@ std::vector<int> AnalogApiProvider::_readValues()
         _hwAccess->readAnalogPin(0, 5),
         _hwAccess->readAnalogPin(0, 6),
         _hwAccess->readAnalogPin(0, 7),
+        _hwAccess->readAnalogPin(1, 0),
         _hwAccess->readAnalogPin(1, 1),
         _hwAccess->readAnalogPin(1, 2),
         _hwAccess->readAnalogPin(1, 3),
@@ -43,6 +44,14 @@ std::vector<int> AnalogApiProvider::_readValues()
         _hwAccess->readAnalogPin(1, 5),
         _hwAccess->readAnalogPin(1, 6),
         _hwAccess->readAnalogPin(1, 7),
+        _hwAccess->readAnalogPin(2, 0),
+        _hwAccess->readAnalogPin(2, 1),
+        _hwAccess->readAnalogPin(2, 2),
+        _hwAccess->readAnalogPin(2, 3),
+        _hwAccess->readAnalogPin(2, 4),
+        _hwAccess->readAnalogPin(2, 5),
+        _hwAccess->readAnalogPin(2, 6),
+        _hwAccess->readAnalogPin(2, 7),
     };
 
     return values;

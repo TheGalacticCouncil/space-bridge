@@ -5,7 +5,7 @@ class ADC :
 	private ioBase
 {
 public:
-	ADC(unsigned channel = 0, bool aux = false);
+	ADC(unsigned channel = 0, bool aux = true);
 	~ADC();
 	ADC(const ADC&) = delete;
 

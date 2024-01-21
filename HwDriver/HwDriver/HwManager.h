@@ -19,7 +19,7 @@ public:
 private:
     ADC& _getAdcForChannel(unsigned channel);
 
-    std::vector<std::shared_ptr<ADC>> _adcs{ MAX_MCP_CHANNEL, nullptr };
+    std::vector<std::shared_ptr<ADC>> _adcs{ nullptr, nullptr, nullptr };
     const unsigned _maxChannel{ MAX_MCP_CHANNEL };
 };
 
