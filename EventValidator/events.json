@@ -750,5 +750,203 @@
                 "max": 3599
             }
         ]
+    },
+    {
+        "name": "MOTOR_1_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_2_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_3_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_4_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_5_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_6_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_7_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_8_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_9_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_10_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_11_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_12_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 1000
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_13_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_14_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_15_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_16_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_17_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
+    },
+    {
+        "name": "MOTOR_18_POSITION",
+        "fields": [
+            {
+                "name": "value",
+                "datatype": "int",
+                "min": 0,
+                "max": 100
+            }
+        ]
     }
 ]

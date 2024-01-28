@@ -1,0 +1,19 @@
+{
+  "name": "shipwatch",
+  "version": "0.1.0",
+  "description": "Monitors EmptyEpsilon's state and generates events on changes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "npm run build -- && node dist/index.js"
+  },
+  "author": "Juho Kuusisto",
+  "license": "ISC",
+  "devDependencies": {
+    "@tsconfig/node-lts": "^20.1.1",
+    "@types/node": "^20.11.9",
+    "typescript": "^5.3.3"
+  },
+  "type": "module"
+}

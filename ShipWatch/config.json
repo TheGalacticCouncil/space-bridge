@@ -1,0 +1,48 @@
+{
+    "server": {
+        "port": 8080,
+        "address": "127.0.0.1"
+    },
+    "broadcast": {
+        "port": 41114,
+        "address": "10.9.2.255"
+    },
+    "systems": {
+        "Reactor": {
+            "coolantMotorNumber": 1,
+            "powerMotorNumber": 10
+        },
+        "BeamWeapons": {
+            "coolantMotorNumber": 2,
+            "powerMotorNumber": 11
+        },
+        "MissileSystem": {
+            "coolantMotorNumber": 3,
+            "powerMotorNumber": 12
+        },
+        "Maneuver": {
+            "coolantMotorNumber": 4,
+            "powerMotorNumber": 13
+        },
+        "Impulse": {
+            "coolantMotorNumber": 5,
+            "powerMotorNumber": 14
+        },
+        "Warp": {
+            "coolantMotorNumber": 6,
+            "powerMotorNumber": 15
+        },
+        "JumpDrive": {
+            "coolantMotorNumber": 7,
+            "powerMotorNumber":16
+        },
+        "FrontShield": {
+            "coolantMotorNumber": 8,
+            "powerMotorNumber": 17
+        },
+        "RearShield": {
+            "coolantMotorNumber": 9,
+            "powerMotorNumber": 18
+        }
+    }
+}
