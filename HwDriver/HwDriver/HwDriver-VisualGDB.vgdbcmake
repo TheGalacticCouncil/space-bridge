@@ -77,7 +77,7 @@
         <CMakeTargetSpecificSettings>
           <TargetID>HwDriver-VisualGDB</TargetID>
           <Debug>
-            <Arguments>--motor 1 10 11 0 0 1 6 --motor 1 9 26 0 1 1 7 --motor 1 5 6 0 2 1 4 --motor 1 25 8 0 3 1 5</Arguments>
+            <Arguments>--motor 1 10 11 0 0 1 6 --motor 1 9 26 0 1 1 7 --motor 1 5 6 0 2 1 4 --motor 1 25 8 0 3 1 5 --first-motor-number 1 --motor-enable-pin 23</Arguments>
           </Debug>
           <Deployment>
             <Mode>Auto</Mode>

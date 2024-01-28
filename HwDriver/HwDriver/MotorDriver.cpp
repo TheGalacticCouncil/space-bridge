@@ -14,9 +14,13 @@ const int MAX_PWM{ 240 };
 const int MIN_PWM{ 230 };
 const int PWM_RANGE{ MAX_PWM - MIN_PWM };
 
-MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, int accuracyPromille)
-    : _position(std::move(positionFeedback)), _motorEnabler(std::move(motorEnabler)), _optionCount(10), _pin1(pin1), _pin2(pin2), _previousSpeed(0), _previousOptionIndex(0), ACCURACY_PROMILLE(accuracyPromille)
+MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, unsigned enablePin, int accuracyPromille)
+    : _position(std::move(positionFeedback)), _motorEnabler(std::move(motorEnabler)), _optionCount(10), _pin1(pin1), _pin2(pin2), _previousSpeed(0), _previousOptionIndex(0), ACCURACY_PROMILLE(accuracyPromille), _latestDriveDisabledValue(0)
 {
+    // Enable motor
+    gpioSetMode(enablePin, PI_OUTPUT);
+    gpioWrite(enablePin, 1);
+    
     // Initiate PWM driving
     gpioSetMode(_pin1, PI_OUTPUT);
     gpioSetMode(_pin2, PI_OUTPUT);
@@ -65,15 +69,19 @@ MotorDriver::MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, st
 
 int MotorDriver::driveToValue(int targetValue)
 {
+    unsigned currentPosition = _position->readCurrentValue();
+    
     // Check if motor is enabled
     if (!_motorEnabler->motorEnabled())
     {
+        _latestDriveDisabledValue = currentPosition;
+        
         return 0;
     }
     
     // Get distance from current value
     int distance;
-    distance = targetValue - _position->readCurrentValue();
+    distance = targetValue - currentPosition;
 
     if (std::abs(distance) < _maxDeviation)
         return distance;
@@ -84,13 +92,23 @@ int MotorDriver::driveToValue(int targetValue)
         // Check if motor is enabled
         if (!_motorEnabler->motorEnabled())
         {
+            _latestDriveDisabledValue = currentPosition;
+
             _stop();
             
             return 0;
         }
         
         if (std::abs(distance) < _maxDeviation * 4)
-            speedMultiplier = 0.85f;
+            speedMultiplier = 0.45f;
+        else if (std::abs(distance) < _maxDeviation * 6)
+            speedMultiplier = 0.55f;
+        else if (std::abs(distance) < _maxDeviation * 8)
+            speedMultiplier = 0.6f;
+        else if (std::abs(distance) < _maxDeviation * 10)
+            speedMultiplier = 0.7f;
+        else if (std::abs(distance) < _maxDeviation * 12)
+            speedMultiplier = 0.8f;
 
         if (distance > 0)
             _increase(std::round(255 * speedMultiplier));
@@ -133,6 +151,11 @@ float MotorDriver::driveToPercentage(int targetPercentage)
 int MotorDriver::readValue()
 {
     return _position->readCurrentValue();
+}
+
+unsigned MotorDriver::getLatestDriveDisabledValue()
+{
+    return _latestDriveDisabledValue;
 }
 
 float MotorDriver::readPercentage()

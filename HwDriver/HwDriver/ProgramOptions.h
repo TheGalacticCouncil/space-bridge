@@ -18,6 +18,8 @@ public:
     std::vector<unsigned> pwmPins;
     std::vector<unsigned> positionPins;
     std::vector<std::vector<unsigned>> motorOptions;
+    unsigned firstMotorNumber;
+    unsigned motorEnablePin;
 
 private:
     std::unique_ptr<CLI::App> _app;

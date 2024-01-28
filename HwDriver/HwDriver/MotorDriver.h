@@ -14,7 +14,7 @@ class MotorDriver :
 {
 public:
     // Constructor for two-pin case
-    MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, int accuracyPromille = 25);
+    MotorDriver(std::unique_ptr<IPositionFeedback> positionFeedback, std::unique_ptr<IMotorEnable> motorEnabler, int pin1, int pin2, unsigned enablePin, int accuracyPromille = 25);
 
     // Constructor for enable-pin case
     // TODO
@@ -23,6 +23,7 @@ public:
     int driveToValue(int targetValue);
     float driveToPercentage(int targetPercentage);
     int readValue();
+    unsigned getLatestDriveDisabledValue();
     float readPercentage();
     void setOperatingMode(OperatingMode mode, int optionCount = 4);
 
@@ -41,6 +42,8 @@ private:
 
     std::unique_ptr<IPositionFeedback> _position;
     std::unique_ptr<IMotorEnable> _motorEnabler;
+    
+    unsigned _latestDriveDisabledValue;
 
     int _minValue;
     int _maxValue;

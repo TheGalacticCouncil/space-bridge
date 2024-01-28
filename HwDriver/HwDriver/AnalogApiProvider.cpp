@@ -1,28 +1,46 @@
 #include "AnalogApiProvider.h"
 
 #include "IHwAccess.h"
+#include "IMotor.h"
 
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <memory>
 
+// TODO: Make file writing "atomic", e.g. by following
+//       https://stackoverflow.com/questions/29261648/atomic-writing-to-file-on-linux
+
+// TODO2: Implement another way to do cross-process communication...
+
+const char* MOTOR_VALUES_OUTPUT_FILE = "/tmp/mcp3008-touched-values-output.txt";
+
 AnalogApiProvider::AnalogApiProvider(std::shared_ptr<IHwAccess> hwAccess) :
     _hwAccess(hwAccess)
 {
     _file.open("mcp3008-output.txt", std::ios::trunc);
+    _motorValuesFile.open(MOTOR_VALUES_OUTPUT_FILE, std::ios::trunc);
 }
 
 AnalogApiProvider::~AnalogApiProvider()
 {
     _file.close();
+    _motorValuesFile.close();
 }
 
 void AnalogApiProvider::tick()
 {
-    _publishValues(
-        _readValues()
+    //_publishValues(
+    //    _readValues()
+    //);
+    _publishMotorValues(
+        _readMotorValues()
     );
+}
+
+void AnalogApiProvider::setMotorsVector(std::vector<std::shared_ptr<IMotor>> motors)
+{
+    _motors = motors;
 }
 
 std::vector<int> AnalogApiProvider::_readValues()
@@ -57,17 +75,35 @@ std::vector<int> AnalogApiProvider::_readValues()
     return values;
 }
 
+std::vector<unsigned> AnalogApiProvider::_readMotorValues()
+{
+    std::vector<unsigned> values;
+    
+    for (int i = 0; i < _motors.size(); ++i)
+    {
+        values.push_back(_motors.at(i)->getLatestDriveDisabledValue()); 
+    }
+    
+    return values;
+}
+
 void AnalogApiProvider::_publishValues(std::vector<int> values)
 {
-    //std::cout << "Read values:\n";
-
-    //for (auto const& val : values) {
-    //    std::cout << val << "\n";
-    //}
     _file.seekp(0);
 
     for (auto const& value : values) {
         _file << std::setfill('0') << std::setw(4) << value << "\n";
+    }
+
+    _file << std::endl;
+}
+
+void AnalogApiProvider::_publishMotorValues(std::vector<unsigned> values)
+{
+    _motorValuesFile.seekp(0);
+    
+    for (auto const& value : values) {
+        _motorValuesFile << std::setfill('0') << std::setw(4) << value << "\n";
     }
 
     _file << std::endl;

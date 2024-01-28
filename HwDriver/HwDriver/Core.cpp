@@ -42,9 +42,12 @@ int Core::start(int argumentCount, char* argumentVector[])
     // Create motors
     _motors = _initMotors();
     
+    // Add motors to AnalogApiProvider
+    _analogApiProvider->setMotorsVector(_motors);
+    
     for (int i = 0; i < _motors.size(); ++i)
     {
-        _motorTargetEventReaders.push_back(std::make_unique<EventReader>(_networkManager, "MOTOR_" + std::to_string(i+1) + "_POSITION"));
+        _motorTargetEventReaders.push_back(std::make_unique<EventReader>(_networkManager, "MOTOR_" + std::to_string(i+_cliOptions->firstMotorNumber) + "_POSITION"));
     }
 
     while (true) {
@@ -75,11 +78,11 @@ int Core::start(int argumentCount, char* argumentVector[])
     return 0;
 }
 
-std::vector<std::unique_ptr<IMotor>> Core::_initMotors()
+std::vector<std::shared_ptr<IMotor>> Core::_initMotors()
 {
     std::cout << "Core::_initMotors - Initializing motors...\n";
 
-    std::vector<std::unique_ptr<IMotor>> motors;
+    std::vector<std::shared_ptr<IMotor>> motors;
 
     // For now only direct reading of MCP3008 is supported
 
@@ -137,7 +140,7 @@ std::vector<std::unique_ptr<IMotor>> Core::_initMotors()
         std::unique_ptr<IMotorEnable> motorEnabler = std::make_unique<TouchSenseMotorEnabler>(TouchSenseMotorEnabler(touchMcpChannel, touchMcpPin, _hw));
 
         // Create IMotor from MotorDriver
-        motors.push_back(std::make_unique<MotorDriver>(std::move(position), std::move(motorEnabler), motorPin1, motorPin2));
+        motors.push_back(std::make_shared<MotorDriver>(std::move(position), std::move(motorEnabler), motorPin1, motorPin2, _cliOptions->motorEnablePin));
 
         motors.back()->setOperatingMode(OperatingMode::Target);
     }
