@@ -68,7 +68,7 @@ class InputConfig():
             self.logger.critical("Error: Could not find %s" % filename)
             exit()
 
-        settings = yaml.load(configfile)
+        settings = yaml.safe_load(configfile)
         configfile.close()
 
         return settings
