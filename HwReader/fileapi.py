@@ -8,7 +8,7 @@ from gpiozero import MCP3008         # A/D converter
 class MCP3008():
     '''
     Wrapper for MCP3008
-    for inputVannel values under 8, uses the gpiozero library
+    For inputVannel values under 8, uses the gpiozero library
     normally. With values [10..inf] uses the file api.
     '''
 
@@ -31,5 +31,18 @@ class MCP3008():
         '''
         with open(self.filename, 'r') as f:
             inputs = f.readlines()
+        number_of_virtual_inputs = len(inputs)
+        if virtualChannel > len(inputs):
+            raise VirtualMCPApiError(f"virtual channel {virtualChannel} out of range {number_of_virtual_inputs}")
         value = int(inputs[virtualChannel])
         return value
+
+
+class VirtualMCPApiError(Exception):
+    '''
+    Error for when trying to address a non-existant
+    inputs using the file api
+    '''
+    def __init__(self, message):
+        self.message = message
+        Exception.__init__(self, message)
