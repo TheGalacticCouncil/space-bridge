@@ -29,12 +29,15 @@ class MCP3008():
         Reads lines from file API
         Returns the line value as int
         '''
-        with open(self.filename, 'r') as f:
-            inputs = f.readlines()
-        number_of_virtual_inputs = len(inputs)
-        if virtualChannel > len(inputs):
-            raise VirtualMCPApiError(f"virtual channel {virtualChannel} out of range {number_of_virtual_inputs}")
-        value = int(inputs[virtualChannel])
+        try:
+            with open(self.filename, 'r') as f:
+                inputs = f.readlines()
+            number_of_virtual_inputs = len(inputs)
+            if virtualChannel > len(inputs):
+                raise VirtualMCPApiError(f"virtual channel {virtualChannel} out of range {number_of_virtual_inputs}")
+            value = int(inputs[virtualChannel])
+        except:
+            raise VirtualMCPApiError("Could not read virtual inputs")
         return value
 
 
