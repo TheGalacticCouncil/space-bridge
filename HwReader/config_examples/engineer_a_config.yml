@@ -1,0 +1,197 @@
+# Next iteration of a config file
+# Replaces 'config.txt' AND 'event.txt'
+#
+# Syntax
+# YAML syntax
+#
+# Following are configuration examples of
+# different types of inputs.
+#
+# FullyDefined:
+#   event: AN_EVENT
+#   event2: UN_EVENT
+#   type: encoder
+#   clk: 17
+#   dt: 24
+#   step: 1
+#   value:
+#     payload: heavy
+#
+# AnalogInp:
+#   event: SET_THROTTLE
+#   type: analog
+#   channel: 0
+#   threshold: 0.01
+#   decimals: 9
+#   min_clip: 0.00245
+#   max_clip: 0.998
+#   trigger: 12             # Pin defining the enable
+#   offset:
+#   maximum:
+
+
+
+##################
+## GENERAL SETUP #
+##################
+
+General:
+  type: config            # config
+  cycle: 0.001            # Recommended 0.001
+  station: WEAPONS   # HELM, ENGINEERING, SCIENCE
+  udp_ip: 192.168.1.255
+  udp_port: 41114
+
+#############
+## BUTTONS ##
+#############
+
+#SwitchTarget:
+#  event: AUTOMATIC_TARGETING
+#  event2: MANUAL_TARGETING
+#  type: switch
+#  pin: 20
+#  invert: True
+
+#SwitchsSelfDestruct:
+#  event: CONFIRM_SELF_DESTRUCT
+#  event2: REVOKE_CONFIRM_SELF_DESTRUCT
+#  type: switch
+#  pin: 21
+#  invert: True
+
+
+###########
+## ANALOG #
+###########
+
+# requres tuning before use
+
+## REACTOR
+
+AnalogBeamTarget:
+  event: SET_REACTOR_POWER
+  type: analog
+  channel: 10
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+
+AnalogBeamTarget:
+  event: SET_REACTOR_COOLANT
+  type: analog
+  channel: 11
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+## BEAM_WEAPONS
+
+AnalogBeamTarget:
+  event: SET_BEAM_WEAPONS_POWER
+  type: analog
+  channel: 12
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+
+AnalogBeamTarget:
+  event: SET_BEAM_WEAPONS_COOLANT
+  type: analog
+  channel: 13
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+## MISSILE_SYSTEM
+
+AnalogBeamTarget:
+  event: SET_MISSILE_SYSTEM_POWER
+  type: analog
+  channel: 14
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+
+AnalogBeamTarget:
+  event: SET_MISSILE_SYSTEM_COOLANT
+  type: analog
+  channel: 15
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+## MANEUVERING
+
+AnalogBeamTarget:
+  event: SET_MANEUVERING_POWER
+  type: analog
+  channel: 16
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+
+AnalogBeamTarget:
+  event: SET_MANEUVERING_COOLANT
+  type: analog
+  channel: 17
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+## IMPULSE_ENGINES
+
+AnalogBeamTarget:
+  event: SET_IMPULSE_ENGINES_POWER
+  type: analog
+  channel: 18
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+
+AnalogBeamTarget:
+  event: SET_IMPULSE_ENGINES_COOLANT
+  type: analog
+  channel: 19
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+
+
+# EOF
