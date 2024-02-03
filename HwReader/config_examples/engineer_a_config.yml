@@ -46,19 +46,18 @@ General:
 ## BUTTONS ##
 #############
 
-#SwitchTarget:
-#  event: AUTOMATIC_TARGETING
-#  event2: MANUAL_TARGETING
-#  type: switch
-#  pin: 20
-#  invert: True
+SwitchTarget:
+  event: REPAIR
+  type: push_button
+  pin: 27
+  invert: True
 
-#SwitchsSelfDestruct:
-#  event: CONFIRM_SELF_DESTRUCT
-#  event2: REVOKE_CONFIRM_SELF_DESTRUCT
-#  type: switch
-#  pin: 21
-#  invert: True
+SwitchsSelfDestruct:
+  event: CONFIRM_SELF_DESTRUCT
+  event2: REVOKE_CONFIRM_SELF_DESTRUCT
+  type: switch
+  pin: 4
+  invert: True
 
 
 ###########
