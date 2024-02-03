@@ -15,11 +15,11 @@ class MCP3008():
     def __init__(self, inputChannel):
 
         self.inputChannel = inputChannel
-        self.filename = "/tmp/mcp3008-touched-values-output.txt"
-
         # Direct access channels
         if inputChannel < 8:
             self.interface = MCP3008(self.inputChannel)
+        else:
+            self.filename = "/tmp/mcp3008-touched-values-output.txt"
 
 
     def fileApi(self, virtualChannel):
