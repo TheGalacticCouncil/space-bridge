@@ -19,9 +19,7 @@ class MCP3008():
 
         # Direct access channels
         if inputChannel < 8:
-            self.value = MCP3008(inputChannel).value
-        else:
-            self.value = self.fileApi(inputChannel - 10)
+            self.interface = MCP3008(self.inputChannel)
 
 
     def fileApi(self, virtualChannel):
@@ -38,6 +36,15 @@ class MCP3008():
             value = int(inputs[virtualChannel])
         except:
             raise VirtualMCPApiError("Could not read virtual inputs")
+        return value
+
+
+    @property
+    def value(self):
+        if self.inputChannel < 8:
+            value = self.interface.value
+        else:
+            value = self.fileApi(self.inputChannel - 10)
         return value
 
 
