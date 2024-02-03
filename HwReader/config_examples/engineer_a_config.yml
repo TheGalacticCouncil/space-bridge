@@ -42,9 +42,11 @@ General:
   udp_ip: 192.168.1.255
   udp_port: 41114
 
+
 #############
 ## BUTTONS ##
 #############
+
 
 SwitchTarget:
   event: REPAIR
@@ -68,7 +70,7 @@ SwitchsSelfDestruct:
 
 ## REACTOR
 
-AnalogBeamTarget:
+AnalogRactorPower:
   event: SET_REACTOR_POWER
   type: analog
   channel: 10
@@ -80,7 +82,7 @@ AnalogBeamTarget:
   trigger: 0
 
 
-AnalogBeamTarget:
+AnalogRactorCoolant:
   event: SET_REACTOR_COOLANT
   type: analog
   channel: 11
@@ -93,7 +95,7 @@ AnalogBeamTarget:
 
 ## BEAM_WEAPONS
 
-AnalogBeamTarget:
+AnalogWeaponPower:
   event: SET_BEAM_WEAPONS_POWER
   type: analog
   channel: 12
@@ -105,7 +107,7 @@ AnalogBeamTarget:
   trigger: 0
 
 
-AnalogBeamTarget:
+AnalogWeaponCoolant:
   event: SET_BEAM_WEAPONS_COOLANT
   type: analog
   channel: 13
@@ -118,7 +120,7 @@ AnalogBeamTarget:
 
 ## MISSILE_SYSTEM
 
-AnalogBeamTarget:
+AnalogMissilePower:
   event: SET_MISSILE_SYSTEM_POWER
   type: analog
   channel: 14
@@ -130,7 +132,7 @@ AnalogBeamTarget:
   trigger: 0
 
 
-AnalogBeamTarget:
+AnalogMissileCoolant:
   event: SET_MISSILE_SYSTEM_COOLANT
   type: analog
   channel: 15
@@ -143,7 +145,8 @@ AnalogBeamTarget:
 
 ## MANEUVERING
 
-AnalogBeamTarget:
+
+AnalogManouveringPower:
   event: SET_MANEUVERING_POWER
   type: analog
   channel: 16
@@ -155,7 +158,7 @@ AnalogBeamTarget:
   trigger: 0
 
 
-AnalogBeamTarget:
+AnalogManouveringCoolant:
   event: SET_MANEUVERING_COOLANT
   type: analog
   channel: 17
@@ -168,29 +171,26 @@ AnalogBeamTarget:
 
 ## IMPULSE_ENGINES
 
-AnalogBeamTarget:
-  event: SET_IMPULSE_ENGINES_POWER
-  type: analog
-  channel: 18
-  threshold: 0.1
-  min_clip: 0
-  max_clip: 1023
-  min: 0
-  max: 300
-  trigger: 0
+#AnalogImpulsePower:
+#  event: SET_IMPULSE_ENGINES_POWER
+#  type: analog
+#  channel: 18
+#  threshold: 0.1
+#  min_clip: 0
+#  max_clip: 1023
+#  min: 0
+#  max: 300
+#  trigger: 0
 
 
-AnalogBeamTarget:
-  event: SET_IMPULSE_ENGINES_COOLANT
-  type: analog
-  channel: 19
-  threshold: 0.1
-  min_clip: 0
-  max_clip: 1023
-  min: 0
-  max: 100
-  trigger: 0
+#AnalogImpulseCoolant:
+#  event: SET_IMPULSE_ENGINES_COOLANT
+#  type: analog
+#  channel: 19
+#  threshold: 0.1
+#  min_clip: 0
+#  max_clip: 1023
+#  min: 0
+#  max: 100
+#  trigger: 0
 
-
-
-# EOF
