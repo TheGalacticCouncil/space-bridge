@@ -29,7 +29,7 @@ class InputPoller(threading.Thread):
 
         self.cycleTime = sleep
         self.inputQueue = inputQueue
-        
+
 
     def run(self):
 
@@ -45,7 +45,7 @@ class InputPoller(threading.Thread):
         switch_range = range(len(self.switchInput))
         #
         #
-        # Converts class objects to local objects 
+        # Converts class objects to local objects
         # to reduce refrencing and improve performance
         #
         cycleTime = self.cycleTime
@@ -90,11 +90,11 @@ class InputPoller(threading.Thread):
 
                 # ENCODER is read
                 #
-                # When a new value is received, 
+                # When a new value is received,
                 # Poller tries to put the input in queue (non-blocking).
                 # If the queue is full, the oldes input will be removed
                 # Finally the input is placed in the queue.
-                # To ensure the delivery of the second attempt the 
+                # To ensure the delivery of the second attempt the
                 # operaion is blocking.
                 #
                 for i in encoder_range:
