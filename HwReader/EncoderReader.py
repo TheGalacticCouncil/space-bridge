@@ -15,7 +15,7 @@ class EncoderInput():
     An object to read an encoder input.
     """
 
-    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
+    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1, interrupt=True):
 
         self.name = name
         self.clockPin = clk
@@ -25,8 +25,12 @@ class EncoderInput():
         self.minimum = minimum
         self.step = step
 
-        #self.counter = 0
+        self.dtState = 0
+        self.clockState = 0
+
+        self.counter = 0
         self.substep = 0
+        self.changed = False
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -34,8 +38,28 @@ class EncoderInput():
 
         self.previousClockState = GPIO.input(self.clockPin)
 
+        # USE IN INTERRUPT MODE:
+        #
+        if interrupt==True:
 
-    def read(self, counter=0):
+            # DEFINE INTERRUPT CALLBACKS
+            #
+            # ENCODER is read
+            #
+            GPIO.add_event_detect(clk, GPIO.RISING, callback=self.clock_up, bounce=1)
+            GPIO.add_event_detect(dt, GPIO.RISING, callback=self.dt_active, bounce=1)
+
+
+    def dt_active(self, foo):
+        self.dtState = GPIO.input(self.dtPin)
+        self.increment()
+
+
+    def clock_up(self, foo=None):
+        self.clockState = 1
+
+
+    def read_tick(self):
         '''
         Reads the encoder state and increments
         the counter accordingly.
@@ -44,20 +68,19 @@ class EncoderInput():
         advanced features.
         '''
 
-        clockState = GPIO.input(self.clockPin)
-        dtState = GPIO.input(self.dtPin)
+        delta = 0
 
-        if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
-            # else:                                         # Default action for else is "nothing" anyway.
-            #     pass                                      # No need to write it
+        # if self.dtState == 1:
+        if self.dtState != self.clockState:
+            delta = 1                                # if dt state is 1, it is added
+        elif self.dtState == self.clockState:
+            delta = -1                                # if dt state is 1, it is subtracted
+        # else:                                       # Default action for else is "nothing" anyway.
+        #     pass                                    # No need to write it
 
-        self.previousClockState = clockState
+        self.clockState = 0
 
-        return counter
+        return delta
 
 
     def rescale(self, counter, delta):
@@ -109,7 +132,7 @@ class EncoderInput():
         return counter, changed
 
 
-    def increment(self, counter=None):
+    def increment(self, foo=None):
         """
         - Reads the encoder,
         - increments the counter,
@@ -118,27 +141,29 @@ class EncoderInput():
 
         - Returns whether the counter
           value has changed.
-        - The counter can be overridden
+        - The counter can NO LONGER be overridden
           by giving a value as parameter.
         """
 
-        # HIT TO PERFORMANCE. SUPPORT DISCONTINUED
-        # If no counter override is defined, self.counter is used
-        # if counter == None:
-        #     counter = self.counter
+        self.clockState = GPIO.input(self.clockPin)
 
-        changed=False
-
-        delta = EncoderInput.read(self)
+        delta = self.read_tick()
 
         # If input has changed
         if abs(delta) > 0:
-            counter, changed = EncoderInput.rescale(self, counter, delta)
+            self.counter, self.changed = self.rescale(self.counter, delta)
+        # else:
+        #     pass
 
-            #self.counter = counter
-            return counter, changed, self.name
-        else:
-            return counter, changed, self.name
+
+    def probe(self):
+        """
+        Probes state of the encoder
+        Returnes the stored values from the <encoder instance>
+        """
+        changed = self.changed      # Reads the changed state
+        self.changed = False        # Resets the changed state
+        return self.counter, changed, self.name
 
 
 # Module can be run directly to test its function
@@ -157,7 +182,7 @@ if __name__ == "__main__":
     try:
         while True:
             ###
-            delta = input1.read()
+            delta = input1.read_tick()
             if delta != 0:
                 counter += delta
                 print(counter)
