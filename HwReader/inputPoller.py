@@ -126,8 +126,8 @@ class InputPoller(threading.Thread):
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
                 for i in switch_range:
-                    s_value, name = switchInput[i].read()
-                    if s_value == True or s_value == False:
+                    s_value, changed, name = switchInput[i].read()
+                    if changed:
                         inputQueue.put([name, s_value])
                     else:
                         pass    # Switch returns only a True on enable
