@@ -32,7 +32,7 @@ class InputConfig():
         self._switchConfig = []
         self.station = ""
         self.udp_ip = '192.168.10.255'
-        self.udp_port = 41114 
+        self.udp_port = 41114
 
 
     def settings(self):
@@ -110,7 +110,7 @@ class InputConfig():
                         eventConfig.maximum(self.eventName(name)),
                         config['trigger']
                         ])
-                    
+
                     if config['trigger'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
                         raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
@@ -124,13 +124,13 @@ class InputConfig():
                         name,                        # name
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
-                        config['step'] 
+                        config['step']
                         ])
-                    
+
                     if config['clk'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
                         raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
-                        
+
                     if config['dt'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
                         raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'dt'".format(config['dt'], name))
@@ -149,15 +149,15 @@ class InputConfig():
                     else:
                         ##print("switch detected")
                         switch.append(button_conf)
-                        
+
                     if config['pin'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
                         raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], name))
-                        
+
                     elif config['pin'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
                         raise ConfigurationError("Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
-                        
+
                 # GENERAL SETTINGS
                 elif config["type"] == "config":
                     self.logger.debug("Settings")
@@ -225,8 +225,8 @@ class InputConfig():
             minimum = float(analogConfig[i][5]) # 0       # Set the minimum value
             maximum = float(analogConfig[i][6]) # 100     # Set the maximum value
             trigger = int(analogConfig[i][7])
-            analogInput.append(AnalogInput(channel, name, threshold, 
-                                           minClip, maxClip, 
+            analogInput.append(AnalogInput(channel, name, threshold,
+                                           minClip, maxClip,
                                            minimum, maximum, trigger))
 
         # ENCODER INPUTS
