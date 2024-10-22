@@ -10,7 +10,7 @@ echo "Update CA-certificates"
 apt-get install -y --reinstall ca-certificates
 
 echo "Installing libraries"
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt  --break-system-packages
 
 echo "================="
 echo -e "\nInstall complete!"
