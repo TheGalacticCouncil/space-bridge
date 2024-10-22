@@ -225,9 +225,12 @@ class InputConfig():
             minimum = float(analogConfig[i][5]) # 0       # Set the minimum value
             maximum = float(analogConfig[i][6]) # 100     # Set the maximum value
             trigger = int(analogConfig[i][7])
-            analogInput.append(AnalogInput(channel, name, threshold,
-                                           minClip, maxClip,
-                                           minimum, maximum, trigger))
+            try:
+                analogInput.append(AnalogInput(channel, name, threshold,
+                                            minClip, maxClip,
+                                            minimum, maximum, trigger))
+            except Exception as e:
+                raise ConfigurationError(e.__str__())
 
         # ENCODER INPUTS
         for i in range(len(encoderConfig)):
