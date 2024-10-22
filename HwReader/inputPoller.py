@@ -6,9 +6,12 @@
 from mcp23017 import GPIO
 from time import sleep, time
 import threading
-#from queue import Queue
 from queue import Full, Empty
 from logger import Logger
+
+# Exceptions
+from fileapi import VirtualMCPApiError
+from gpiozero import exc
 
 class InputPoller(threading.Thread):
     '''
@@ -154,5 +157,7 @@ class InputPoller(threading.Thread):
 
         except KeyboardInterrupt:
             pass
+        except VirtualMCPApiError as e:
+            logger.critical(e.__str__())
         finally:
             GPIO.cleanup()
