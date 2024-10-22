@@ -71,7 +71,13 @@ eventSleep = 0.5
 station = inputConfig.station
 
 # creates appropriate input instances from config file
-aInput, eInput, bInput, sInput = InputConfig.collectInputs(inputConfig)
+try:
+    aInput, eInput, bInput, sInput = InputConfig.collectInputs(inputConfig)
+except Exception as e:
+    logger.critical(e.__str__())
+    logger.critical("Collecting inputs failed - Terminating")
+    exit()
+
 
 # Creates input queue with debth: 2 (items).
 #  This is to allow up to two events to be placed in the queue

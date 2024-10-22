@@ -22,7 +22,8 @@ class EncoderInput():
         self.dtPin = dt
 
         self.maximum = maximum
-        self.minimum = minimum
+        self.minimum = minimum                       # If min and max are equal
+        self.min_max_enabled = (minimum != maximum)  # disable limits
         self.step = step
 
         #self.counter = 0
@@ -98,13 +99,11 @@ class EncoderInput():
 
             counter += delta
 
-        try:                            # if minimum != None and maximum != None:
+        if self.min_max_enabled:
             if counter > self.maximum:
                 counter = self.maximum
             elif counter < self.minimum:
                 counter = self.minimum
-        except TypeError:
-            pass
 
         return counter, changed
 

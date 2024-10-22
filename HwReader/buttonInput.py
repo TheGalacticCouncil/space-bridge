@@ -10,7 +10,7 @@ class PushButton():
     And object to read a button push.
     If the button input is default HIGH, the input can be inverted.
     """
-    
+
     def __init__(self, pin, name='', invert=False):
 
         self.name = name
@@ -19,7 +19,7 @@ class PushButton():
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        
+
         if self.invert == True:                             # Inversion is done in init, not read()
             self.level = GPIO.LOW
         else:
@@ -31,7 +31,7 @@ class PushButton():
     def read(self):
         """
         Reads the push button state.
-        Returns True, if the button is pressed. 
+        Returns True, if the button is pressed.
         """
 
         state = GPIO.input(self.pin) == self.level          # Compares the input to a chosen level
@@ -42,7 +42,7 @@ class PushButton():
                 return True, self.name
         else:
             self.last_state = False
-        
+
         return False, self.name
 
 class SwitchInput():
@@ -64,7 +64,8 @@ class SwitchInput():
     def read(self):
         """
         Reads the switch state.
-        Returns True, if the button is pressed. 
+        Returns [state], [changed], [name]
+        Returns True, if the switch is on.
         """
 
         if self.invert == True:
@@ -75,14 +76,14 @@ class SwitchInput():
         if state == True:
             if state != self.last_state:
                 self.last_state = True
-                return True, self.name
+                return state, True, self.name
 
         else:
             if state != self.last_state:
                 self.last_state = False
-                return False, self.name
-        
-        return None, self.name
+                return state, True, self.name
+
+        return state, False, self.name
 
 
 # Module can be run directly to test its function
@@ -91,7 +92,7 @@ if __name__ == "__main__":
     from time import sleep
 
     push_pin = 16       # Input pin
-    switch_pin = 12     # 
+    switch_pin = 12     #
 
     input1 = PushButton(push_pin, invert=True)
     input2 = SwitchInput(switch_pin, invert=True)

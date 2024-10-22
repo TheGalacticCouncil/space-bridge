@@ -6,9 +6,12 @@
 from mcp23017 import GPIO
 from time import sleep, time
 import threading
-#from queue import Queue
 from queue import Full, Empty
 from logger import Logger
+
+# Exceptions
+from fileapi import VirtualMCPApiError
+from gpiozero import exc
 
 class InputPoller(threading.Thread):
     '''
@@ -55,9 +58,6 @@ class InputPoller(threading.Thread):
         switchInput = self.switchInput
         inputQueue = self.inputQueue
 
-        # Analog Init
-        a_value = [0 for i in analog_range]
-
         # Encoder Init
         counter = [0 for i in encoder_range]
 
@@ -81,10 +81,10 @@ class InputPoller(threading.Thread):
                 # accuarcy, but improves responciveness a great deal.
                 #
                 for i in analog_range:
-                    a_value[i], changed, name = analogInput[i].readUpdate()
+                    a_value, changed, name = analogInput[i].readUpdate()
                     if changed == True:
                         try:
-                            inputQueue.put_nowait([name, a_value[i]])
+                            inputQueue.put_nowait([name, a_value])
                         except Full:
                             pass
 
@@ -129,8 +129,8 @@ class InputPoller(threading.Thread):
                 # Button press is blocking and waits to deposit
                 # its value. (Sort of, but not exactly like an interrupt)
                 for i in switch_range:
-                    s_value, name = switchInput[i].read()
-                    if s_value == True or s_value == False:
+                    s_value, changed, name = switchInput[i].read()
+                    if changed:
                         inputQueue.put([name, s_value])
                     else:
                         pass    # Switch returns only a True on enable
@@ -157,5 +157,7 @@ class InputPoller(threading.Thread):
 
         except KeyboardInterrupt:
             pass
+        except VirtualMCPApiError as e:
+            logger.critical(e.__str__())
         finally:
             GPIO.cleanup()
