@@ -272,8 +272,8 @@ TargetEncoder0a:
   type: encoder
   clk: 27
   dt: 22
-
   step: 1
+  wrap: True
 
 TargetEncoder0b:
   event: TARGET_NEXT_ENEMY
@@ -282,6 +282,7 @@ TargetEncoder0b:
   clk: 27
   dt: 22
   step: -10 # optional
+  wrap: True
 
 # DUAL PURPOSE ENCODER /\
 
@@ -292,6 +293,8 @@ ShieldEncoder:
   clk: 5
   dt: 6
   step: 1
+  wrap: True
+
 
 BeamEncoder:
   event: SET_BEAM_FREQUENCY
@@ -299,7 +302,7 @@ BeamEncoder:
   clk: 13
   dt: 19
   step: 1
-
+  wrap: True
 
 ###########
 ## ANALOG #
