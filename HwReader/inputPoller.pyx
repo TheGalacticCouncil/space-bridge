@@ -91,7 +91,6 @@ cdef class InputPoller():
 
         # Encoder Init
         cdef list counter = [0 for i in encoder_range]
-        cdef list encoder_in_queue = [False for i in encoder_range]
 
         # Init Perf metric variables
         cdef int q = 0   #Counter for a performance metric
@@ -99,6 +98,7 @@ cdef class InputPoller():
         cdef float end_time
         cdef float cycle_length
         cdef int cycle_count = 0
+        cdef bint encoder_in_queue = False
 
         # Init temp variables
         cdef bint changed
@@ -127,10 +127,10 @@ cdef class InputPoller():
                 for i in encoder_range:
                     counter[i], changed, name = encoderInput[i].increment(counter[i])
                     if changed == True:
-                        encoder_in_queue[i] = True
-                    if encoder_in_queue[i] and cycle_count % 10 == 0:
+                        encoder_in_queue = True
+                    if encoder_in_queue and cycle_count % 5 == 0:
                         cycle_count = 0
-                        encoder_in_queue[i] = False
+                        encoder_in_queue = False
                         try:
                             inputQueue.put_nowait([name, counter[i]])
                         except Full:
