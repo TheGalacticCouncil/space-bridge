@@ -34,7 +34,7 @@ class InputConfig():
         self.udp_ip = '192.168.10.255'
         self.udp_port = 41114
 
-
+    @property
     def settings(self):
         '''Returns the full input settings dict'''
 
@@ -84,7 +84,7 @@ class InputConfig():
         analog, encoder and button inputs.
         '''
 
-        settings = self._settings
+        settings = self.settings
 
         analog=[]
         encoder=[]
@@ -124,7 +124,8 @@ class InputConfig():
                         name,                        # name
                         eventConfig.minimum(self.eventName(name)),
                         eventConfig.maximum(self.eventName(name)),
-                        config['step']
+                        config['step'],
+                        config['wrap']
                         ])
 
                     if config['clk'] in range(28, 100):
@@ -240,6 +241,7 @@ class InputConfig():
             dt = int(encoderConfig[i][1]) #24       # define dt pin
             minimum = int(encoderConfig[i][3])      # Minimum allowed value
             maximum = int(encoderConfig[i][4])      # Maximum allowed value
+            wrap = bool(encoderConfig[i][5])        # Value wrapping
 
             # Optional parameters
             name=""
@@ -253,7 +255,7 @@ class InputConfig():
 
             # Automatically configured parameters
 
-            encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step))
+            encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step, wrap))
 
         # PUSH BUTTONS
         for i in range(len(buttonConfig)):

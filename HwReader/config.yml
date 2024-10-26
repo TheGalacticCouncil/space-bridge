@@ -4,9 +4,9 @@
 # Syntax
 # YAML syntax
 #
-# Following are configuration examples of 
+# Following are configuration examples of
 # different types of inputs.
-# 
+#
 # FullyDefined:
 #   event: AN_EVENT
 #   event2: UN_EVENT
@@ -26,8 +26,8 @@
 #  min_clip: 0.00245
 #  max_clip: 0.998
 #  trigger: 12             # Pin defining the enable
-#  offset: 
-#  maximum: 
+#  offset:
+#  maximum:
 
 General:
   type: config            # config
@@ -54,6 +54,7 @@ TestInput1:
   clk: 108
   dt: 109
   step: 1
+  wrap: False
 
 TestInput2:
   event: TARGET_NEXT_ENEMY
