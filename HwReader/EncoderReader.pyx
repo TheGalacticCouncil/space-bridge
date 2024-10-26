@@ -28,7 +28,9 @@ cdef class EncoderInput():
 
     cdef int substep
 
-    cdef int previousClockState
+    cdef int self.previousClockState
+    cdef int self.previousDtState
+
 
     def __cinit__(self, int clk, int dt, str name='', int minimum=0, int maximum=0, int step=1): # enable switch for min max
 
@@ -48,7 +50,32 @@ cdef class EncoderInput():
         GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        self.previousClockState = GPIO.input(self.clockPin)
+        # self.previousClockState = GPIO.input(self.clockPin)
+
+
+
+    cdef filter(self, str pin, int n=5):
+        '''
+        Samples pins 'n' times, and filters outliers
+        '''
+
+        cdef list clockState = [0] * n
+        cdef list dtState = [0] * n
+
+        # Poll each input n times
+        for i in range(n):
+            clockState[i] = GPIO.input(self.clockPin)
+            dtState[i] = GPIO.input(self.dtPin)
+
+        # Count whether there are more 1s or 0s.
+        cdef int filteredClk = int( len([ x for x in clockState if x == 1 ]) > len(clockState)/2 )
+        cdef int filteredDt  = int( len([ x for x in dtState if x == 1 ]) > len(dtState)/2 )
+
+        if pin == "clk":
+            return filteredClk
+
+        if pin == "dt":
+            return filteredDt
 
 
     cdef read(self, int counter=0):
@@ -60,18 +87,37 @@ cdef class EncoderInput():
         advanced features.
         '''
 
-        cdef int clockState = GPIO.input(self.clockPin)
-        cdef int dtState = GPIO.input(self.dtPin)
+        cdef int previousClockState
+        cdef int previousDtState
 
-        if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
+        # cdef int clockState = GPIO.input(self.clockPin)
+        # cdef int dtState = GPIO.input(self.dtPin)
+
+        cdef int SAMPLE_COUNT = 3
+
+        # cdef int clockState = EncoderInput.filter(self, "clk", SAMPLE_COUNT)
+        # cdef int dtState    = EncoderInput.filter(self, "dt", SAMPLE_COUNT)
+
+        cdef int clockState = GPIO.input(self.clockPin)
+        cdef int dtState    = GPIO.input(self.dtPin)
+
+
+        #if clockState != self.previousClockState or dtState != previousDtState:
+        #    if dtState != clockState and dtState == 0:
+        #        counter += 1                                # if dt state is 1, it is added
+        #    elif dtState == clockState and dtState == 0:
+        #        counter -= 1                                # if dt state is 1, it is subtracted
             # else:                                         # Default action for else is "nothing" anyway.
             #     pass                                      # No need to write it
 
+        if clockState != self.previousClockState or dtState != previousDtState:
+            if dtState != clockState and dtState == 0:
+                counter += 1                                # if dt state is 1, it is added
+            elif dtState != clockState and dtState == 1:
+                counter -= 1                                # if dt state is 1, it is subtracted
+
         self.previousClockState = clockState
+        self.previousDtState = dtState
 
         return counter
 
@@ -123,7 +169,7 @@ cdef class EncoderInput():
         return counter, changed
 
 
-    def increment(self, counter=None):
+    def increment(self, int counter=0):
         """
         - Reads the encoder,
         - increments the counter,
@@ -141,9 +187,9 @@ cdef class EncoderInput():
         # if counter == None:
         #     counter = self.counter
 
-        changed=False
+        cdef bint changed=False
 
-        delta = EncoderInput.read(self)
+        cdef bint delta = EncoderInput.read(self)
 
         # If input has changed
         if abs(delta) > 0:
@@ -153,4 +199,30 @@ cdef class EncoderInput():
             return counter, changed, self.name
         else:
             return counter, changed, self.name
+
+
+#######################
+
+
+    def tester(self, dt, clk):
+        prevClk = 0
+        prevDt = 0
+        c = "E"
+        d = "E"
+        while True:
+            clkS = GPIO.input(clk)
+            dtS    = GPIO.input(dt)
+            if clkS != prevClk or dtS != prevDt:
+                if clkS == 0:
+                    c = "-"
+                else:
+                    c = "X"
+                if dtS == 0:
+                    d = "-"
+                else:
+                    d = "X"
+
+                print(f"clk: {c} - dt: {d}")
+                prevClk = clkS
+                prevDt = dtS
 

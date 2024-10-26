@@ -33,6 +33,7 @@ cdef class InputPoller():
     cdef object inputQueue
     cdef object myThread
     cdef bint running
+    cdef int cycle_count
 
 
     def __init__(self, list analogInput, list encoderInput, list buttonInput,
@@ -90,12 +91,14 @@ cdef class InputPoller():
 
         # Encoder Init
         cdef list counter = [0 for i in encoder_range]
+        cdef list encoder_in_queue = [False for i in encoder_range]
 
         # Init Perf metric variables
         cdef int q = 0   #Counter for a performance metric
         cdef float start_time
         cdef float end_time
         cdef float cycle_length
+        cdef int cycle_count = 0
 
         # Init temp variables
         cdef bint changed
@@ -112,24 +115,6 @@ cdef class InputPoller():
 
                 start_time = time()
 
-                # POTENTIOMETER is read
-                #
-                # The operation is non-blocking.
-                # If the queue is full, the new value is discarded.
-                #
-                # This is done, because analog inputs generate a
-                # massive flow of new inputs for even a small change.
-                # Discarding a few intermediary values will not hurt
-                # accuarcy, but improves responciveness a great deal.
-                #
-                for i in analog_range:
-                    a_value, changed, name = analogInput[i].readUpdate()
-                    if changed == True:
-                        try:
-                            inputQueue.put_nowait([name, a_value])
-                        except Full:
-                            pass
-
                 # ENCODER is read
                 #
                 # When a new value is received,
@@ -142,6 +127,10 @@ cdef class InputPoller():
                 for i in encoder_range:
                     counter[i], changed, name = encoderInput[i].increment(counter[i])
                     if changed == True:
+                        encoder_in_queue[i] = True
+                    if encoder_in_queue[i] and cycle_count % 10 == 0:
+                        cycle_count = 0
+                        encoder_in_queue[i] = False
                         try:
                             inputQueue.put_nowait([name, counter[i]])
                         except Full:
@@ -150,6 +139,27 @@ cdef class InputPoller():
                             except Empty:
                                 pass
                             inputQueue.put([name, counter[i]])
+
+
+
+                # POTENTIOMETER is read
+                #
+                # The operation is non-blocking.
+                # If the queue is full, the new value is discarded.
+                #
+                # This is done, because analog inputs generate a
+                # massive flow of new inputs for even a small change.
+                # Discarding a few intermediary values will not hurt
+                # accuarcy, but improves responciveness a great deal.
+                #
+                if cycle_count % 10 == 0:
+                    for i in analog_range:
+                        a_value, changed, name = analogInput[i].readUpdate()
+                        if changed == True:
+                            try:
+                                inputQueue.put_nowait([name, a_value])
+                            except Full:
+                                pass
 
                 # BUTTON is read
                 #
@@ -178,13 +188,15 @@ cdef class InputPoller():
                         pass    # Switch returns only a True on enable
                                 # False on disable and None when not changed
 
+                cycle_count += 1
+
                 # PERFORMANCE METRICS
                 #
                 end_time = time()
                 cycle_length = (end_time - start_time)
                 if q >= 1000:
                     q = 0
-                    logger.debug("InputPoller cycle time: %i ns" % int(cycle_length * 1000 * 1000))
+                    logger.debug("InputPoller cycle time: %i µs" % int(cycle_length * 1000 * 1000 * 1000))
                 q += 1
 
                 if cycle_length < cycleTime:
@@ -201,3 +213,4 @@ cdef class InputPoller():
             pass
         finally:
             GPIO.cleanup()
+
