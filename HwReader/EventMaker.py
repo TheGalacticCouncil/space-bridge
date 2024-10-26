@@ -86,6 +86,7 @@ class EventMaker(threading.Thread):
         return event
 
 
+    @staticmethod
     def payloader(input_name, value, fields, settings):
         '''
         Packs the payload for the event
@@ -93,6 +94,7 @@ class EventMaker(threading.Thread):
         and interprits how to combine it with the [value].
         '''
 
+        payload = {}
 
         if "name" in fields:
             value_name = fields["name"]

@@ -34,7 +34,6 @@ class InputConfig():
         self.udp_ip = '192.168.10.255'
         self.udp_port = 41114
 
-    @property
     def settings(self):
         '''Returns the full input settings dict'''
 
@@ -84,7 +83,7 @@ class InputConfig():
         analog, encoder and button inputs.
         '''
 
-        settings = self.settings
+        settings = self.settings()
 
         analog=[]
         encoder=[]
@@ -185,14 +184,14 @@ class InputConfig():
                 else:
                     self.logger.warning("Undefined input type '%s'" % settings[name]["type"])
 
-            except KeyError:
-                self.logger.warning("No 'type' defined for '%s'" % name)
+            except KeyError as e:
+                self.logger.warning("Incorrect key for input type '%s'" % name)
+                self.logger.warning("KeyError: '%s'" % e.__str__())
 
         self._analogConfig = analog
         self._encoderConfig = encoder
         self._buttonConfig = button
         self._switchConfig = switch
-        self.station
         return cycle
 
 
