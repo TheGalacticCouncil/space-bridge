@@ -9,13 +9,14 @@ name.read([counter])
 """
 
 from mcp23017 import GPIO
+from gpiozero import RotaryEncoder
 
 class EncoderInput():
     """
     An object to read an encoder input.
     """
 
-    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
+    def __init__(self, clk, dt, name='', minimum=None, maximum=0, step=1, wrap=False):
 
         self.name = name
         self.clockPin = clk
@@ -25,16 +26,22 @@ class EncoderInput():
         self.minimum = minimum                       # If min and max are equal
         self.min_max_enabled = (minimum != maximum)  # disable limits
         self.step = step
+        self.wrap = wrap
 
-        #self.counter = 0
+        self.value = 0
         self.substep = 0
 
+        # Setup gpiozero Encoder Object
+        maximum = int(self.maximum/step)
+
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-        self.previousClockState = GPIO.input(self.clockPin)
-
+        self.encoder = RotaryEncoder(
+            self.dtPin,
+            self.clockPin,
+            max_steps=maximum,
+            wrap=self.wrap,
+            bounce_time=None
+            )
 
     def read(self, counter=0):
         '''
@@ -45,23 +52,12 @@ class EncoderInput():
         advanced features.
         '''
 
-        clockState = GPIO.input(self.clockPin)
-        dtState = GPIO.input(self.dtPin)
-
-        if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
-            # else:                                         # Default action for else is "nothing" anyway.
-            #     pass                                      # No need to write it
-
-        self.previousClockState = clockState
+        counter = self.encoder.steps
 
         return counter
 
 
-    def rescale(self, counter, delta):
+    def rescale(self, counter, value):
         '''Re-scales an input to requirement'''
 
         changed = True
@@ -70,40 +66,21 @@ class EncoderInput():
         # SENSITIVITY INCREASED
         #
         if self.step >= 0:
-            counter += delta * self.step
+            counter = value * self.step
 
         # SENSITIVITY IS DECREASED
         # "substeps" are used
         #
         elif self.step < 0:
-            # INCREMENT SUBSTEP
-            self.substep += delta
+            new_counter = int(value/self.step)
 
-            # IF FULL (+) STEP IS REACHED,
-            # substeps is reset and
-            # delta is passed on
-            if self.substep == -(self.step):
-                self.substep = 0
-
-            # IF FULL (-) STEP IS REACHED,
-            # substeps is reset and
-            # delta is passed on
-            elif self.substep == self.step:
-                self.substep = 0
-
-            else:
-                # if substeps are less, delta is reset
-                # and substeps keep building up
-                delta = 0
+            if counter == new_counter:
                 changed = False
+            else:
+                counter = new_counter
 
-            counter += delta
-
-        if self.min_max_enabled:
-            if counter > self.maximum:
-                counter = self.maximum
-            elif counter < self.minimum:
-                counter = self.minimum
+        elif self.step == 1:
+            counter = value
 
         return counter, changed
 
@@ -128,13 +105,12 @@ class EncoderInput():
 
         changed=False
 
-        delta = EncoderInput.read(self)
+        value = EncoderInput.read(self)
 
         # If input has changed
-        if abs(delta) > 0:
-            counter, changed = EncoderInput.rescale(self, counter, delta)
-
-            #self.counter = counter
+        if value != self.value:
+            self.value = value
+            counter, changed = EncoderInput.rescale(self, counter, value)
             return counter, changed, self.name
         else:
             return counter, changed, self.name
