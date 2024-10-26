@@ -3,7 +3,7 @@
 # J.V.Ojala 02.02.2024
 # MCP3008 - File API adapter
 
-from gpiozero import MCP3008         # A/D converter
+from gpiozero import MCP3008 as MCP3008zero    # A/D converter
 
 class MCP3008():
     '''
@@ -17,7 +17,7 @@ class MCP3008():
         self.inputChannel = inputChannel
         # Direct access channels
         if inputChannel < 8:
-            self.interface = MCP3008(self.inputChannel)
+            self.interface = MCP3008zero(self.inputChannel)
         else:
             self.filename = "/tmp/mcp3008-touched-values-output.txt"
 
