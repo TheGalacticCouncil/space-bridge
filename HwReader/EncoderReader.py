@@ -16,7 +16,7 @@ class EncoderInput():
     An object to read an encoder input.
     """
 
-    def __init__(self, clk, dt, name='', minimum=None, maximum=0, step=1, wrap=False):
+    def __init__(self, clk, dt, name='', minimum=0, maximum=0, step=1, wrap=False):
 
         self.name = name
         self.clockPin = clk
@@ -24,7 +24,8 @@ class EncoderInput():
 
         self.maximum = maximum
         self.minimum = minimum                       # If min and max are equal
-        self.min_max_enabled = (minimum != maximum)  # disable limits
+        self.min_max_enabled = (maximum != minimum)  # disable limits
+        self.max_range_per_side = 0
         self.step = step
         self.wrap = wrap
 
@@ -32,13 +33,15 @@ class EncoderInput():
         self.substep = 0
 
         # Setup gpiozero Encoder Object
-        maximum = int(self.maximum/step)
+        if self.min_max_enabled:
+            max_range = self.maximum - self.minimum
+            self.max_range_per_side = int( (max_range+1) / 2 / step )
 
         GPIO.setmode(GPIO.BCM)
         self.encoder = RotaryEncoder(
             self.dtPin,
             self.clockPin,
-            max_steps=maximum,
+            max_steps=self.max_range_per_side,
             wrap=self.wrap,
             bounce_time=None
             )
@@ -84,6 +87,14 @@ class EncoderInput():
 
         return counter, changed
 
+    def offset(self, counter):
+        """
+        Adjust offset to align with wanted output range min/max
+        """
+        if not self.min_max_enabled:
+            return counter
+        counter += self.maximum - self.max_range_per_side
+        return counter
 
     def increment(self, counter=None):
         """
@@ -111,6 +122,8 @@ class EncoderInput():
         if value != self.value:
             self.value = value
             counter, changed = EncoderInput.rescale(self, counter, value)
+            counter = self.offset(counter)
+
             return counter, changed, self.name
         else:
             return counter, changed, self.name
