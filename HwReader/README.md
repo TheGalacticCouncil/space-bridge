@@ -104,6 +104,7 @@ If you choose to build a control board different from ours, you'll have to confi
 | `channel` |  |  | ***x*** | `7` | Pin on MCP3008 ADC `[0...7]` *or*<br>Virtual input `[10...inf]` *( see [virtual inputs](#virtual-inputs) )* |
 | `invert` | ***x*** |  |  | `True` | If the behaviour of a button or switch is reversed, set `invert` to `True` or `False` |
 | `step` |  | ***x*** |  | `1` | Defines how much the *value* changes per tick<br>Default `1` (see [steps](#steps)) |
+| `wrap` |  | ***x*** |  | `False` | Defines whether the *value* wraps around when reaching the the maximum/minimum value for the event |
 | `threshold` |  |  | ***x*** | `0.1` | Minimum change in raw value to trigger a new event. Default: `0.1` |
 | `max_clip` |  |  | ***x*** | `0.98` | Define the input value interpreted as 100%<br>For direct inputs typically: `0.90`..`1.0` |
 | `min_clip` |  |  | ***x*** | `0.02` | Define the input value interpreted as 0%<br>For direct inputs typically: `0.0`..`0.10` |
