@@ -99,16 +99,10 @@ class InputConfig():
                 # ANALOG
                 if config["type"] == "analog":
                     self.logger.debug("Type: analog")
-                    analog.append([
-                        config['channel'],
-                        name,                        # "name"
-                        config['threshold'],
-                        config['min_clip'],
-                        config['max_clip'],
-                        eventConfig.minimum(self.eventName(name)),
-                        eventConfig.maximum(self.eventName(name)),
-                        config['trigger']
-                        ])
+                    config['name'] = name
+                    config["min"] = eventConfig.minimum(self.eventName(name)) # min/max is automatically taken from EVENT config
+                    config["max"] = eventConfig.maximum(self.eventName(name))
+                    analog.append(config)
 
                     if config['trigger'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'trigger'".format(config['trigger'], name))
@@ -117,15 +111,10 @@ class InputConfig():
                 # ENCODER
                 elif config["type"] == "encoder":
                     self.logger.debug("Type: encoder")
-                    encoder.append([
-                        config['clk'],
-                        config['dt'],
-                        name,                        # name
-                        eventConfig.minimum(self.eventName(name)),
-                        eventConfig.maximum(self.eventName(name)),
-                        config['step'],
-                        config['wrap']
-                        ])
+                    config['name'] = name
+                    config["min"] = eventConfig.minimum(self.eventName(name)) # min/max is automatically taken from EVENT config
+                    config["max"] = eventConfig.maximum(self.eventName(name))
+                    encoder.append(config)
 
                     if config['clk'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'clk'".format(config['clk'], name))
@@ -138,17 +127,12 @@ class InputConfig():
                 # BUTTONS AND SWITCHES
                 elif config["type"] in ["push_button", "switch"]:
                     self.logger.debug("Type: button or switch")
-                    button_conf = [
-                        config["pin"],
-                        name,
-                        config["invert"] ]
+                    config['name'] = name
 
                     if config["type"] == "push_button":
-                        ##print("button detected")
-                        button.append(button_conf)
+                        button.append(config)
                     else:
-                        ##print("switch detected")
-                        switch.append(button_conf)
+                        switch.append(config)
 
                     if config['pin'] in range(28, 100):
                         self.logger.critical("Configuration error: Invalid GPIO address '{}' for '{}': 'pin'".format(config['pin'], config[1]))
@@ -217,14 +201,14 @@ class InputConfig():
         for i in range(len(analogConfig)):
 
             # Analog config
-            channel = int(analogConfig[i][0]) #0
-            name = analogConfig[i][1] # "Set_Analog"
-            threshold = float(analogConfig[i][2]) #0.01   # sets the threshold for registering change
-            minClip = float(analogConfig[i][3]) #0.00245  # sets minimum value clipping
-            maxClip = float(analogConfig[i][4]) #0.998    # sets maximum value clipping
-            minimum = float(analogConfig[i][5]) # 0       # Set the minimum value
-            maximum = float(analogConfig[i][6]) # 100     # Set the maximum value
-            trigger = int(analogConfig[i][7])
+            channel = int(analogConfig[i]["channel"]) #0
+            name = analogConfig[i]["name"] # "Set_Analog"
+            threshold = float(analogConfig[i]["threshold"]) #0.01   # sets the threshold for registering change
+            minClip = float(analogConfig[i]["min_clip"]) #0.00245   # sets minimum value clipping
+            maxClip = float(analogConfig[i]["max_clip"]) #0.998     # sets maximum value clipping
+            minimum = float(analogConfig[i]["min"]) # 0             # Set the minimum value
+            maximum = float(analogConfig[i]["max"]) # 100           # Set the maximum value
+            trigger = int(analogConfig[i]["trigger"])
             try:
                 analogInput.append(AnalogInput(channel, name, threshold,
                                             minClip, maxClip,
@@ -236,40 +220,37 @@ class InputConfig():
         for i in range(len(encoderConfig)):
 
             # Encoder config
-            clk = int(encoderConfig[i][0]) #17      # Define clock pin
-            dt = int(encoderConfig[i][1]) #24       # define dt pin
-            minimum = int(encoderConfig[i][3])      # Minimum allowed value
-            maximum = int(encoderConfig[i][4])      # Maximum allowed value
-            wrap = bool(encoderConfig[i][5])        # Value wrapping
+            clk = int(encoderConfig[i]["clk"]) #17      # Define clock pin
+            dt = int(encoderConfig[i]["dt"]) #24        # define dt pin
+            minimum = int(encoderConfig[i]["min"])      # Minimum allowed value
+            maximum = int(encoderConfig[i]["max"])      # Maximum allowed value
+            wrap = bool(encoderConfig[i]["wrap"])       # Value wrapping
 
             # Optional parameters
             name=""
             step=1
             try:
-                name = encoderConfig[i][2]
+                name = encoderConfig[i]["name"]
             except: pass
             try:
-                step = int(encoderConfig[i][5])    # Step size
+                step = int(encoderConfig[i]["step"])    # Step size
             except: pass
 
             # Automatically configured parameters
-
             encoderInput.append(EncoderInput(clk, dt, name, minimum, maximum, step, wrap))
 
         # PUSH BUTTONS
         for i in range(len(buttonConfig)):
-            pin = int(buttonConfig[i][0])
-            name = buttonConfig[i][1]
-            invert = buttonConfig[i][2]
-            #buttonInput.append(PushButton(buttonConfig[i]))
+            pin = int(buttonConfig[i]["pin"])
+            name = buttonConfig[i]["name"]
+            invert = buttonConfig[i]["invert"]
             buttonInput.append(PushButton(pin, name, invert))
 
         # SWITSHES
         for i in range(len(switchConfig)):
-            pin = int(switchConfig[i][0])
-            name = switchConfig[i][1]
-            invert = switchConfig[i][2]
-            #switchInput.append(SwitchInput(switchConfig[i]))
+            pin = int(switchConfig[i]["pin"])
+            name = switchConfig[i]["name"]
+            invert = switchConfig[i]["invert"]
             switchInput.append(SwitchInput(pin, name, invert))
 
         return analogInput, encoderInput, buttonInput, switchInput
