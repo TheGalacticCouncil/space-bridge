@@ -30,23 +30,22 @@ class EncoderInput():
         self.wrap = wrap
 
         self.value = 0
-        self.substep = 0
 
         # Setup gpiozero Encoder Object
         if self.min_max_enabled:
             max_range = self.maximum - self.minimum
-            self.max_range_per_side = int( (max_range+1) / 2 / step )
+            self.max_range_per_side = int( (max_range) / 2 / step )
 
         GPIO.setmode(GPIO.BCM)
         self.encoder = RotaryEncoder(
-            self.dtPin,
             self.clockPin,
+            self.dtPin,
             max_steps=self.max_range_per_side,
             wrap=self.wrap,
             bounce_time=None
             )
 
-    def read(self, counter=0):
+    def read(self):
         '''
         Reads the encoder state and increments
         the counter accordingly.
@@ -55,48 +54,46 @@ class EncoderInput():
         advanced features.
         '''
 
-        counter = self.encoder.steps
+        raw_value = self.encoder.steps
 
-        return counter
+        return raw_value
 
 
-    def rescale(self, counter, value):
+    def rescale(self, raw_value):
         '''Re-scales an input to requirement'''
 
         changed = True
 
         # NORMAL OPERATION
+        #
+        if self.step == 1:
+            value = raw_value
+
         # SENSITIVITY INCREASED
         #
-        if self.step >= 0:
-            counter = value * self.step
+        elif abs(self.step) >= 1:
+            value = raw_value * self.step
 
         # SENSITIVITY IS DECREASED
         # "substeps" are used
         #
-        elif self.step < 0:
-            new_counter = int(value/self.step)
-
-            if counter == new_counter:
+        else:
+            value = int(raw_value/self.step)
+            if value == self.value:
                 changed = False
-            else:
-                counter = new_counter
 
-        elif self.step == 1:
-            counter = value
+        return value, changed
 
-        return counter, changed
-
-    def offset(self, counter):
+    def offset(self, value):
         """
         Adjust offset to align with wanted output range min/max
         """
         if not self.min_max_enabled:
-            return counter
-        counter += self.maximum - self.max_range_per_side
-        return counter
+            return value
+        value += self.maximum - self.max_range_per_side
+        return value
 
-    def increment(self, counter=None):
+    def increment(self, value=None):
         """
         - Reads the encoder,
         - increments the counter,
@@ -116,17 +113,16 @@ class EncoderInput():
 
         changed=False
 
-        value = EncoderInput.read(self)
+        raw_value = EncoderInput.read(self)
 
         # If input has changed
-        if value != self.value:
-            self.value = value
-            counter, changed = EncoderInput.rescale(self, counter, value)
-            counter = self.offset(counter)
+        if raw_value != self.value:
+            value, changed = EncoderInput.rescale(self, raw_value)
+            if changed:
+                self.value = raw_value
+                value = self.offset(value)
 
-            return counter, changed, self.name
-        else:
-            return counter, changed, self.name
+        return value, changed, self.name
 
 
 # Module can be run directly to test its function
