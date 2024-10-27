@@ -34,7 +34,7 @@ class EncoderInput():
         # Setup gpiozero Encoder Object
         if self.min_max_enabled:
             max_range = self.maximum - self.minimum
-            self.max_range_per_side = int( (max_range) / 2 / self.step )
+            self.max_range_per_side = int( (max_range) / 2 / abs(self.step) )
 
         GPIO.setmode(GPIO.BCM)
         self.encoder = RotaryEncoder(
@@ -90,7 +90,7 @@ class EncoderInput():
         """
         if not self.min_max_enabled:
             return value
-        value += self.maximum - self.max_range_per_side*self.step
+        value += self.maximum - self.max_range_per_side * abs(self.step)
         return value
 
     def increment(self, value=None):
