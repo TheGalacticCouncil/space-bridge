@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Sync to Remote (pi@galactic-dev)",
+            "type": "shell",
+            "command": "rsync",
+            "args": [
+                "-avz",
+                "--exclude",
+                ".vscode/",
+                "${workspaceFolder}/",
+                "pi@galactic-dev:/home/pi/hwdriver2"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Start Remote Program (pi@galactic-dev)",
+            "type": "shell",
+            "command": "ssh",
+            "dependsOn": [
+                "Sync to Remote (pi@galactic-dev)"
+            ],
+            "args": [
+                "pi@galactic-dev",
+                "bash -c \"source /etc/profile; sudo pigpiod -x 0x0FFFFFFF; cd /home/pi/hwdriver2; pkill -o dlv; nohup dlv debug /home/pi/hwdriver2/cmd/hwdriver2 --headless --listen=:2345 --api-version=2 > /dev/null 2>&1 &\"; sleep 3"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install Go and Delve (pi@galactic-dev)",
+            "type": "shell",
+            "command": "ssh",
+            "args": [
+                "pi@galactic-dev",
+                "wget https://go.dev/dl/go1.23.2.linux-arm64.tar.gz && sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.23.2.linux-arm64.tar.gz && sudo echo \"export GOPATH=\\$HOME/go\" | sudo tee -a /etc/profile && sudo echo \"export PATH=\\$PATH:/usr/local/go/bin:\\$GOPATH/bin\" | sudo tee -a /etc/profile && export PATH=$PATH:/usr/local/go/bin && go install github.com/go-delve/delve/cmd/dlv@latest"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Install pigpiod (pi@galactic-dev)",
+            "type": "shell",
+            "command": "ssh",
+            "args": [
+                "pi@galactic-dev",
+                "wget https://github.com/joan2937/pigpio/archive/master.zip && unzip master.zip && cd pigpio-master && make && sudo make install"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Start pigpiod (pi@galactic-dev)",
+            "type": "shell",
+            "command": "ssh",
+            "args": [
+                "pi@galactic-dev",
+                "sudo pigpiod"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

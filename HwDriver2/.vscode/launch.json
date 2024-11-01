@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Go Program",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/hwdriver2/main.go",
+            "env": {},
+            "args": []
+        },
+        {
+            "name": "Remote Debug with Sync (pi@galactic-dev)",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "remotePath": "/home/pi/hwdriver2",
+            "port": 2345,
+            "host": "galactic-dev",
+            "showLog": true,
+            "trace": "error",
+            "preLaunchTask": "Start Remote Program (pi@galactic-dev)"
+        },
+        {
+            "name": "Remote Debug (attach only) (pi@galactic-dev)",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "remotePath": "/home/pi/hwdriver2",
+            "port": 2345,
+            "host": "galactic-dev",
+            "showLog": true
+        }
+    ]
+}
