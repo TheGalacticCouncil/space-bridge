@@ -5,6 +5,6 @@
     - `echo "export STATION='engineer a'" >> ~/.bashrc` for Engineer A
     - `echo "export STATION='engineer b'" >> ~/.bashrc` for Engineer B
     - `echo "export STATION='weapons'" >> ~/.bashrc` for Weapons
-2. Add `~/motd.sh` to end of the `.bashrc` file: `echo "~/motd.sh" >> ~/.bashrc`
+2. Add `~/motd/motd.sh` to end of the `.bashrc` file: `echo "~/motd/motd.sh" >> ~/.bashrc`
 
 The motd script will print out fancy ASCII art text and info of the system on every login
