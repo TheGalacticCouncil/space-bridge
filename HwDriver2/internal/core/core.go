@@ -15,13 +15,16 @@ type HardwareAccess interface {
 
 type MotorizedSlider interface {
 	ReadPosition() (int, error)
+	ReadTouchPosition() (int, error)
 	DriveToPosition(position int) error
 	Calibrate() error
+	GetId() int
 }
 
 type core struct {
-	hwManager HardwareAccess
-	sliders   []MotorizedSlider
+	hwManager     HardwareAccess
+	sliders       []MotorizedSlider
+	fileApiWriter *OutputFileApiWriter
 }
 
 func (c *core) Run() {
@@ -44,13 +47,34 @@ func (c *core) Run() {
 			fmt.Printf("Slider %d position: %d\n", id, position)
 		}
 
+		// Write positions to file
+		err := c.fileApiWriter.WritePositionsToFile()
+		if err != nil {
+			fmt.Println("Error writing positions to file: ", err)
+			return
+		}
+
 		// Sleep for 16ms
-		time.Sleep(32 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 	}
 }
 
 func (c *core) Close() error {
-	return c.hwManager.Close()
+	var errs []error
+
+	if err := c.hwManager.Close(); err != nil {
+		errs = append(errs, fmt.Errorf("error closing hwManager: %w", err))
+	}
+
+	if err := c.fileApiWriter.Close(); err != nil {
+		errs = append(errs, fmt.Errorf("error closing fileApiWriter: %w", err))
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("multiple errors: %v", errs)
+	}
+
+	return nil
 }
 
 func (c *core) initializeHwManager() error {
@@ -101,6 +125,22 @@ func (c *core) initializeMotors() error {
 	return nil
 }
 
+func (c *core) initializeOutputFileApiWriter(filePath string) error {
+	// Convert sliders to PositionProviders. TODO: Find more elegant way to handle this
+	positionProviders := make([]PositionProvider, len(c.sliders))
+	for i, slider := range c.sliders {
+		positionProviders[i] = slider
+	}
+
+	var err error
+	c.fileApiWriter, err = NewOutputFileApiWriter(positionProviders, filePath)
+	if err != nil {
+		return fmt.Errorf("error creating OutputFileApiWriter: %w", err)
+	}
+
+	return nil
+}
+
 func NewCore() (*core, error) {
 	core := &core{}
 
@@ -109,6 +149,10 @@ func NewCore() (*core, error) {
 	}
 
 	if err := core.initializeMotors(); err != nil {
+		return nil, err
+	}
+
+	if err := core.initializeOutputFileApiWriter("positions.txt"); err != nil {
 		return nil, err
 	}
 

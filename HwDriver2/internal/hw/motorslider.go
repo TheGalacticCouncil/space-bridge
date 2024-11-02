@@ -35,6 +35,11 @@ func (m *MotorSlider) ReadPosition() (int, error) {
 	return m.Hw.ReadAnalogMcp3008Pin(m.SlidePositionSpiChannel, m.SlidePositionAdcChannel)
 }
 
+func (m *MotorSlider) ReadTouchPosition() (int, error) {
+	// TODO: Implement true touch position handling
+	return m.ReadPosition()
+}
+
 func (*MotorSlider) DriveToPosition(position int) error {
 	return nil
 }
@@ -115,4 +120,8 @@ func (m *MotorSlider) Calibrate() error {
 	fmt.Printf("Calibration values: min=%d, max=%d, range=%d\n", m._minRawValue, m._maxRawValue, m._rawValueRange)
 
 	return nil
+}
+
+func (m *MotorSlider) GetId() int {
+	return m.Id
 }
