@@ -20,7 +20,8 @@
             "host": "galactic-dev",
             "showLog": true,
             "trace": "error",
-            "preLaunchTask": "Start Remote Program (pi@galactic-dev)"
+            // "preLaunchTask": "Start Remote Program (pi@galactic-dev)"
+            "preLaunchTask": "Wait for 5s"
         },
         {
             "name": "Remote Debug (attach only) (pi@galactic-dev)",

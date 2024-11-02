@@ -2,9 +2,11 @@ package pigpio
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"net"
+	"sync"
 )
 
 type GpioMode int
@@ -445,6 +447,10 @@ var PigpioErrorStrings = PigpioErrorStringMap{
 	PI_ONLY_ON_BCM2711:   "only available on BCM2711",
 }
 
+var (
+	ErrInvalidPinNumber = errors.New("Invalid pin number")
+)
+
 type PigpiodCmdMessage struct {
 	Command uint32
 	P1      uint32
@@ -462,6 +468,8 @@ type PigpiodCmdResponse struct {
 type Pigpio struct {
 	Socket    *net.TCPConn
 	Connected bool
+
+	mu sync.Mutex
 }
 
 func (p *Pigpio) Close() {
@@ -472,24 +480,100 @@ func (p *Pigpio) Close() {
 func (p *Pigpio) SetMode(pin int, mode GpioMode) (int, error) {
 	numericMode := int(mode)
 
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	response := PigpiodCommand(p.Socket, PI_CMD_MODES, pin, numericMode)
 
 	return CheckPigpiodError(response)
 }
 
+// Returns the GPIO level of the specified pin
+// The pin parameter should be between 0 and 53.
+func (p *Pigpio) Read(pin int) (int, error) {
+	// Check if the pin is within the valid range
+	if pin < 0 || pin > 53 {
+		return 0, ErrInvalidPinNumber
+	}
+
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	response := PigpiodCommand(p.Socket, PI_CMD_READ, pin, 0)
+
+	return CheckPigpiodError(response)
+}
+
+// Returns the GPIO level of the specified pin
+// The pin parameter should be between 0 and 53.
+// The value parameter should be either 0 or 1.
+func (p *Pigpio) Write(pin int, value int) (int, error) {
+	// Check if the pin is within the valid range
+	if pin < 0 || pin > 53 {
+		return 0, ErrInvalidPinNumber
+	}
+
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	response := PigpiodCommand(p.Socket, PI_CMD_WRITE, pin, value)
+
+	return CheckPigpiodError(response)
+}
+
+// Sets the frequency (in Hz) of the PWM to be used on the GPIO.
+// The selectable frequencies depend upon the sample rate which
+// may be 1, 2, 4, 5, 8, or 10 microseconds (default 5).  The
+// sample rate is set when the pigpio daemon is started. See online documentation for more information.
+func (p *Pigpio) SetPwmFrequency(pin int, frequency int) (int, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	response := PigpiodCommand(p.Socket, PI_CMD_PFS, pin, frequency)
+
+	return CheckPigpiodError(response)
+}
+
+func (p *Pigpio) SetPwmDutyCycle(pin int, dutyCycle int) (int, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	response := PigpiodCommand(p.Socket, PI_CMD_PWM, pin, dutyCycle)
+
+	return CheckPigpiodError(response)
+}
+
+func (p *Pigpio) GetPwmDutyCycle(pin int) (int, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	response := PigpiodCommand(p.Socket, PI_CMD_GDC, pin, 0)
+
+	return CheckPigpiodError(response)
+}
+
 func (p *Pigpio) SpiOpen(channel int, baud int, flags []byte) (int, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	response := PigpiodCommandExtended(p.Socket, PI_CMD_SPIO, channel, baud, len(flags), flags)
 
 	return CheckPigpiodError(response)
 }
 
 func (p *Pigpio) SpiClose(handle int) (int, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	response := PigpiodCommand(p.Socket, PI_CMD_SPIC, handle, 0)
 
 	return CheckPigpiodError(response)
 }
 
 func (p *Pigpio) SpiXfer(handle int, data []byte) (int, []byte, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	rawResponseBytesCount := PigpiodCommandExtended(p.Socket, PI_CMD_SPIX, handle, 0, len(data), data)
 	responseBytesCount, err := CheckPigpiodError(rawResponseBytesCount)
 	if err != nil {
