@@ -41,6 +41,107 @@ const (
 	PI_CMD_BS2   = 15
 	PI_CMD_TICK  = 16
 	PI_CMD_HWVER = 17
+	PI_CMD_NO    = 18
+	PI_CMD_NB    = 19
+	PI_CMD_NP    = 20
+	PI_CMD_NC    = 21
+	PI_CMD_PRG   = 22
+	PI_CMD_PFG   = 23
+	PI_CMD_PRRG  = 24
+	PI_CMD_HELP  = 25
+	PI_CMD_PIGPV = 26
+	PI_CMD_WVCLR = 27
+	PI_CMD_WVAG  = 28
+	PI_CMD_WVAS  = 29
+	PI_CMD_WVGO  = 30
+	PI_CMD_WVGOR = 31
+	PI_CMD_WVBSY = 32
+	PI_CMD_WVHLT = 33
+	PI_CMD_WVSM  = 34
+	PI_CMD_WVSP  = 35
+	PI_CMD_WVSC  = 36
+	PI_CMD_TRIG  = 37
+	PI_CMD_PROC  = 38
+	PI_CMD_PROCD = 39
+	PI_CMD_PROCR = 40
+	PI_CMD_PROCS = 41
+	PI_CMD_SLRO  = 42
+	PI_CMD_SLR   = 43
+	PI_CMD_SLRC  = 44
+	PI_CMD_PROCP = 45
+	PI_CMD_MICRO = 46
+	PI_CMD_MILLI = 47
+	PI_CMD_PARSE = 48
+	PI_CMD_WVCRE = 49
+	PI_CMD_WVDEL = 50
+	PI_CMD_WVTX  = 51
+	PI_CMD_WVTXR = 52
+	PI_CMD_WVNEW = 53
+	PI_CMD_I2CO  = 54
+	PI_CMD_I2CC  = 55
+	PI_CMD_I2CRD = 56
+	PI_CMD_I2CWD = 57
+	PI_CMD_I2CWQ = 58
+	PI_CMD_I2CRS = 59
+	PI_CMD_I2CWS = 60
+	PI_CMD_I2CRB = 61
+	PI_CMD_I2CWB = 62
+	PI_CMD_I2CRW = 63
+	PI_CMD_I2CWW = 64
+	PI_CMD_I2CRK = 65
+	PI_CMD_I2CWK = 66
+	PI_CMD_I2CRI = 67
+	PI_CMD_I2CWI = 68
+	PI_CMD_I2CPC = 69
+	PI_CMD_I2CPK = 70
+	PI_CMD_SPIO  = 71
+	PI_CMD_SPIC  = 72
+	PI_CMD_SPIR  = 73
+	PI_CMD_SPIW  = 74
+	PI_CMD_SPIX  = 75
+	PI_CMD_SERO  = 76
+	PI_CMD_SERC  = 77
+	PI_CMD_SERRB = 78
+	PI_CMD_SERWB = 79
+	PI_CMD_SERR  = 80
+	PI_CMD_SERW  = 81
+	PI_CMD_SERDA = 82
+	PI_CMD_GDC   = 83
+	PI_CMD_GPW   = 84
+	PI_CMD_HC    = 85
+	PI_CMD_HP    = 86
+	PI_CMD_CF1   = 87
+	PI_CMD_CF2   = 88
+	PI_CMD_NOIB  = 99
+	PI_CMD_BI2CC = 89
+	PI_CMD_BI2CO = 90
+	PI_CMD_BI2CZ = 91
+	PI_CMD_I2CZ  = 92
+	PI_CMD_WVCHA = 93
+	PI_CMD_SLRI  = 94
+	PI_CMD_CGI   = 95
+	PI_CMD_CSI   = 96
+	PI_CMD_FG    = 97
+	PI_CMD_FN    = 98
+	PI_CMD_WVTXM = 100
+	PI_CMD_WVTAT = 101
+	PI_CMD_PADS  = 102
+	PI_CMD_PADG  = 103
+	PI_CMD_FO    = 104
+	PI_CMD_FC    = 105
+	PI_CMD_FR    = 106
+	PI_CMD_FW    = 107
+	PI_CMD_FS    = 108
+	PI_CMD_FL    = 109
+	PI_CMD_SHELL = 110
+	PI_CMD_BSPIC = 111
+	PI_CMD_BSPIO = 112
+	PI_CMD_BSPIX = 113
+	PI_CMD_BSCX  = 114
+	PI_CMD_EVM   = 115
+	PI_CMD_EVT   = 116
+	PI_CMD_PROCU = 117
+	PI_CMD_WVCAP = 118
 )
 
 type PigpioError int
@@ -376,6 +477,39 @@ func (p *Pigpio) SetMode(pin int, mode GpioMode) (int, error) {
 	return CheckPigpiodError(response)
 }
 
+func (p *Pigpio) SpiOpen(channel int, baud int, flags []byte) (int, error) {
+	response := PigpiodCommandExtended(p.Socket, PI_CMD_SPIO, channel, baud, len(flags), flags)
+
+	return CheckPigpiodError(response)
+}
+
+func (p *Pigpio) SpiClose(handle int) (int, error) {
+	response := PigpiodCommand(p.Socket, PI_CMD_SPIC, handle, 0)
+
+	return CheckPigpiodError(response)
+}
+
+func (p *Pigpio) SpiXfer(handle int, data []byte) (int, []byte, error) {
+	rawResponseBytesCount := PigpiodCommandExtended(p.Socket, PI_CMD_SPIX, handle, 0, len(data), data)
+	responseBytesCount, err := CheckPigpiodError(rawResponseBytesCount)
+	if err != nil {
+		panic(err)
+	}
+
+	// If we've more than 0 bytes incoming, read those
+	if responseBytesCount > 0 {
+		responseData := make([]byte, responseBytesCount)
+
+		if _, err := io.ReadFull(p.Socket, responseData); err != nil {
+			panic(err)
+		}
+
+		return responseBytesCount, responseData, nil
+	}
+
+	return responseBytesCount, nil, nil
+}
+
 func NewPigpio() *Pigpio {
 	genericSocket, err := net.Dial("tcp", "localhost:8888")
 	if err != nil {
@@ -407,6 +541,40 @@ func PigpiodCommand(socket *net.TCPConn, command int, p1 int, p2 int) int {
 	binary.LittleEndian.PutUint32(messageBytes[4:8], message.P1)
 	binary.LittleEndian.PutUint32(messageBytes[8:12], message.P2)
 	binary.LittleEndian.PutUint32(messageBytes[12:16], message.P3)
+
+	// Send the command to the pigpiod daemon
+	_, err := socket.Write(messageBytes)
+	if err != nil {
+		panic(err)
+	}
+
+	// Read the response from the pigpiod daemon
+	responseBytes := make([]byte, 16)
+	if _, err := io.ReadFull(socket, responseBytes); err != nil {
+		panic(err)
+	}
+	responseMessage := PigpiodCmdResponse{
+		Command: binary.LittleEndian.Uint32(responseBytes[0:4]),
+		P1:      binary.LittleEndian.Uint32(responseBytes[4:8]),
+		P2:      binary.LittleEndian.Uint32(responseBytes[8:12]),
+		Res:     int32(binary.LittleEndian.Uint32(responseBytes[12:16])),
+	}
+
+	return int(responseMessage.Res)
+}
+
+func PigpiodCommandExtended(socket *net.TCPConn, command int, p1 int, p2 int, p3 int, extents []byte) int {
+	// Check that p3 matches the length of the extents
+	if p3 != len(extents) {
+		panic("p3 does not match length of extents")
+	}
+
+	messageBytes := make([]byte, 16+len(extents))
+	binary.LittleEndian.PutUint32(messageBytes[0:4], uint32(command))
+	binary.LittleEndian.PutUint32(messageBytes[4:8], uint32(p1))
+	binary.LittleEndian.PutUint32(messageBytes[8:12], uint32(p2))
+	binary.LittleEndian.PutUint32(messageBytes[12:16], uint32(p3))
+	copy(messageBytes[16:], extents)
 
 	// Send the command to the pigpiod daemon
 	_, err := socket.Write(messageBytes)
