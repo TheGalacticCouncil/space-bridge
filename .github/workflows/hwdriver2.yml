@@ -22,32 +22,19 @@ jobs:
       with:
         go-version: '1.23'
 
-    - name: Cache Go modules
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
-    - name: Install dependencies
-      run: go mod download
-
     - name: Build for Raspberry Pi Zero 1
       env:
         GOOS: linux
         GOARCH: arm
         GOARM: 6
-      run: go build -v -o hwdriver2-rpi-zero1
+      run: go build -v -o hwdriver2-rpi-zero1 cmd/hwdriver2/main.go
 
     - name: Build for Raspberry Pi Zero 2
       env:
         GOOS: linux
         GOARCH: arm
         GOARM: 7
-      run: go build -v -o hwdriver2-rpi-zero2
+      run: go build -v -o hwdriver2-rpi-zero2 cmd/hwdriver2/main.go
 
     # Enable this step once there are some tests written...
     # - name: Run tests
