@@ -38,7 +38,7 @@
 General:
   type: config            # config
   cycle: 0.001            # Recommended 0.001
-  station: ENGINEER-A   # HELM, ENGINEERING, SCIENCE
+  station: ENGINEER-B   # HELM, ENGINEERING, SCIENCE
   udp_ip: 192.168.1.255
   udp_port: 41114
 
@@ -47,20 +47,7 @@ General:
 ## BUTTONS ##
 #############
 
-
-SwitchTarget:
-  event: REPAIR
-  type: push_button
-  pin: 27
-  invert: True
-
-SwitchsSelfDestruct:
-  event: CONFIRM_SELF_DESTRUCT
-  event2: REVOKE_CONFIRM_SELF_DESTRUCT
-  type: switch
-  pin: 4
-  invert: True
-
+# None
 
 ###########
 ## ANALOG #
@@ -68,10 +55,8 @@ SwitchsSelfDestruct:
 
 # requres tuning before use
 
-## REACTOR
-
-AnalogRactorPower:
-  event: SET_REACTOR_POWER
+AnalogImpulsePower:
+  event: SET_IMPULSE_ENGINES_POWER
   type: analog
   channel: 10
   threshold: 0.1
@@ -81,9 +66,8 @@ AnalogRactorPower:
   max: 300
   trigger: 0
 
-
-AnalogRactorCoolant:
-  event: SET_REACTOR_COOLANT
+AnalogImpulseCoolant:
+  event: SET_IMPULSE_ENGINES_COOLANT
   type: analog
   channel: 11
   threshold: 0.1
@@ -93,10 +77,10 @@ AnalogRactorCoolant:
   max: 100
   trigger: 0
 
-## BEAM_WEAPONS
+## JUMP / WARP DUAL EVENT
 
-AnalogWeaponPower:
-  event: SET_BEAM_WEAPONS_POWER
+AnalogJumpPower:
+  event: SET_JUMP_DRIVE_POWER
   type: analog
   channel: 12
   threshold: 0.1
@@ -106,9 +90,8 @@ AnalogWeaponPower:
   max: 300
   trigger: 0
 
-
-AnalogWeaponCoolant:
-  event: SET_BEAM_WEAPONS_COOLANT
+AnalogJumpCoolant:
+  event: SET_JUMP_DRIVE_COOLANT
   type: analog
   channel: 13
   threshold: 0.1
@@ -118,10 +101,34 @@ AnalogWeaponCoolant:
   max: 100
   trigger: 0
 
-## MISSILE_SYSTEM
+#SET_WARP_DRIVE_POWER
 
-AnalogMissilePower:
-  event: SET_MISSILE_SYSTEM_POWER
+AnalogWarpPower:
+  event: SET_WARP_DRIVE_POWER
+  type: analog
+  channel: 12
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 300
+  trigger: 0
+
+AnalogWarpCoolant:
+  event: SET_REAR_SHIELD_GENERATOR_COOLANT
+  type: analog
+  channel: 13
+  threshold: 0.1
+  min_clip: 0
+  max_clip: 1023
+  min: 0
+  max: 100
+  trigger: 0
+
+## SHIELDS
+
+AnalogFShieldPower:
+  event: SET_FRONT_SHIELD_GENERATOR_POWER
   type: analog
   channel: 14
   threshold: 0.1
@@ -132,8 +139,8 @@ AnalogMissilePower:
   trigger: 0
 
 
-AnalogMissileCoolant:
-  event: SET_MISSILE_SYSTEM_COOLANT
+AnalogFShieldCoolant:
+  event: SET_FRONT_SHIELD_GENERATOR_COOLANT
   type: analog
   channel: 15
   threshold: 0.1
@@ -143,11 +150,9 @@ AnalogMissileCoolant:
   max: 100
   trigger: 0
 
-## MANEUVERING
 
-
-AnalogManouveringPower:
-  event: SET_MANEUVERING_POWER
+AnalogRShieldPower:
+  event: SET_REAR_SHIELD_GENERATOR_POWER
   type: analog
   channel: 16
   threshold: 0.1
@@ -158,8 +163,8 @@ AnalogManouveringPower:
   trigger: 0
 
 
-AnalogManouveringCoolant:
-  event: SET_MANEUVERING_COOLANT
+AnalogRShieldCoolant:
+  event: SET_REAR_SHIELD_GENERATOR_COOLANT
   type: analog
   channel: 17
   threshold: 0.1
@@ -168,29 +173,4 @@ AnalogManouveringCoolant:
   min: 0
   max: 100
   trigger: 0
-
-## IMPULSE_ENGINES
-
-#AnalogImpulsePower:
-#  event: SET_IMPULSE_ENGINES_POWER
-#  type: analog
-#  channel: 18
-#  threshold: 0.1
-#  min_clip: 0
-#  max_clip: 1023
-#  min: 0
-#  max: 300
-#  trigger: 0
-
-
-#AnalogImpulseCoolant:
-#  event: SET_IMPULSE_ENGINES_COOLANT
-#  type: analog
-#  channel: 19
-#  threshold: 0.1
-#  min_clip: 0
-#  max_clip: 1023
-#  min: 0
-#  max: 100
-#  trigger: 0
 
