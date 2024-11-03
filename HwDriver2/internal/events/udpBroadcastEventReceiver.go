@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"sync"
 )
 
 type SpaceBridgeEventPayload struct {
@@ -21,29 +20,29 @@ type SpaceBridgeEvent struct {
 }
 
 type UdpBroadcastEventReceiver struct {
-	conn       *net.UDPConn
-	buffer     []*SpaceBridgeEvent
-	bufferSize int
-	mu         sync.Mutex
+	conn      *net.UDPConn
+	eventChan chan *SpaceBridgeEvent
+	done      chan struct{}
 }
 
 // NewUdpBroadcastEventReceiver creates a new UdpBroadcastEventReceiver
 func NewUdpBroadcastEventReceiver(port int, bufferSize int) (*UdpBroadcastEventReceiver, error) {
-	addr := net.UDPAddr{
+	addr := &net.UDPAddr{
 		Port: port,
 		IP:   net.ParseIP("0.0.0.0"),
 	}
-	conn, err := net.ListenUDP("udp", &addr)
+	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to listen on UDP port %d: %w", port, err)
 	}
 
 	receiver := &UdpBroadcastEventReceiver{
-		conn:       conn,
-		buffer:     make([]*SpaceBridgeEvent, 0, bufferSize),
-		bufferSize: bufferSize,
+		conn:      conn,
+		eventChan: make(chan *SpaceBridgeEvent, bufferSize),
+		done:      make(chan struct{}),
 	}
 
+	// Start listening for incoming UDP packets in separate goroutine
 	go receiver.listen()
 
 	return receiver, nil
@@ -53,43 +52,60 @@ func NewUdpBroadcastEventReceiver(port int, bufferSize int) (*UdpBroadcastEventR
 func (r *UdpBroadcastEventReceiver) listen() {
 	buf := make([]byte, 2048)
 	for {
-		n, _, err := r.conn.ReadFromUDP(buf)
-		if err != nil {
-			fmt.Println("Error reading from UDP:", err)
-			continue
-		}
+		select {
+		case <-r.done:
+			// Exit the loop if done signal is received
+			fmt.Println("Stopping UDP listener")
+			return
+		default:
+			n, _, err := r.conn.ReadFromUDP(buf)
+			if err != nil {
+				// If the error is "use of closed network connection", ignore it and continue - most likely we're shutting down
+				if err, ok := err.(*net.OpError); ok && err.Err.Error() == "use of closed network connection" {
+					continue
+				}
 
-		var event SpaceBridgeEvent
-		err = json.Unmarshal(buf[:n], &event)
-		if err != nil {
-			fmt.Println("Error unmarshalling JSON:", err)
-			continue
-		}
+				fmt.Println("Error reading from UDP:", err)
+				continue
+			}
 
-		r.mu.Lock()
-		if len(r.buffer) >= r.bufferSize {
-			r.buffer = r.buffer[1:]
+			var event SpaceBridgeEvent
+			err = json.Unmarshal(buf[:n], &event)
+			if err != nil {
+				fmt.Println("Error unmarshalling JSON:", err)
+				continue
+			}
+
+			select {
+			case r.eventChan <- &event:
+				// Successfully sent event to channel
+			default:
+				// Channel is full, drop the event
+				fmt.Println("Event channel is full, dropping event")
+			}
 		}
-		r.buffer = append(r.buffer, &event)
-		r.mu.Unlock()
 	}
 }
 
-// ConsumeEvent returns the oldest event from the buffer or nil if no events are available
+// ConsumeEvent returns the oldest event from the channel or nil if no events are available
 func (r *UdpBroadcastEventReceiver) ConsumeEvent() *SpaceBridgeEvent {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	if len(r.buffer) == 0 {
+	select {
+	case event := <-r.eventChan:
+		return event
+	default:
 		return nil
 	}
+}
 
-	event := r.buffer[0]
-	r.buffer = r.buffer[1:]
-	return event
+func (r *UdpBroadcastEventReceiver) GetEventChan() chan *SpaceBridgeEvent {
+	return r.eventChan
 }
 
 // Close closes the UDP connection
-func (r *UdpBroadcastEventReceiver) Close() {
-	r.conn.Close()
+func (r *UdpBroadcastEventReceiver) Close() error {
+	close(r.done)
+	err := r.conn.Close()
+	close(r.eventChan)
+
+	return err
 }
