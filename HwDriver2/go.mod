@@ -1,4 +1,4 @@
-module hwdriver2
+module HwDriver2/hwdriver2
 
 go 1.23.2
 

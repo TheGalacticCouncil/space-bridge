@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+      - feature/*
+    paths:
+      - 'HwDriver2/**'
   pull_request:
     branches:
       - master
@@ -27,16 +30,24 @@ jobs:
         GOOS: linux
         GOARCH: arm
         GOARM: 6
-      run: go build -v -o hwdriver2-rpi-zero1 cmd/hwdriver2/main.go
+      run: cd HwDriver2; go build -v -o hwdriver2-rpi-zero1 cmd/hwdriver2/main.go
 
     - name: Build for Raspberry Pi Zero 2
       env:
         GOOS: linux
         GOARCH: arm
         GOARM: 7
-      run: go build -v -o hwdriver2-rpi-zero2 cmd/hwdriver2/main.go
+      run: cd HwDriver2; go build -v -o hwdriver2-rpi-zero2 cmd/hwdriver2/main.go
 
-    # Enable this step once there are some tests written...
-    # - name: Run tests
-    #   run: go test -v ./...
+    - name: Archive artifacts - Zero 1
+      uses: actions/upload-artifact@v4
+      with:
+        name: hwdriver2-zero1
+        path: HwDriver2/hwdriver2-rpi-zero1
+
+    - name: Archive artifacts - Zero 2
+      uses: actions/upload-artifact@v4
+      with:
+        name: hwdriver2-zero2
+        path: HwDriver2/hwdriver2-rpi-zero1
 

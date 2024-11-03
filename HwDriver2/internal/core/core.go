@@ -2,11 +2,12 @@ package core
 
 import (
 	"fmt"
-	"hwdriver2/internal/config"
-	"hwdriver2/internal/events"
-	"hwdriver2/internal/hw"
-	"hwdriver2/pkg/pigpio"
 	"time"
+
+	"HwDriver2/hwdriver2/internal/config"
+	"HwDriver2/hwdriver2/internal/events"
+	"HwDriver2/hwdriver2/internal/hw"
+	"HwDriver2/hwdriver2/pkg/pigpio"
 )
 
 const (

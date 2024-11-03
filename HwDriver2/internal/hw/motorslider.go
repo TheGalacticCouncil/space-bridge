@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"hwdriver2/pkg/pigpio"
+	"HwDriver2/hwdriver2/pkg/pigpio"
 )
 
 type TouchState rune
