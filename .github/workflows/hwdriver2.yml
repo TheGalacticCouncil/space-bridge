@@ -5,6 +5,8 @@ on:
     branches:
       - master
       - feature/*
+    paths:
+      - 'HwDriver2/**'
   pull_request:
     branches:
       - master
