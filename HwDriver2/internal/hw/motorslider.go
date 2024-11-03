@@ -152,6 +152,14 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 		if i > m.Config.MotorLoopIterationsMax {
 			// Print an error and stop the motor
 			fmt.Println("Motor loop iteration count is too high: ", i)
+			// Print motor details and pins (motor and touch and pos)
+			fmt.Printf("MotorSlider details (Id=%d):\n", m.Id)
+			fmt.Printf("Current position: %d\n", currentPosition)
+			fmt.Printf("Target position: %d\n", rawPosition)
+			fmt.Printf("Motor pins: %d, %d, %d\n", m.MotorPin1, m.MotorPin2, m.MotorEnablePin)
+			fmt.Printf("TouchSense pins: %d, %d\n", m.TouchSenseSpiChannel, m.TouchSenseAdcChannel)
+			fmt.Printf("SlidePosition pins: %d, %d\n", m.SlidePositionSpiChannel, m.SlidePositionAdcChannel)
+
 			return m.stop()
 		}
 
