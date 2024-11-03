@@ -8,10 +8,20 @@ import (
 )
 
 const (
-	MAX_LOGICAL_VALUE = 1023
-	MIN_LOGICAL_VALUE = 0
-	MAX_PWM_MOVING    = 255
-	MIN_PWM_MOVING    = 170
+	MAX_LOGICAL_VALUE                   = 1023
+	MIN_LOGICAL_VALUE                   = 0
+	MAX_PWM_MOVING                      = 255
+	MIN_PWM_MOVING                      = 170
+	TOUCH_THRESHOLD                     = 800
+	MINIMUM_MS_FROM_LAST_DETECTED_TOUCH = 50
+	MINIMUM_MS_FROM_LAST_ENABLED_START  = 500
+)
+
+type TouchState rune
+
+const (
+	NOT_TOUCHING TouchState = 'N'
+	TOUCHING     TouchState = 'T'
 )
 
 type MotorSlider struct {
@@ -29,6 +39,11 @@ type MotorSlider struct {
 	_minRawValue   int
 	_maxRawValue   int
 	_rawValueRange int
+
+	lastTouchDetectedTimestamp time.Time
+	touchState                 TouchState
+
+	latestTouchPosition int
 }
 
 func (m *MotorSlider) ReadPosition() (int, error) {
@@ -36,12 +51,58 @@ func (m *MotorSlider) ReadPosition() (int, error) {
 }
 
 func (m *MotorSlider) ReadTouchPosition() (int, error) {
-	// TODO: Implement true touch position handling
-	return m.ReadPosition()
+	return m.latestTouchPosition, nil
+}
+
+func (m *MotorSlider) ReadTouchRaw() (int, error) {
+	return m.Hw.ReadAnalogMcp3008Pin(m.TouchSenseSpiChannel, m.TouchSenseAdcChannel)
 }
 
 func (*MotorSlider) DriveToPosition(position int) error {
 	return nil
+}
+
+func (m *MotorSlider) Tick() {
+	// Get current currentPosition
+	currentPosition, err := m.ReadPosition()
+	if err != nil {
+		// Log error and return
+		fmt.Println("Error reading position: ", err)
+		return
+	}
+
+	// Check if the motor is enabled
+	if !m.motorEnabled() {
+		m.latestTouchPosition = currentPosition
+		return
+	}
+
+}
+
+func (m *MotorSlider) motorEnabled() bool {
+	touchValue, err := m.ReadTouchRaw()
+	if err != nil {
+		// Log error and set touchValue to 0
+		fmt.Println("Error reading touch value: ", err)
+		touchValue = 0
+	}
+
+	if touchValue > TOUCH_THRESHOLD {
+		m.lastTouchDetectedTimestamp = time.Now()
+
+		m.touchState = TOUCHING
+	} else {
+		now := time.Now()
+		diff := now.Sub(m.lastTouchDetectedTimestamp)
+
+		if diff.Milliseconds() > MINIMUM_MS_FROM_LAST_DETECTED_TOUCH {
+			if diff.Milliseconds() > MINIMUM_MS_FROM_LAST_ENABLED_START {
+				m.touchState = NOT_TOUCHING
+			}
+		}
+	}
+
+	return m.touchState == TOUCHING
 }
 
 func (m *MotorSlider) Calibrate() error {

@@ -2,9 +2,15 @@ package core
 
 import (
 	"fmt"
+	"hwdriver2/internal/events"
 	"hwdriver2/internal/hw"
 	"hwdriver2/pkg/pigpio"
 	"time"
+)
+
+const (
+	BROADCAST_PORT             = 41114
+	EVENT_RECEIVER_BUFFER_SIZE = 100
 )
 
 type HardwareAccess interface {
@@ -16,15 +22,21 @@ type HardwareAccess interface {
 type MotorizedSlider interface {
 	ReadPosition() (int, error)
 	ReadTouchPosition() (int, error)
+	ReadTouchRaw() (int, error)
 	DriveToPosition(position int) error
 	Calibrate() error
 	GetId() int
+}
+
+type EventSource interface {
+	ConsumeEvent() *events.SpaceBridgeEvent
 }
 
 type core struct {
 	hwManager     HardwareAccess
 	sliders       []MotorizedSlider
 	fileApiWriter *OutputFileApiWriter
+	eventReceiver EventSource
 }
 
 func (c *core) Run() {
@@ -41,7 +53,7 @@ func (c *core) Run() {
 		}
 
 		// Clear terminal (assuming Unix-like system)
-		fmt.Print("\033[H\033[2J")
+		// fmt.Print("\033[H\033[2J")
 
 		for id, position := range positions {
 			fmt.Printf("Slider %d position: %d\n", id, position)
@@ -52,6 +64,15 @@ func (c *core) Run() {
 		if err != nil {
 			fmt.Println("Error writing positions to file: ", err)
 			return
+		}
+
+		// Consume up to 10 events and print them
+		for i := 0; i < 10; i++ {
+			event := c.eventReceiver.ConsumeEvent()
+			if event == nil {
+				break
+			}
+			fmt.Printf("Event: %+v\n", event)
 		}
 
 		// Sleep for 16ms
@@ -125,7 +146,7 @@ func (c *core) initializeMotors() error {
 	return nil
 }
 
-func (c *core) initializeOutputFileApiWriter(filePath string) error {
+func (c *core) initializeOutputFileApiWriter(filePath string, touchFilePath string, touchPositionFilePath string) error {
 	// Convert sliders to PositionProviders. TODO: Find more elegant way to handle this
 	positionProviders := make([]PositionProvider, len(c.sliders))
 	for i, slider := range c.sliders {
@@ -133,9 +154,19 @@ func (c *core) initializeOutputFileApiWriter(filePath string) error {
 	}
 
 	var err error
-	c.fileApiWriter, err = NewOutputFileApiWriter(positionProviders, filePath)
+	c.fileApiWriter, err = NewOutputFileApiWriter(positionProviders, filePath, touchFilePath, touchPositionFilePath)
 	if err != nil {
 		return fmt.Errorf("error creating OutputFileApiWriter: %w", err)
+	}
+
+	return nil
+}
+
+func (c *core) initializeEventReceiver() error {
+	var err error
+	c.eventReceiver, err = events.NewUdpBroadcastEventReceiver(BROADCAST_PORT, EVENT_RECEIVER_BUFFER_SIZE)
+	if err != nil {
+		return fmt.Errorf("error creating event receiver: %w", err)
 	}
 
 	return nil
@@ -152,7 +183,15 @@ func NewCore() (*core, error) {
 		return nil, err
 	}
 
-	if err := core.initializeOutputFileApiWriter("positions.txt"); err != nil {
+	if err := core.initializeEventReceiver(); err != nil {
+		return nil, err
+	}
+
+	if err := core.initializeOutputFileApiWriter(
+		"positions.txt",
+		"touch.txt",
+		"touchpos.txt",
+	); err != nil {
 		return nil, err
 	}
 
