@@ -2,22 +2,10 @@ package hw
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"hwdriver2/pkg/pigpio"
-)
-
-const (
-	MAX_LOGICAL_VALUE = 1023
-	MIN_LOGICAL_VALUE = 0
-	MAX_PWM_MOVING    = 255
-	// MIN_PWM_MOVING                      = 170 // For 12V
-	MIN_PWM_MOVING                      = 240 // For 5V
-	TOUCH_THRESHOLD                     = 800
-	MINIMUM_MS_FROM_LAST_DETECTED_TOUCH = 50
-	MINIMUM_MS_FROM_LAST_ENABLED_START  = 500
-	ACCURACY_PROMILLE                   = 30
-	MAX_MOTOR_LOOP_ITERATIONS           = 1000
 )
 
 type TouchState rune
@@ -35,13 +23,25 @@ const (
 	MOTOR_DECREASING MotorState = 'D'
 )
 
+type MotorSliderGenericConfig struct {
+	MotorMaxPwm            int
+	MotorMinPwm            int
+	MotorLoopIterationsMax int
+	AccuracyPromille       int
+	MinTimeFromLastTouchMs int
+	TouchSenseThreshold    int
+}
+
 type MotorSlider struct {
-	Hw                      HwAccess
+	Id     int
+	Config MotorSliderGenericConfig
+
+	Hw HwAccess
+
 	SlidePositionAdcChannel int
 	SlidePositionSpiChannel int
 	TouchSenseAdcChannel    int
 	TouchSenseSpiChannel    int
-	Id                      int
 
 	MotorPin1      int
 	MotorPin2      int
@@ -87,14 +87,19 @@ func (m *MotorSlider) ReadTouchRaw() (int, error) {
 	return m.Hw.ReadAnalogMcp3008Pin(m.TouchSenseSpiChannel, m.TouchSenseAdcChannel)
 }
 
+// DriveToPosition drives the motor slider to the given position
+// position is expected to be in the range of 0 to 1000
 func (m *MotorSlider) DriveToPosition(position int) error {
+	// Convert the position to a raw value
+	rawPosition := m.convertPositionToRawValue(position)
+
 	currentPosition, err := m.ReadPosition()
 	if err != nil {
 		return err
 	}
 
 	// Calculate the difference between the current position and the target position
-	diff := position - currentPosition
+	diff := rawPosition - currentPosition
 
 	absDiff := diff
 	if absDiff < 0 {
@@ -131,20 +136,20 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 
 		// Drive the motor
 		if diff > 0 {
-			err = m.increase(int(float64(MAX_PWM_MOVING) * speedMultiplier))
+			err = m.increase(int(float64(m.Config.MotorMaxPwm) * speedMultiplier))
 		} else {
-			err = m.decrease(int(float64(MAX_PWM_MOVING) * speedMultiplier))
+			err = m.decrease(int(float64(m.Config.MotorMaxPwm) * speedMultiplier))
 		}
 		if err != nil {
 			return err
 		}
 
-		if i > MAX_MOTOR_LOOP_ITERATIONS/2 {
+		if i > m.Config.MotorLoopIterationsMax/2 && i%100 == 0 {
 			// Print a warning
 			fmt.Println("Motor loop iteration count is getting high: ", i)
 		}
 
-		if i > MAX_MOTOR_LOOP_ITERATIONS {
+		if i > m.Config.MotorLoopIterationsMax {
 			// Print an error and stop the motor
 			fmt.Println("Motor loop iteration count is too high: ", i)
 			return m.stop()
@@ -160,7 +165,7 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 		}
 
 		// Calculate the difference between the current position and the target position
-		diff = position - currentPosition
+		diff = rawPosition - currentPosition
 
 		absDiff = diff
 		if absDiff < 0 {
@@ -202,7 +207,7 @@ func (m *MotorSlider) motorEnabled() bool {
 		touchValue = 0
 	}
 
-	if touchValue > TOUCH_THRESHOLD {
+	if touchValue > m.Config.TouchSenseThreshold {
 		m.lastTouchDetectedTimestamp = time.Now()
 
 		m.touchState = TOUCHING
@@ -210,10 +215,10 @@ func (m *MotorSlider) motorEnabled() bool {
 		now := time.Now()
 		diff := now.Sub(m.lastTouchDetectedTimestamp)
 
-		if diff.Milliseconds() > MINIMUM_MS_FROM_LAST_DETECTED_TOUCH {
-			if diff.Milliseconds() > MINIMUM_MS_FROM_LAST_ENABLED_START {
-				m.touchState = NOT_TOUCHING
-			}
+		if diff.Milliseconds() > int64(m.Config.MinTimeFromLastTouchMs) {
+			// TODO: Add logic for having a minimum time from the end of touch
+			//       and the start of the touch separately to increase responsiveness!
+			m.touchState = NOT_TOUCHING
 		}
 	}
 
@@ -258,7 +263,7 @@ func (m *MotorSlider) Calibrate() error {
 	}
 
 	// TODO: Find the minimum and maximum positions by driving the motor to the both ends and reading the position
-	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin1, MAX_PWM_MOVING); err != nil {
+	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin1, m.Config.MotorMaxPwm); err != nil {
 		return err
 	}
 	time.Sleep(time.Second * 3)
@@ -272,7 +277,7 @@ func (m *MotorSlider) Calibrate() error {
 		return err
 	}
 
-	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin2, MAX_PWM_MOVING); err != nil {
+	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin2, m.Config.MotorMaxPwm); err != nil {
 		return err
 	}
 	time.Sleep(time.Second * 3)
@@ -292,7 +297,7 @@ func (m *MotorSlider) Calibrate() error {
 	}
 
 	m._rawValueRange = m._maxRawValue - m._minRawValue
-	m._maxDeviation = int(float64(m._rawValueRange)*float64(ACCURACY_PROMILLE)/1000.0 + 0.5)
+	m._maxDeviation = int(float64(m._rawValueRange)*float64(m.Config.AccuracyPromille)/1000.0 + 0.5)
 
 	// TODO: Print the calibration values
 	fmt.Printf("MotorSlider calibration results (Id=%d):\n", m.Id)
@@ -368,14 +373,21 @@ func (m *MotorSlider) calculatePwmValue(speed int) int {
 	// TODO: Implement proper calculation based on calibration
 
 	// if below min, set to min
-	if speed < MIN_PWM_MOVING {
-		return MIN_PWM_MOVING
+	if speed < m.Config.MotorMinPwm {
+		return m.Config.MotorMinPwm
 	}
 
 	// if above max, set to max
-	if speed > MAX_PWM_MOVING {
-		return MAX_PWM_MOVING
+	if speed > m.Config.MotorMaxPwm {
+		return m.Config.MotorMaxPwm
 	}
 
 	return speed
+}
+
+// convertPositionToRawValue converts the position to a raw value based on the calibration values.
+// Position is expected to be in the range of 0 to 1000.
+func (m *MotorSlider) convertPositionToRawValue(position int) int {
+	// Calculate the raw value based on the calibrated values
+	return m._minRawValue + int(math.Round(float64(m._rawValueRange)*float64(position)/1000.0))
 }

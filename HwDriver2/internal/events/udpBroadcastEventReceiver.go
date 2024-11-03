@@ -26,10 +26,10 @@ type UdpBroadcastEventReceiver struct {
 }
 
 // NewUdpBroadcastEventReceiver creates a new UdpBroadcastEventReceiver
-func NewUdpBroadcastEventReceiver(port int, bufferSize int) (*UdpBroadcastEventReceiver, error) {
+func NewUdpBroadcastEventReceiver(listenAddress string, port int, bufferSize int) (*UdpBroadcastEventReceiver, error) {
 	addr := &net.UDPAddr{
 		Port: port,
-		IP:   net.ParseIP("0.0.0.0"),
+		IP:   net.ParseIP(listenAddress),
 	}
 	conn, err := net.ListenUDP("udp", addr)
 	if err != nil {

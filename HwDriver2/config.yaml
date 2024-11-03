@@ -1,0 +1,107 @@
+# Generic configuration holds parameters related to overall HwDriver behavior
+generic:
+  # mainLoopSleepTimeMs is the time in milliseconds the main loop will sleep after each iteration
+  # This affects the responsiveness of the HwDriver2
+  mainLoopSleepTimeMs: 16
+
+# Events configuration holds parameters related to the event system
+events:
+  # brodcastPort is the port the HwDriver2 will listen for incoming events
+  broadcastPort: 41114
+  # broadcastListenAddress is the address the HwDriver2 will listen for incoming events
+  # It is recommended to leave this as 0.0.0.0, listening on all interfaces
+  broadcastListenAddress: "0.0.0.0"
+  # eventReceiverBufferSize is the size of the buffer that holds incoming events
+  # If the buffer is full, incoming events will be dropped. Recommendation is to not to touch this.
+  eventReceiverBufferSize: 100
+
+# FileApi configuration holds parameters related to the file API provided by HwDriver2
+fileApi:
+  # positionsFilePath is the path to the file that will hold the current positions of the sliders
+  # This file will be updated by the HwDriver2 and will be created if it does not exist. Both relative and absolute
+  # paths are supported.
+  positionsFilePath: "positions.txt"
+  # touchFilePath is the path to the file that will hold the touch sensor values of the sliders
+  # This file will be updated by the HwDriver2 and will be created if it does not exist. Both relative and absolute
+  # paths are supported.
+  touchFilePath: "touch.txt"
+  # touchPositionsFilePath is the path to the file that will hold the touch positions of the sliders
+  # This file will be updated by the HwDriver2 and will be created if it does not exist. Both relative and absolute
+  # paths are supported.
+  touchPositionsFilePath: "touchpos.txt"
+
+# MotorizedSliders configuration holds parameters related to the motorized sliders
+motorizedSliders:
+  # config holds general parameters applicable to all motorized sliders
+  config:
+    # motorMaxPwm is the maximum PWM value that will be sent to the motor
+    motorMaxPwm: 255
+    # motorMinPwm is the minimum PWM value that will be sent to the motor
+    # For 12V power, use 170 as the minimum value. For 5V power, use 255.
+    motorMinPwm: 255
+    # motorLoopIterationsMax is the maximum number of iterations the motor driving loop will run
+    # If the motor does not reach the target position in this number of iterations, the motor will stop. Usually, this
+    # should be left at the default value.
+    motorLoopIterationsMax: 1000
+    # accuracyPromille is the required accuracy of the motorized slider position in promille
+    # This is calculated as fraction of the calibrated range of each slider separately. If the slider has wiggle and
+    # doesn't reach the position within allowed loop iterations, this value should be increased.
+    accuracyPromille: 30
+    # minTimeFromLastTouchMs is the minimum time in milliseconds that must pass from the last touch event before the
+    # motor can be engaged
+    # If the slider tries to move while touching the slider, this value should be increased. Lower values may give
+    # better responsiveness.
+    minTimeFromLastTouchMs: 500
+    # touchSenseThreshold is the threshold value for the touch sensor to be considered touched
+    # Range of the touch sensor is 0-1023. If the touch sensor is too sensitive, this value should be increased.
+    touchSenseThreshold: 800
+  # sliders is a list of motorized sliders connected to the system
+  sliders:
+    # Example configuration for a single slider
+    #   # id is the unique identifier of a slider
+    #   # ID is used to connect incoming events to the correct slider
+    # - id: 1
+    #   # motor configuration holds parameters related to the motor of the slider
+    #   motor:
+    #     # pin1 is the GPIO pin number of the first motor control pin (see https://pinout.xyz/)
+    #     pin1: 10
+    #     # pin2 is the GPIO pin number of the second motor control pin (see https://pinout.xyz/)
+    #     pin2: 11
+    #     # enablePin is the GPIO pin number of the motor enable pin (see https://pinout.xyz/)
+    #     enablePin: 23
+    #   # positionSensor configuration holds parameters related to the position sensor of the slider
+    #   positionSensor:
+    #     # adcChannel is the ADC channel number of the position sensor
+    #     # This is the channel number of the ADC chip, not the GPIO pin number!
+    #     adcChannel: 0
+    #     # spiChannel is the SPI channel number of the MCP3008 chip the position sensor is connected to
+    #     spiChannel: 0
+    #   # touchSensor configuration holds parameters related to the touch sensor of the slider
+    #   touchSensor:
+    #     # adcChannel is the ADC channel number of the touch sensor
+    #     # This is the channel number of the ADC chip, not the GPIO pin number!
+    #     adcChannel: 6
+    #     # spiChannel is the SPI channel number of the MCP3008 chip the touch sensor is connected to
+    #     spiChannel: 1
+    - id: 1
+      motor:
+        pin1: 10
+        pin2: 11
+        enablePin: 23
+      positionSensor:
+        adcChannel: 0
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 6
+        spiChannel: 1
+    - id: 2
+      motor:
+        pin1: 9
+        pin2: 26
+        enablePin: 23
+      positionSensor:
+        adcChannel: 1
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 7
+        spiChannel: 1

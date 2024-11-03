@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"hwdriver2/internal/config"
 	"hwdriver2/internal/events"
 	"hwdriver2/internal/hw"
 	"hwdriver2/pkg/pigpio"
@@ -38,13 +39,20 @@ type ExpectedPositionProvider interface {
 	GetExpectedPosition(motorId int) (int, bool)
 }
 
+type ConfigProvider interface {
+	GetConfig() config.CombinedConfig
+}
+
 type core struct {
+	config                   ConfigProvider
 	hwManager                HardwareAccess
 	sliders                  []MotorizedSlider
 	fileApiWriter            *OutputFileApiWriter
 	eventReceiver            EventSource
 	expectedPositionProvider ExpectedPositionProvider
 	stopChan                 chan struct{}
+
+	loopSleepTime time.Duration
 }
 
 func (c *core) Run() {
@@ -104,8 +112,7 @@ func (c *core) Run() {
 				}
 			}
 
-			// Sleep for 16ms
-			time.Sleep(16 * time.Millisecond)
+			time.Sleep(c.loopSleepTime)
 		}
 	}
 }
@@ -137,6 +144,10 @@ func (c *core) Close() error {
 	return nil
 }
 
+func (c *core) Config() config.CombinedConfig {
+	return c.config.GetConfig()
+}
+
 func (c *core) initializeHwManager() error {
 	var err error
 	c.hwManager, err = hw.NewHwManager()
@@ -149,29 +160,35 @@ func (c *core) initializeHwManager() error {
 
 func (c *core) initializeMotors() error {
 	// TODO: Read these from a config file
-	c.sliders = []MotorizedSlider{
-		&hw.MotorSlider{
-			Id:                      1,
+
+	config := c.config.GetConfig().MotorizedSliders
+
+	c.sliders = make([]MotorizedSlider, len(config.Sliders))
+
+	commonMotorConfig := hw.MotorSliderGenericConfig{
+		MotorMaxPwm:            config.Config.MotorMaxPwm,
+		MotorMinPwm:            config.Config.MotorMinPwm,
+		MotorLoopIterationsMax: config.Config.MotorLoopIterationsMax,
+		AccuracyPromille:       config.Config.AccuracyPromille,
+		MinTimeFromLastTouchMs: config.Config.MinTimeFromLastTouchMs,
+		TouchSenseThreshold:    config.Config.TouchSenseThreshold,
+	}
+
+	for i, sliderConfig := range config.Sliders {
+		slider := &hw.MotorSlider{
+			Id:                      sliderConfig.ID,
+			Config:                  commonMotorConfig,
 			Hw:                      c.hwManager,
-			SlidePositionAdcChannel: 0,
-			SlidePositionSpiChannel: 0,
-			TouchSenseAdcChannel:    6,
-			TouchSenseSpiChannel:    1,
-			MotorPin1:               10,
-			MotorPin2:               11,
-			MotorEnablePin:          23,
-		},
-		&hw.MotorSlider{
-			Id:                      2,
-			Hw:                      c.hwManager,
-			SlidePositionAdcChannel: 1,
-			SlidePositionSpiChannel: 0,
-			TouchSenseAdcChannel:    7,
-			TouchSenseSpiChannel:    1,
-			MotorPin1:               9,
-			MotorPin2:               26,
-			MotorEnablePin:          23,
-		},
+			SlidePositionAdcChannel: sliderConfig.PositionSensor.AdcChannel,
+			SlidePositionSpiChannel: sliderConfig.PositionSensor.SpiChannel,
+			TouchSenseAdcChannel:    sliderConfig.TouchSensor.AdcChannel,
+			TouchSenseSpiChannel:    sliderConfig.TouchSensor.SpiChannel,
+			MotorPin1:               sliderConfig.Motor.Pin1,
+			MotorPin2:               sliderConfig.Motor.Pin2,
+			MotorEnablePin:          sliderConfig.Motor.EnablePin,
+		}
+
+		c.sliders[i] = slider
 	}
 
 	// Calibrate motors
@@ -185,15 +202,19 @@ func (c *core) initializeMotors() error {
 	return nil
 }
 
-func (c *core) initializeOutputFileApiWriter(filePath string, touchFilePath string, touchPositionFilePath string) error {
-	// Convert sliders to PositionProviders. TODO: Find more elegant way to handle this
+func (c *core) initializeOutputFileApiWriter() error {
 	positionProviders := make([]PositionProvider, len(c.sliders))
 	for i, slider := range c.sliders {
 		positionProviders[i] = slider
 	}
 
 	var err error
-	c.fileApiWriter, err = NewOutputFileApiWriter(positionProviders, filePath, touchFilePath, touchPositionFilePath)
+	c.fileApiWriter, err = NewOutputFileApiWriter(
+		positionProviders,
+		c.config.GetConfig().FileApi.PositionsFilePath,
+		c.config.GetConfig().FileApi.TouchFilePath,
+		c.config.GetConfig().FileApi.TouchPositionsFilePath,
+	)
 	if err != nil {
 		return fmt.Errorf("error creating OutputFileApiWriter: %w", err)
 	}
@@ -203,7 +224,11 @@ func (c *core) initializeOutputFileApiWriter(filePath string, touchFilePath stri
 
 func (c *core) initializeEventReceiver() error {
 	var err error
-	c.eventReceiver, err = events.NewUdpBroadcastEventReceiver(BROADCAST_PORT, EVENT_RECEIVER_BUFFER_SIZE)
+	c.eventReceiver, err = events.NewUdpBroadcastEventReceiver(
+		c.config.GetConfig().Events.BroadcastListenAddress,
+		c.config.GetConfig().Events.BroadcastPort,
+		c.config.GetConfig().Events.EventReceiverBufferSize,
+	)
 	if err != nil {
 		return fmt.Errorf("error creating event receiver: %w", err)
 	}
@@ -226,9 +251,24 @@ func (c *core) initializeExpectedPositionProvider() error {
 	return nil
 }
 
+func (c *core) initializeConfigProvider() error {
+	var err error
+	c.config, err = config.NewConfigProvider()
+
+	if err != nil {
+		return fmt.Errorf("error creating config provider: %w", err)
+	}
+
+	return nil
+}
+
 func NewCore() (*core, error) {
 	core := &core{
 		stopChan: make(chan struct{}),
+	}
+
+	if err := core.initializeConfigProvider(); err != nil {
+		return nil, err
 	}
 
 	if err := core.initializeHwManager(); err != nil {
@@ -247,13 +287,15 @@ func NewCore() (*core, error) {
 		return nil, err
 	}
 
-	if err := core.initializeOutputFileApiWriter(
-		"positions.txt",
-		"touch.txt",
-		"touchpos.txt",
-	); err != nil {
+	if err := core.initializeOutputFileApiWriter(); err != nil {
 		return nil, err
 	}
+
+	core.loopSleepTime = time.Duration(core.Config().Generic.MainLoopSleepTimeMs * int(time.Millisecond))
+
+	// Print generic information
+	fmt.Printf("Initialized %d motors\n", len(core.sliders))
+	fmt.Printf("Loop sleep time: %v\n", core.loopSleepTime)
 
 	return core, nil
 }
