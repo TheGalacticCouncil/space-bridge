@@ -20,12 +20,12 @@ const (
 )
 
 var (
-	ErrInvalidSpiChannel = errors.New("Invalid SPI channel")
+	ErrInvalidSpiChannel = errors.New("invalid SPI channel")
 )
 
 func NewHwManager() (*hwManager, error) {
 	manager := &hwManager{
-		adcs: make([]*mcp3008, MAX_SPI_CHANNEL),
+		adcs: make([]*mcp3008, MAX_SPI_CHANNEL+1),
 		hw:   pigpio.NewPigpio(),
 	}
 
