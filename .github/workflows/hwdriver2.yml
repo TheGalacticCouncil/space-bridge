@@ -1,0 +1,55 @@
+name: HwDriver2
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.23'
+
+    - name: Cache Go modules
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install dependencies
+      run: go mod download
+
+    - name: Build for Raspberry Pi Zero 1
+      env:
+        GOOS: linux
+        GOARCH: arm
+        GOARM: 6
+      run: go build -v -o hwdriver2-rpi-zero1
+
+    - name: Build for Raspberry Pi Zero 2
+      env:
+        GOOS: linux
+        GOARCH: arm
+        GOARM: 7
+      run: go build -v -o hwdriver2-rpi-zero2
+
+    # Enable this step once there are some tests written...
+    # - name: Run tests
+    #   run: go test -v ./...
+
