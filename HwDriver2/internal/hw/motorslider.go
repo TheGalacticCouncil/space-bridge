@@ -58,14 +58,29 @@ type MotorSlider struct {
 	touchState                 TouchState
 
 	latestTouchPosition int
+	latestPosition      int
 }
 
+// ReadPosition reads the position of the motor slider
 func (m *MotorSlider) ReadPosition() (int, error) {
-	return m.Hw.ReadAnalogMcp3008Pin(m.SlidePositionSpiChannel, m.SlidePositionAdcChannel)
+	var err error
+	m.latestPosition, err = m.Hw.ReadAnalogMcp3008Pin(m.SlidePositionSpiChannel, m.SlidePositionAdcChannel)
+
+	return m.latestPosition, err
 }
 
+// GetLatestPosition returns the latest position read from the motor slider
+func (m *MotorSlider) GetLatestPosition() int {
+	return m.latestPosition
+}
+
+// Deprecated: Use GetLatestTouchPosition instead
 func (m *MotorSlider) ReadTouchPosition() (int, error) {
 	return m.latestTouchPosition, nil
+}
+
+func (m *MotorSlider) GetLatestTouchPosition() int {
+	return m.latestTouchPosition
 }
 
 func (m *MotorSlider) ReadTouchRaw() (int, error) {

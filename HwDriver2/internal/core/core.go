@@ -21,6 +21,7 @@ type HardwareAccess interface {
 
 type MotorizedSlider interface {
 	ReadPosition() (int, error)
+	GetLatestPosition() int
 	ReadTouchPosition() (int, error)
 	ReadTouchRaw() (int, error)
 	DriveToPosition(position int) error
@@ -48,7 +49,9 @@ type core struct {
 
 func (c *core) Run() {
 	// Main loop. Read slider positions and print.
+	i := 0
 	for {
+		i++
 		select {
 		case <-c.stopChan:
 			fmt.Println("Stopping core run loop")
@@ -58,19 +61,8 @@ func (c *core) Run() {
 		default:
 			positions := make(map[int]int)
 			for i, slider := range c.sliders {
-				position, err := slider.ReadPosition()
-				if err != nil {
-					fmt.Println("Error reading position: ", err)
-					return
-				}
+				position := slider.GetLatestPosition()
 				positions[i] = position
-			}
-
-			// Clear terminal (assuming Unix-like system)
-			// fmt.Print("\033[H\033[2J")
-
-			for id, position := range positions {
-				fmt.Printf("Slider %d position: %d\n", id, position)
 			}
 
 			// Write positions to file
@@ -80,22 +72,22 @@ func (c *core) Run() {
 				return
 			}
 
-			// // Consume up to 10 events and print them
-			// for i := 0; i < 10; i++ {
-			// 	event := c.eventReceiver.ConsumeEvent()
-			// 	if event == nil {
-			// 		break
-			// 	}
-			// 	fmt.Printf("Event: %+v\n", event)
-			// }
+			// Print only on every 60th iteration
+			if i == 60 {
+				i = 0
 
-			// Print expected motor positions
-			for _, slider := range c.sliders {
-				expectedPosition, ok := c.expectedPositionProvider.GetExpectedPosition(slider.GetId())
-				if !ok {
-					fmt.Printf("Expected position for motor %d not found\n", slider.GetId())
-				} else {
-					fmt.Printf("Expected position for motor %d: %d\n", slider.GetId(), expectedPosition)
+				for id, position := range positions {
+					fmt.Printf("Slider %d position: %d\n", id, position)
+				}
+
+				// Print expected motor positions
+				for _, slider := range c.sliders {
+					expectedPosition, ok := c.expectedPositionProvider.GetExpectedPosition(slider.GetId())
+					if !ok {
+						fmt.Printf("Expected position for motor %d not found\n", slider.GetId())
+					} else {
+						fmt.Printf("Expected position for motor %d: %d\n", slider.GetId(), expectedPosition)
+					}
 				}
 			}
 
@@ -113,7 +105,7 @@ func (c *core) Run() {
 			}
 
 			// Sleep for 16ms
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(16 * time.Millisecond)
 		}
 	}
 }
