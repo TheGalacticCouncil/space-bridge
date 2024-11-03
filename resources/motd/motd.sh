@@ -25,6 +25,8 @@ elif [ "$STATION" == "engineer-b" ]; then
     "$RESOURCE_PATH"/texts/echo_engineer_b.sh
 elif [ "$STATION" == "weapons" ]; then
     "$RESOURCE_PATH"/texts/echo_weapons.sh
+elif [ "$STATION" == "dev" ]; then
+    "$RESOURCE_PATH"/texts/echo_dev.sh
 elif [ "$STATION" == "" ]; then
     echo ""
 else

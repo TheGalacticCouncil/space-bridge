@@ -17,9 +17,16 @@ echo "Setting up MOTD for <$STATION>"
 
 # Copy scripts to HOME
 cp -r ../motd ~/
-# Setup an enviromen variable
-echo "export STATION='$STATION'" >> ~/.bashrc
-# Setup motd.sh to run at login
-echo "~/motd/motd.sh" >> ~/.bashrc
+
+STATION_SETUP="$(cat ~/.bashrc | grep 'export STATION=')"
+
+if [ "$STATION_SETUP" == "" ]; then
+    # Setup an enviromen variable
+    echo "export STATION='$STATION'" >> ~/.bashrc
+    # Setup motd.sh to run at login
+    echo "~/motd/motd.sh" >> ~/.bashrc
+else
+    echo "Variable already set. Updating scripts"
+fi
 
 echo "done"
