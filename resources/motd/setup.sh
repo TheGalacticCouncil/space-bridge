@@ -18,6 +18,7 @@ echo "Setting up MOTD for <$STATION>"
 # Copy scripts to HOME
 cp -r ../motd ~/
 
+# CHecks if .bashrc has been updated
 STATION_SETUP="$(cat ~/.bashrc | grep 'export STATION=')"
 
 if [ "$STATION_SETUP" == "" ]; then
