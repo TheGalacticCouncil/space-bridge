@@ -1,8 +1,8 @@
 package main
 
 import (
+	"HwDriver2/hwdriver2/internal/core"
 	"fmt"
-	"hwdriver2/internal/core"
 	"os"
 	"os/signal"
 	"syscall"

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature/*
   pull_request:
     branches:
       - master
@@ -27,14 +28,14 @@ jobs:
         GOOS: linux
         GOARCH: arm
         GOARM: 6
-      run: go build -v -o hwdriver2-rpi-zero1 cmd/hwdriver2/main.go
+      run: cd HwDriver2; go build -v -o hwdriver2-rpi-zero1 cmd/hwdriver2/main.go
 
     - name: Build for Raspberry Pi Zero 2
       env:
         GOOS: linux
         GOARCH: arm
         GOARM: 7
-      run: go build -v -o hwdriver2-rpi-zero2 cmd/hwdriver2/main.go
+      run: cd HwDriver2; go build -v -o hwdriver2-rpi-zero2 cmd/hwdriver2/main.go
 
     # Enable this step once there are some tests written...
     # - name: Run tests

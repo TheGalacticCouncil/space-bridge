@@ -2,7 +2,8 @@ package hw
 
 import (
 	"errors"
-	"hwdriver2/pkg/pigpio"
+
+	"HwDriver2/hwdriver2/pkg/pigpio"
 )
 
 type HwAccess interface {
