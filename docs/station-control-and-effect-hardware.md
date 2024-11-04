@@ -3,7 +3,7 @@
 BUTTON (Returns to original state after pressing. Original state = circuit is open.)  
 RETRACTIVE SWITCH (Returns to original state after turning. Original state = circuit is open.)  
 TOGGLE SWITCH (Remains at set state after turning.)  
-FADER (Wiring: motor A black, motor B red, servo track 1 orange, servo track 2 grey, servo track 3 yellow, touch sense track blue)    
+FADER (Wiring: motor A black, motor B red, servo track 1 orange, servo track 2 grey, servo track 3 blue, touch sense track yellow)    
 ROTARY ENCODER 20p  
 OPTIC ROTARY ENCODER 400p  
 DIGITAL LED STRIP (GND/DATA/+5V Numbers indicate which leds are used for specific effect.)  
