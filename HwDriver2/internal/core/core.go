@@ -68,22 +68,15 @@ func (c *core) Run() {
 			return
 
 		default:
-			positions := make(map[int]int)
-			for i, slider := range c.sliders {
-				position := slider.GetLatestPosition()
-				positions[i] = position
-			}
-
-			// Write positions to file
-			err := c.fileApiWriter.WritePositionsToFile()
-			if err != nil {
-				fmt.Println("Error writing positions to file: ", err)
-				return
-			}
-
 			// Print only on every 60th iteration
 			if i == 60 {
 				i = 0
+
+				positions := make(map[int]int)
+				for i, slider := range c.sliders {
+					position := slider.GetLatestPosition()
+					positions[i] = position
+				}
 
 				for id, position := range positions {
 					fmt.Printf("Slider %d position: %d\n", id, position)
@@ -111,6 +104,13 @@ func (c *core) Run() {
 					fmt.Println("Error driving motor: ", err)
 					return
 				}
+			}
+
+			// Write positions to file
+			err := c.fileApiWriter.WritePositionsToFile()
+			if err != nil {
+				fmt.Println("Error writing positions to file: ", err)
+				return
 			}
 
 			time.Sleep(c.loopSleepTime)
@@ -173,6 +173,7 @@ func (c *core) initializeMotors() error {
 		AccuracyPromille:       config.Config.AccuracyPromille,
 		MinTimeFromLastTouchMs: config.Config.MinTimeFromLastTouchMs,
 		TouchSenseThreshold:    config.Config.TouchSenseThreshold,
+		CalibrationRunTimeMs:   config.Config.CalibrationRunTimeMs,
 	}
 
 	for i, sliderConfig := range config.Sliders {

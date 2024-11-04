@@ -60,7 +60,7 @@
             "type": "shell",
             "command": "sleep",
             "args": [
-                "5"
+                "7"
             ],
             "problemMatcher": [],
             "dependsOn": [

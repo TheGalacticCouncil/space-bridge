@@ -7,7 +7,7 @@ import (
 )
 
 type PositionProvider interface {
-	ReadPosition() (int, error)
+	GetLatestPosition() int
 	ReadTouchRaw() (int, error)
 	ReadTouchPosition() (int, error)
 }
@@ -52,17 +52,18 @@ func (o *OutputFileApiWriter) WritePositionsToFile() error {
 	if _, err := o.fhandletouch.Seek(0, 0); err != nil {
 		return fmt.Errorf("failed to seek file: %w", err)
 	}
+	if _, err := o.fhandletouchpos.Seek(0, 0); err != nil {
+		return fmt.Errorf("failed to seek file: %w", err)
+	}
 	w := bufio.NewWriter(o.fhandlepos)
 	wt := bufio.NewWriter(o.fhandletouch)
+	wtp := bufio.NewWriter(o.fhandletouchpos)
 
 	for _, provider := range o.PositionProviders {
 		// Handle position
-		position, err := provider.ReadPosition()
-		if err != nil {
-			return fmt.Errorf("failed to read position: %w", err)
-		}
+		position := provider.GetLatestPosition()
 
-		_, err = fmt.Fprintf(w, "%04d\n", position)
+		_, err := fmt.Fprintf(w, "%04d\n", position)
 		if err != nil {
 			return fmt.Errorf("failed to write to file: %w", err)
 		}
@@ -86,6 +87,22 @@ func (o *OutputFileApiWriter) WritePositionsToFile() error {
 		err = wt.Flush()
 		if err != nil {
 			return fmt.Errorf("failed to flush touch file: %w", err)
+		}
+
+		// Handle touch position
+		touchPosValue, err := provider.ReadTouchPosition()
+		if err != nil {
+			return fmt.Errorf("failed to read touchpos value: %w", err)
+		}
+
+		_, err = fmt.Fprintf(wtp, "%04d\n", touchPosValue)
+		if err != nil {
+			return fmt.Errorf("failed to write to touchpos file: %w", err)
+		}
+
+		err = wtp.Flush()
+		if err != nil {
+			return fmt.Errorf("failed to flush touchpos file: %w", err)
 		}
 	}
 

@@ -24,6 +24,7 @@ type MotorizedSlidersConfig struct {
 		AccuracyPromille       int `yaml:"accuracyPromille"`
 		MinTimeFromLastTouchMs int `yaml:"minTimeFromLastTouchMs"`
 		TouchSenseThreshold    int `yaml:"touchSenseThreshold"`
+		CalibrationRunTimeMs   int `yaml:"calibrationRunTimeMs"`
 	} `yaml:"config"`
 	Sliders []struct {
 		ID    int `yaml:"id"`

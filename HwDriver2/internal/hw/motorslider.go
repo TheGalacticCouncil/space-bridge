@@ -30,6 +30,7 @@ type MotorSliderGenericConfig struct {
 	AccuracyPromille       int
 	MinTimeFromLastTouchMs int
 	TouchSenseThreshold    int
+	CalibrationRunTimeMs   int
 }
 
 type MotorSlider struct {
@@ -288,7 +289,7 @@ func (m *MotorSlider) Calibrate() error {
 	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin2, m.Config.MotorMaxPwm); err != nil {
 		return err
 	}
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Millisecond * time.Duration(m.Config.CalibrationRunTimeMs))
 	if _, err := m.Hw.GetPigpio().SetPwmDutyCycle(m.MotorPin2, 0); err != nil {
 		return err
 	}

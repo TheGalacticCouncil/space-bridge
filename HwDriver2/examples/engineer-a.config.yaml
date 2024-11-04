@@ -14,11 +14,12 @@ fileApi:
 motorizedSliders:
   config:
     motorMaxPwm: 255
-    motorMinPwm: 255
+    motorMinPwm: 170
     motorLoopIterationsMax: 1000
     accuracyPromille: 30
     minTimeFromLastTouchMs: 500
     touchSenseThreshold: 800
+    calibrationRunTimeMs: 1200
   sliders:
     - id: 1
       motor:

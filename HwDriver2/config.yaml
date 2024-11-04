@@ -55,6 +55,9 @@ motorizedSliders:
     # touchSenseThreshold is the threshold value for the touch sensor to be considered touched
     # Range of the touch sensor is 0-1023. If the touch sensor is too sensitive, this value should be increased.
     touchSenseThreshold: 800
+    # calibrationRunTimeMs is the time in milliseconds that each motor is driven to both directions during calibration
+    # Time should be enough to allow full slider movement to happen to ensure proper calibration.
+    calibrationRunTimeMs: 2200
   # sliders is a list of motorized sliders connected to the system
   sliders:
     # Example configuration for a single slider
