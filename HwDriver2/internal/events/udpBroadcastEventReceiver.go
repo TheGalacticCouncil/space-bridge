@@ -11,7 +11,7 @@ type SpaceBridgeEventPayload struct {
 }
 
 type SpaceBridgeEvent struct {
-	Timestamp       int                     `json:"timestamp"`
+	Timestamp       int64                   `json:"timestamp"`
 	SourceComponent string                  `json:"sourceComponent"`
 	SourceIp        string                  `json:"sourceIp"`
 	Event           string                  `json:"event"`
