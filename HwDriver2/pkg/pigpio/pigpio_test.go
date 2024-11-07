@@ -20,12 +20,12 @@ func ListenAndReply(t *testing.T, listener net.Listener, done chan struct{}, exp
 
 	for i := 0; i < len(expectedReadData); i++ {
 		// Read the incoming data (16 bytes) and log
-		readData := make([]byte, 16)
+		readData := make([]byte, len(expectedReadData[i]))
 		n, err := conn.Read(readData)
 
 		require.NoError(t, err)
 
-		assert.Equal(t, 16, n)
+		assert.Equal(t, len(expectedReadData[i]), n)
 		assert.Equal(t, expectedReadData[i], readData)
 
 		// Send the response
@@ -417,6 +417,144 @@ func TestGetPwmDutyCycle(t *testing.T) {
 	if assert.Error(t, err) {
 		assert.Equal(t, ErrInvalidUserPinNumber, err)
 	}
+
+	p.Close()
+
+	<-done
+}
+
+func TestSpiOpen(t *testing.T) {
+	// Mock the pigpio server
+	listener, err := net.Listen("tcp", "localhost:8888")
+	require.NoError(t, err)
+
+	expectedData := [][]byte{
+		// TC 1
+		{
+			0x47, 0x00, 0x00, 0x00, // Write command
+			0x01, 0x00, 0x00, 0x00, // Pin number
+			0x40, 0x42, 0x0f, 0x00, // Value 1
+			0x01, 0x00, 0x00, 0x00,
+		},
+	}
+	responseData := [][]byte{
+		// TC 1
+		{
+			0x47, 0x00, 0x00, 0x00,
+			0x01, 0x00, 0x00, 0x00,
+			0x40, 0x42, 0x0f, 0x00,
+			0x01, 0x00, 0x00, 0x00,
+		},
+	}
+	done := make(chan struct{})
+	go ListenAndReply(t, listener, done, expectedData, responseData)
+
+	p := NewPigpio()
+	assert.NotNil(t, p)
+
+	// TC 1: Succesfully open SPI on channel 1
+	value, err := p.SpiOpen(1, 1000000, []byte{0x00})
+	assert.NoError(t, err)
+	assert.Equal(t, 1, value)
+
+	// TODO: Implement TCs for different failure cases
+	// See: https://abyz.me.uk/rpi/pigpio/cif.html#spiOpen
+
+	p.Close()
+
+	<-done
+}
+
+func TestSpiClose(t *testing.T) {
+	// Mock the pigpio server
+	listener, err := net.Listen("tcp", "localhost:8888")
+	require.NoError(t, err)
+
+	expectedData := [][]byte{
+		// TC 1
+		{
+			0x48, 0x00, 0x00, 0x00, // Write command
+			0x01, 0x00, 0x00, 0x00, // Pin number
+			0x00, 0x00, 0x00, 0x00, // Value 1
+			0x00, 0x00, 0x00, 0x00,
+		},
+	}
+	responseData := [][]byte{
+		// TC 1
+		{
+			0x47, 0x00, 0x00, 0x00,
+			0x01, 0x00, 0x00, 0x00,
+			0x40, 0x42, 0x0f, 0x00,
+			0x01, 0x00, 0x00, 0x00,
+		},
+	}
+	done := make(chan struct{})
+	go ListenAndReply(t, listener, done, expectedData, responseData)
+
+	p := NewPigpio()
+	assert.NotNil(t, p)
+
+	// TC 1: Succesfully close spi handle 1
+	value, err := p.SpiClose(1)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, value)
+
+	// TODO: Implement TCs for different failure cases
+	// See: https://abyz.me.uk/rpi/pigpio/cif.html#spiClose
+
+	p.Close()
+
+	<-done
+}
+
+func TestSpiXfer(t *testing.T) {
+	// Mock the pigpio server
+	listener, err := net.Listen("tcp", "localhost:8888")
+	require.NoError(t, err)
+
+	expectedData := [][]byte{
+		// TC 1
+		{
+			0x4b, 0x00, 0x00, 0x00, // Write command
+			0x01, 0x00, 0x00, 0x00, // Pin number
+			0x00, 0x00, 0x00, 0x00, // Value 1
+			0x10, 0x00, 0x00, 0x00,
+			// Same as data given in SPI Xfer
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+		},
+	}
+	responseData := [][]byte{
+		// TC 1
+		{
+			0x4b, 0x00, 0x00, 0x00,
+			0x01, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0x10, 0x00, 0x00, 0x00,
+			// 16 bits of something
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+		},
+	}
+	done := make(chan struct{})
+	go ListenAndReply(t, listener, done, expectedData, responseData)
+
+	p := NewPigpio()
+	assert.NotNil(t, p)
+
+	// TC 1: Succesfully transmit 16 bytes with handle 1
+	bytesCount, data, err := p.SpiXfer(1, []byte{
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00,
+	})
+	assert.NoError(t, err)
+	assert.Equal(t, len(data), bytesCount)
 
 	p.Close()
 
