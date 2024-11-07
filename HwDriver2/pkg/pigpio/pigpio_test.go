@@ -357,3 +357,68 @@ func TestSetPwmDutyCycle(t *testing.T) {
 
 	<-done
 }
+
+func TestGetPwmDutyCycle(t *testing.T) {
+	// Mock the pigpio server
+	listener, err := net.Listen("tcp", "localhost:8888")
+	require.NoError(t, err)
+
+	expectedData := [][]byte{
+		// TC 1
+		{
+			0x53, 0x00, 0x00, 0x00, // Write command
+			0x02, 0x00, 0x00, 0x00, // Pin number
+			0x00, 0x00, 0x00, 0x00, // Value 1
+			0x00, 0x00, 0x00, 0x00,
+		},
+		// TC 2
+		{
+			0x53, 0x00, 0x00, 0x00, // Write command
+			0x04, 0x00, 0x00, 0x00, // Pin number
+			0x00, 0x00, 0x00, 0x00, // Value 1
+			0x00, 0x00, 0x00, 0x00,
+		},
+	}
+	responseData := [][]byte{
+		// TC 1
+		{
+			0x53, 0x00, 0x00, 0x00,
+			0x02, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00,
+			0xFF, 0x00, 0x00, 0x00,
+		},
+		// TC 2
+		{
+			0x53, 0x00, 0x00, 0x00,
+			0x04, 0x00, 0x00, 0x00,
+			0x2c, 0x00, 0x00, 0x00,
+			0xA4, 0xFF, 0xFF, 0xFF,
+		},
+	}
+	done := make(chan struct{})
+	go ListenAndReply(t, listener, done, expectedData, responseData)
+
+	p := NewPigpio()
+	assert.NotNil(t, p)
+
+	// TC 1: Succesfully get PWM dc on pin 2
+	value, err := p.GetPwmDutyCycle(2)
+	assert.NoError(t, err)
+	assert.Equal(t, 255, value)
+
+	// TC 2: Unsuccesfully Get PWM on pin 4
+	_, err = p.GetPwmDutyCycle(4)
+	if assert.Error(t, err) {
+		assert.Equal(t, ErrNotPwmGpio, err)
+	}
+
+	// TC 3: Unsuccesfully get dc on pin -42
+	_, err = p.GetPwmDutyCycle(-42)
+	if assert.Error(t, err) {
+		assert.Equal(t, ErrInvalidUserPinNumber, err)
+	}
+
+	p.Close()
+
+	<-done
+}

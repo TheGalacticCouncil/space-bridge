@@ -453,12 +453,14 @@ var (
 	ErrBadGpioLevel         = errors.New(PigpioErrorStrings[PI_BAD_LEVEL])
 	ErrNegativePwmFrequency = errors.New("pwm frequency must be positive")
 	ErrBadPwmDutyCycle      = errors.New(PigpioErrorStrings[PI_BAD_DUTYCYCLE])
+	ErrNotPwmGpio           = errors.New(PigpioErrorStrings[PI_NOT_PWM_GPIO])
 )
 
 var ErrorCodeToError = map[int]error{
-	-1: ErrInvalidPinNumber,
-	-5: ErrBadGpioLevel,
-	-8: ErrBadPwmDutyCycle,
+	-1:  ErrInvalidPinNumber,
+	-5:  ErrBadGpioLevel,
+	-8:  ErrBadPwmDutyCycle,
+	-92: ErrNotPwmGpio,
 }
 
 type PigpiodCmdMessage struct {
@@ -569,6 +571,11 @@ func (p *Pigpio) SetPwmDutyCycle(pin int, dutyCycle int) (int, error) {
 }
 
 func (p *Pigpio) GetPwmDutyCycle(pin int) (int, error) {
+	// Check if pin is within valid range (physical pins only)
+	if pin < 0 || pin > 31 {
+		return 0, ErrInvalidUserPinNumber
+	}
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
