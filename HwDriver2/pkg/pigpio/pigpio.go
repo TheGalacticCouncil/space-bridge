@@ -448,8 +448,18 @@ var PigpioErrorStrings = PigpioErrorStringMap{
 }
 
 var (
-	ErrInvalidPinNumber = errors.New("Invalid pin number")
+	ErrInvalidPinNumber     = errors.New(PigpioErrorStrings[PI_BAD_GPIO])
+	ErrInvalidUserPinNumber = errors.New(PigpioErrorStrings[PI_BAD_USER_GPIO])
+	ErrBadGpioLevel         = errors.New(PigpioErrorStrings[PI_BAD_LEVEL])
+	ErrNegativePwmFrequency = errors.New("pwm frequency must be positive")
+	ErrBadPwmDutyCycle      = errors.New(PigpioErrorStrings[PI_BAD_DUTYCYCLE])
 )
+
+var ErrorCodeToError = map[int]error{
+	-1: ErrInvalidPinNumber,
+	-5: ErrBadGpioLevel,
+	-8: ErrBadPwmDutyCycle,
+}
 
 type PigpiodCmdMessage struct {
 	Command uint32
@@ -526,6 +536,16 @@ func (p *Pigpio) Write(pin int, value int) (int, error) {
 // may be 1, 2, 4, 5, 8, or 10 microseconds (default 5).  The
 // sample rate is set when the pigpio daemon is started. See online documentation for more information.
 func (p *Pigpio) SetPwmFrequency(pin int, frequency int) (int, error) {
+	// Check if the pin is within the valid range
+	if pin < 0 || pin > 31 {
+		return 0, ErrInvalidUserPinNumber
+	}
+
+	// Check that the PWM frequency is positive (TODO: change the API to use unsigned data type)
+	if frequency < 0 {
+		return 0, ErrNegativePwmFrequency
+	}
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -535,6 +555,11 @@ func (p *Pigpio) SetPwmFrequency(pin int, frequency int) (int, error) {
 }
 
 func (p *Pigpio) SetPwmDutyCycle(pin int, dutyCycle int) (int, error) {
+	// Check if pin is within valid range (physical pins only)
+	if pin < 0 || pin > 31 {
+		return 0, ErrInvalidUserPinNumber
+	}
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -687,6 +712,11 @@ func CheckPigpiodError(value int) (int, error) {
 		errorString, ok := PigpioErrorStrings[PigpioError(value)]
 		if !ok {
 			return 0, fmt.Errorf("pigpiod command failed with unknown error code %d", value)
+		}
+
+		// Try to use typed error
+		if err, ok := ErrorCodeToError[value]; ok {
+			return value, err
 		}
 
 		return value, fmt.Errorf("pigpiod command failed with error: %s", errorString)
