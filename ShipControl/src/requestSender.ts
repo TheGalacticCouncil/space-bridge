@@ -25,9 +25,10 @@ export class RequestSender {
       const request: IRequest | undefined = this.requestQueue.shift();
       if (request !== undefined) {
         try {
-          await this.send(request);
+          this.send(request); // TODO: handle return value properly, but don't block queue processing!
         } catch (error) {
           console.log("error");
+          console.log(error);
         }
       }
     }
@@ -52,6 +53,7 @@ export class RequestSender {
           });
       } catch (error) {
         console.log("error");
+        console.log(error);
       }
 
     } else {
@@ -63,6 +65,7 @@ export class RequestSender {
           });
       } catch (error) {
         console.log("error");
+        console.log(error);
       }
     }
 

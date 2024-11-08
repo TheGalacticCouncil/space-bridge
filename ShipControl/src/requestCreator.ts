@@ -225,7 +225,7 @@ export const setAimLock = (enabled: boolean): IGetRequest => ({
 
 export const setAimAngle = (angle: number): IGetRequest => ({
   method: GET,
-  path: `set.lua?commandSetAimAngle(${angle})`
+  path: `set.lua?commandSetAimAngle(${angle/10})` // convert input value to the scale expected by EE
 });
 
 export const startRepair = (): IGetRequest => ({
