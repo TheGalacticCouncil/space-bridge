@@ -890,7 +890,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     },
@@ -901,7 +901,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     },
@@ -912,7 +912,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     },
@@ -923,7 +923,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     },
@@ -934,7 +934,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     },
@@ -945,7 +945,7 @@
                 "name": "value",
                 "datatype": "int",
                 "min": 0,
-                "max": 100
+                "max": 1000
             }
         ]
     }
