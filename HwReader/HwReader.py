@@ -142,5 +142,5 @@ except KeyboardInterrupt:
 inputThread.join(0.01)
 eventThread.join(0.01)
 listener.join(0.01)
-
 logger.info("Exited")
+exit()

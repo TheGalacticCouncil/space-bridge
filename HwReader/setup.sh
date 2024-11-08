@@ -7,19 +7,23 @@ yellow=$(echo -e "\033[1;36m")
 green=$(echo -e "\033[1;32m")
 red=$(echo -e "\033[1;31m")
 
+echo ""
 echo -e "${yellow}Installing Python 3${no_color}"
 sudo apt-get update
 sudo apt-get install python3
 sudo apt-get install python3-pip
 
+echo ""
 echo -e "${yellow}Update CA-certificates${no_color}"
 apt-get install -y --reinstall ca-certificates
 
+echo ""
 echo -e "${yellow}Installing libraries${no_color}"
 pip3 install -r requirements.txt  --break-system-packages
 
+echo ""
 echo "================="
-echo -e "${green}\nInstall complete!${no_color}"
+echo -e "${green}Install complete!${no_color}"
 echo "================="
 echo -e "\nYou can run Hwreader by running run.sh"
 

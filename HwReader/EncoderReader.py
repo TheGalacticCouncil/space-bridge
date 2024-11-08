@@ -9,13 +9,14 @@ name.read([counter])
 """
 
 from mcp23017 import GPIO
+from gpiozero import RotaryEncoder
 
 class EncoderInput():
     """
     An object to read an encoder input.
     """
 
-    def __init__(self, clk, dt, name='', minimum=None, maximum=None, step=1):
+    def __init__(self, clk, dt, name='', minimum=0, maximum=0, step=1, wrap=False):
 
         self.name = name
         self.clockPin = clk
@@ -23,20 +24,28 @@ class EncoderInput():
 
         self.maximum = maximum
         self.minimum = minimum                       # If min and max are equal
-        self.min_max_enabled = (minimum != maximum)  # disable limits
+        self.min_max_enabled = (maximum != minimum)  # disable limits
+        self.max_range_per_side = 0
         self.step = step
+        self.wrap = wrap
 
-        #self.counter = 0
-        self.substep = 0
+        self.value = 0
+
+        # Setup gpiozero Encoder Object
+        if self.min_max_enabled:
+            max_range = self.maximum - self.minimum
+            self.max_range_per_side = int( (max_range) / 2 / abs(self.step) )
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.clockPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self.dtPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self.encoder = RotaryEncoder(
+            self.clockPin,
+            self.dtPin,
+            max_steps=self.max_range_per_side,
+            wrap=self.wrap,
+            bounce_time=None
+            )
 
-        self.previousClockState = GPIO.input(self.clockPin)
-
-
-    def read(self, counter=0):
+    def read(self):
         '''
         Reads the encoder state and increments
         the counter accordingly.
@@ -45,70 +54,46 @@ class EncoderInput():
         advanced features.
         '''
 
-        clockState = GPIO.input(self.clockPin)
-        dtState = GPIO.input(self.dtPin)
+        raw_value = self.encoder.steps
 
-        if clockState != self.previousClockState:
-            if dtState != clockState and dtState == 1:
-                counter += 1                                # if dt state is 1, it is added
-            elif dtState == clockState and dtState == 1:
-                counter -= 1                                # if dt state is 1, it is subtracted
-            # else:                                         # Default action for else is "nothing" anyway.
-            #     pass                                      # No need to write it
-
-        self.previousClockState = clockState
-
-        return counter
+        return raw_value
 
 
-    def rescale(self, counter, delta):
+    def rescale(self, raw_value):
         '''Re-scales an input to requirement'''
 
         changed = True
 
         # NORMAL OPERATION
+        #
+        if self.step == 1:
+            value = raw_value
+
         # SENSITIVITY INCREASED
         #
-        if self.step >= 0:
-            counter += delta * self.step
+        elif abs(self.step) >= 1:
+            value = raw_value * self.step
 
         # SENSITIVITY IS DECREASED
         # "substeps" are used
         #
-        elif self.step < 0:
-            # INCREMENT SUBSTEP
-            self.substep += delta
-
-            # IF FULL (+) STEP IS REACHED,
-            # substeps is reset and
-            # delta is passed on
-            if self.substep == -(self.step):
-                self.substep = 0
-
-            # IF FULL (-) STEP IS REACHED,
-            # substeps is reset and
-            # delta is passed on
-            elif self.substep == self.step:
-                self.substep = 0
-
-            else:
-                # if substeps are less, delta is reset
-                # and substeps keep building up
-                delta = 0
+        else:
+            value = int(raw_value/self.step)
+            if value == self.value:
                 changed = False
 
-            counter += delta
+        return value, changed
 
-        if self.min_max_enabled:
-            if counter > self.maximum:
-                counter = self.maximum
-            elif counter < self.minimum:
-                counter = self.minimum
+    def offset(self, value):
+        """
+        Adjust offset to align with wanted output range min/max
+        """
+        if not self.min_max_enabled:
+            return value
+        value += self.maximum - self.max_range_per_side * abs(self.step)
+        return value
 
-        return counter, changed
-
-
-    def increment(self, counter=None):
+    def increment(self, value=None):
         """
         - Reads the encoder,
         - increments the counter,
@@ -128,16 +113,17 @@ class EncoderInput():
 
         changed=False
 
-        delta = EncoderInput.read(self)
+        raw_value = EncoderInput.read(self)
 
         # If input has changed
-        if abs(delta) > 0:
-            counter, changed = EncoderInput.rescale(self, counter, delta)
+        if raw_value != self.value:
+            value, changed = EncoderInput.rescale(self, raw_value)
+            if changed:
+                self.value = raw_value
+                value = self.offset(value)
 
-            #self.counter = counter
-            return counter, changed, self.name
-        else:
-            return counter, changed, self.name
+
+        return value, changed, self.name
 
 
 # Module can be run directly to test its function
