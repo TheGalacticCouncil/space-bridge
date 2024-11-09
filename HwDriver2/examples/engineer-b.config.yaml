@@ -1,0 +1,132 @@
+generic:
+  mainLoopSleepTimeMs: 16
+
+events:
+  broadcastPort: 41114
+  broadcastListenAddress: "0.0.0.0"
+  eventReceiverBufferSize: 100
+
+fileApi:
+  positionsFilePath: "positions.txt"
+  touchFilePath: "touch.txt"
+  touchPositionsFilePath: "touchpos.txt"
+
+motorizedSliders:
+  config:
+    motorMaxPwm: 255
+    motorMinPwm: 170
+    motorLoopIterationsMax: 1000
+    accuracyPromille: 30
+    minTimeFromLastTouchMs: 500
+    touchSenseThreshold: 800
+    calibrationRunTimeMs: 1200
+  sliders:
+    - id: 9
+      motor:
+        pin1: 12
+        pin2: 7
+        enablePin: 23
+      positionSensor:
+        adcChannel: 0
+        spiChannel: 1
+      touchSensor:
+        adcChannel: 1
+        spiChannel: 1
+    - id: 10
+      motor:
+        pin1: 26
+        pin2: 13
+        enablePin: 23
+      positionSensor:
+        adcChannel: 2
+        spiChannel: 1
+      touchSensor:
+        adcChannel: 3
+        spiChannel: 1
+    - id: 11
+      motor:
+        pin1: 25
+        pin2: 8
+      positionSensor:
+        adcChannel: 4
+        spiChannel: 1
+      touchSensor:
+        adcChannel: 5
+        spiChannel: 1
+    - id: 12
+      motor:
+        pin1: 6
+        pin2: 5
+        enablePin: 23
+      positionSensor:
+        adcChannel: 6
+        spiChannel: 1
+      touchSensor:
+        adcChannel: 7
+        spiChannel: 1
+    - id: 13
+      motor:
+        pin1: 15
+        pin2: 24
+        enablePin: 23
+      positionSensor:
+        adcChannel: 0
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 1
+        spiChannel: 0
+    - id: 14
+      motor:
+        pin1: 0
+        pin2: 11
+        enablePin: 23
+      positionSensor:
+        adcChannel: 2
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 3
+        spiChannel: 0
+    - id: 15
+      motor:
+        pin1: 14
+        pin2: 2
+        enablePin: 23
+      positionSensor:
+        adcChannel: 4
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 5
+        spiChannel: 0
+    - id: 16
+      motor:
+        pin1: 9
+        pin2: 10
+        enablePin: 23
+      positionSensor:
+        adcChannel: 6
+        spiChannel: 0
+      touchSensor:
+        adcChannel: 7
+        spiChannel: 0
+    - id: 17
+      motor:
+        pin1: 3
+        pin2: 4
+        enablePin: 23
+      positionSensor:
+        adcChannel: 0
+        spiChannel: 2
+      touchSensor:
+        adcChannel: 1
+        spiChannel: 2
+    - id: 18
+      motor:
+        pin1: 27
+        pin2: 22
+        enablePin: 23
+      positionSensor:
+        adcChannel: 2
+        spiChannel: 2
+      touchSensor:
+        adcChannel: 3
+        spiChannel: 2
