@@ -63,10 +63,12 @@ eventConfig = EventConfig()
 # Loads the input configuration class.
 # It stores input configuration and other
 # settings and can be accessed with fuctions.
-inputConfig = InputConfig()
+inputConfig = InputConfig(eventConfig)
 
 # Loads input configuration from file
-cycleTime = InputConfig.loadConfig(inputConfig, eventConfig)
+#cycleTime = InputConfig.loadConfig(inputConfig, eventConfig)
+cycleTime = inputConfig.cycleTime
+
 eventSleep = 0.5
 station = inputConfig.station
 

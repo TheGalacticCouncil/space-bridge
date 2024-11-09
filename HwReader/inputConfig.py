@@ -19,10 +19,10 @@ class ConfigurationError(Exception):
 
 class InputConfig():
 
-    def __init__(self):
+    def __init__(self, eventConfig):
         self.logger = Logger(__name__)
         try:
-            self._settings = self.readConfig()
+            self._settings = self.__readConfig()
         except:
             self.logger.critical("Encountered a critical error while reading config.")
             raise
@@ -33,6 +33,7 @@ class InputConfig():
         self.station = ""
         self.udp_ip = '192.168.10.255'
         self.udp_port = 41114
+        self.cycleTime = self.__loadConfig(eventConfig)
 
     def settings(self):
         '''Returns the full input settings dict'''
@@ -53,7 +54,7 @@ class InputConfig():
         return self._settings[name]
 
 
-    def readConfig(self):
+    def __readConfig(self):
         """
         Reads the config file and returns the dict of
         all settings.
@@ -73,7 +74,7 @@ class InputConfig():
         return settings
 
 
-    def loadConfig(self, eventConfig):
+    def __loadConfig(self, eventConfig):
         '''
         Extracts from the config file and event.json,
         the required settings for configuring the

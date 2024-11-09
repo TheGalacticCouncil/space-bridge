@@ -134,7 +134,7 @@ class EventMaker(threading.Thread):
 
         udpSender = UdpSender(udpIP, udpPort)
 
-        settings = InputConfig.settings(self.inputConfig)
+        settings = self.inputConfig.settings()
 
         try:
             # Main Loop
@@ -143,11 +143,11 @@ class EventMaker(threading.Thread):
                 start_time = time.time()
 
                 # Gets a new input message from queue
-                item = self.inputQueue.get()
-                ##print(" >>>", item[0], item[1])
+                item_name, item_value = self.inputQueue.get()
+                ##print(" >>>", item_name, item_value)
 
                 # A new event is created
-                event = EventMaker.event(self, item[0], item[1], settings)
+                event = EventMaker.event(self, item_name, item_value, settings)
 
                 # Prints a pretty json formatted event
                 #print(json.dumps(event, sort_keys=False, indent=4))
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     eventTypes = eventConfig.EventConfig()
     inputConfig = InputConfig()
     eventmaker = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
-    settings = InputConfig.settings(eventmaker.inputConfig)
+    settings = InputConfig.__settings(eventmaker.inputConfig)
     #print(event.event("ButtonTest", 1))
     #event = EventMaker.event(event, "LOAD_TUBE", 1)
     #event = EventMaker(0.5, inQ, eQ, eventTypes, inputConfig, 'self test station')
