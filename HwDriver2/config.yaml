@@ -72,6 +72,9 @@ motorizedSliders:
     #     pin2: 11
     #     # enablePin is the GPIO pin number of the motor enable pin (see https://pinout.xyz/)
     #     enablePin: 23
+    #     # motorEnabledAfterCalibration control wheter motor should be enabled after calibration or not
+    #     # Most of the time, this should be left at true. Adjusting this may be useful for hardware debugging.
+    #     motorEnabledAfterCalibration: true
     #   # positionSensor configuration holds parameters related to the position sensor of the slider
     #   positionSensor:
     #     # adcChannel is the ADC channel number of the position sensor
@@ -91,6 +94,7 @@ motorizedSliders:
         pin1: 10
         pin2: 11
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 0
         spiChannel: 0
@@ -102,6 +106,7 @@ motorizedSliders:
         pin1: 9
         pin2: 26
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 1
         spiChannel: 0

@@ -29,9 +29,10 @@ type MotorizedSlidersConfig struct {
 	Sliders []struct {
 		ID    int `yaml:"id"`
 		Motor struct {
-			Pin1      int `yaml:"pin1"`
-			Pin2      int `yaml:"pin2"`
-			EnablePin int `yaml:"enablePin"`
+			Pin1                         int  `yaml:"pin1"`
+			Pin2                         int  `yaml:"pin2"`
+			EnablePin                    int  `yaml:"enablePin"`
+			MotorEnabledAfterCalibration bool `yaml:"motorEnabledAfterCalibration"`
 		} `yaml:"motor"`
 		PositionSensor struct {
 			AdcChannel int `yaml:"adcChannel"`

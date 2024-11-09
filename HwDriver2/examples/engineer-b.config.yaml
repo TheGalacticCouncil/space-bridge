@@ -26,6 +26,7 @@ motorizedSliders:
         pin1: 12
         pin2: 7
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 0
         spiChannel: 1
@@ -37,6 +38,7 @@ motorizedSliders:
         pin1: 26
         pin2: 13
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 2
         spiChannel: 1
@@ -47,6 +49,8 @@ motorizedSliders:
       motor:
         pin1: 25
         pin2: 8
+        enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 4
         spiChannel: 1
@@ -58,6 +62,7 @@ motorizedSliders:
         pin1: 6
         pin2: 5
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 6
         spiChannel: 1
@@ -69,6 +74,7 @@ motorizedSliders:
         pin1: 15
         pin2: 24
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 0
         spiChannel: 0
@@ -80,6 +86,7 @@ motorizedSliders:
         pin1: 0
         pin2: 11
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 2
         spiChannel: 0
@@ -91,6 +98,7 @@ motorizedSliders:
         pin1: 14
         pin2: 2
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 4
         spiChannel: 0
@@ -102,6 +110,7 @@ motorizedSliders:
         pin1: 9
         pin2: 10
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 6
         spiChannel: 0
@@ -113,6 +122,7 @@ motorizedSliders:
         pin1: 3
         pin2: 4
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 0
         spiChannel: 2
@@ -124,6 +134,7 @@ motorizedSliders:
         pin1: 27
         pin2: 22
         enablePin: 23
+        motorEnabledAfterCalibration: true
       positionSensor:
         adcChannel: 2
         spiChannel: 2

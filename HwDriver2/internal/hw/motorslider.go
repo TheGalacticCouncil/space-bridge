@@ -44,9 +44,10 @@ type MotorSlider struct {
 	TouchSenseAdcChannel    int
 	TouchSenseSpiChannel    int
 
-	MotorPin1      int
-	MotorPin2      int
-	MotorEnablePin int
+	MotorPin1                    int
+	MotorPin2                    int
+	MotorEnablePin               int
+	MotorEnabledAfterCalibration bool
 
 	motorState MotorState
 
@@ -209,6 +210,12 @@ func (m *MotorSlider) Tick() {
 }
 
 func (m *MotorSlider) motorEnabled() bool {
+	if m.MotorEnabledAfterCalibration == false {
+		m.touchState = NOT_TOUCHING
+
+		return false
+	}
+
 	touchValue, err := m.ReadTouchRaw()
 	if err != nil {
 		// Log error and set touchValue to 0

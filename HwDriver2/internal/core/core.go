@@ -178,16 +178,17 @@ func (c *core) initializeMotors() error {
 
 	for i, sliderConfig := range config.Sliders {
 		slider := &hw.MotorSlider{
-			Id:                      sliderConfig.ID,
-			Config:                  commonMotorConfig,
-			Hw:                      c.hwManager,
-			SlidePositionAdcChannel: sliderConfig.PositionSensor.AdcChannel,
-			SlidePositionSpiChannel: sliderConfig.PositionSensor.SpiChannel,
-			TouchSenseAdcChannel:    sliderConfig.TouchSensor.AdcChannel,
-			TouchSenseSpiChannel:    sliderConfig.TouchSensor.SpiChannel,
-			MotorPin1:               sliderConfig.Motor.Pin1,
-			MotorPin2:               sliderConfig.Motor.Pin2,
-			MotorEnablePin:          sliderConfig.Motor.EnablePin,
+			Id:                           sliderConfig.ID,
+			Config:                       commonMotorConfig,
+			Hw:                           c.hwManager,
+			SlidePositionAdcChannel:      sliderConfig.PositionSensor.AdcChannel,
+			SlidePositionSpiChannel:      sliderConfig.PositionSensor.SpiChannel,
+			TouchSenseAdcChannel:         sliderConfig.TouchSensor.AdcChannel,
+			TouchSenseSpiChannel:         sliderConfig.TouchSensor.SpiChannel,
+			MotorPin1:                    sliderConfig.Motor.Pin1,
+			MotorPin2:                    sliderConfig.Motor.Pin2,
+			MotorEnablePin:               sliderConfig.Motor.EnablePin,
+			MotorEnabledAfterCalibration: sliderConfig.Motor.MotorEnabledAfterCalibration,
 		}
 
 		c.sliders[i] = slider
