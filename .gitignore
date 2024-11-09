@@ -4,3 +4,4 @@
 .vs/VSWorkspaceState.json
 HwDriver/HwDriver/.visualgdb
 HwDriver2/hwdriver2-rpi-zero1
+node_modules
