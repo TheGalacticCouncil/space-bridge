@@ -115,6 +115,8 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 
 	for i := 0; absDiff > m._maxDeviation; i++ {
 		// Check if the motor is disabled
+		// TODO: Check the naming of (*MotorSlider).motorEnabled() as it seems to actually tell whether the motor
+		//       _should_ be disabled based on whether we're getting touch input.
 		if !m.motorEnabled() {
 			m.latestTouchPosition = currentPosition
 
@@ -123,6 +125,9 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 		}
 
 		// TODO: Implement more fancy algorithm for speed control
+		// TODO2: Take into account the used motor voltage. We could maybe approximate the motor driving speed during
+		// 	 calibration and use that to adjust the speed dynamically based on the distance to the target, rather than
+		// 	 using fixed voltage given via config.
 		speedMultiplier := 1.0
 		if absDiff < 4*m._maxDeviation {
 			speedMultiplier = 0.5
@@ -166,6 +171,8 @@ func (m *MotorSlider) DriveToPosition(position int) error {
 		}
 
 		// Wait for a while
+		// TODO: As we're waiting here, we should do the driving of individual motors concurrently to enhance perf.
+		// TODO2: Check the execution time of this loop to determine max feasible concurrency!
 		time.Sleep(time.Millisecond * 1)
 
 		// Read the current position
